@@ -5,3 +5,7 @@ from m3h3.setup_parameters import Physics, Parameters
 from m3h3.interaction import Interaction
 from m3h3.pde import Stimulus
 from m3h3.m3h3 import M3H3
+
+from dolfin import Parameters, parameters, UnitSquareMesh, Constant
+
+# from cbcbeat import *

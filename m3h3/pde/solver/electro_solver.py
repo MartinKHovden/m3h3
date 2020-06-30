@@ -1,9 +1,14 @@
-from dolfin import (system, LinearVariationalProblem, LinearVariationalSolver)
+from dolfin import (system, LinearVariationalProblem, LinearVariationalSolver, info, Function)
 
 from m3h3 import Physics
 
+# from cbcbeat.monodomainsolver import BasicMonodomainSolver, MonodomainSolver 
+import cbcbeat.monodomainsolver as ms
+from cbcbeat.utils import * 
+from cbcbeat.splittingsolver import SplittingSolver, BasicSplittingSolver
 
 __all__ = ['BasicBidomainSolver',
+            'BasicMonodomainSolverM3H3',
             'BidomainSolver',
             'SplittingSolver']
 
@@ -139,3 +144,16 @@ class BasicBidomainSolver(object):
         solver = LinearVariationalSolver(problem)
         solver.parameters.update(self.parameters)
         solver.solve()
+
+class BasicMonodomainSolver(ms.BasicMonodomainSolver):
+  pass
+
+class MonodomainSolver(ms.MonodomainSolver):
+  pass
+
+
+
+
+
+
+  
