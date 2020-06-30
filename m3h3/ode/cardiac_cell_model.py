@@ -70,14 +70,10 @@ class CardiacCellModel:
         init_conditions = init_conditions or OrderedDict()
 
         if params:
-            # assert isinstance(params, dict), \
-            #        "expected a dict or a Parameters, as the params argument"
-            if isinstance(params, dict):
-                params = params
+            assert isinstance(params, dict), \
+                   "expected a dict or a Parameters, as the params argument"
             if isinstance(params, Parameters):
                 params = params.to_dict()
-            print("Params inside of cardiac_cell_model:", params)
-            print("Params inside of cardiac cell_model:")
             self.set_parameters(**params)
 
         if init_conditions:
@@ -101,8 +97,6 @@ class CardiacCellModel:
 
     def set_parameters(self, **params):
         "Update parameters in model"
-        print("Params items: ", params.items())
-        print("self._parameters:", self._parameters)
         for param_name, param_value in params.items():
             if param_name not in self._parameters:
                 error("'%s' is not a parameter in %s" %(param_name, self))

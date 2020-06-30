@@ -7,16 +7,12 @@ from geometry import HeartGeometry, MultiGeometry
 from m3h3.setup_parameters import Parameters, Physics
 from m3h3.pde import *
 from m3h3.pde.solver import *
-from m3h3.pde.solver.electro_solver import BasicMonodomainSolver, SplittingSolver
 
-from cbcbeat.cardiacmodels import CardiacModel
-from cbcbeat import Expression
 
 class M3H3(object):
 
     def __init__(self, geometry, parameters, *args, **kwargs):
         self.parameters = parameters
-        print(self.parameters.keys())
         self.physics = [Physics(p) for p in parameters.keys()
                                                     if Physics.has_value(p)]
         self.interactions = kwargs.get('interactions', [])
@@ -29,56 +25,38 @@ class M3H3(object):
         else:
             self.time = Constant(self.parameters['start_time'])
 
-        print(geometry)
-
-        print(self.physics)
-
-    
-
         self._setup_geometries(geometry, self.physics)
         self._setup_problems(**kwargs)
         self._setup_solvers(**kwargs)
 
 
+    def step(self):
+        # Setup time stepping if running step function for the first time.
+        if self.time.values()[0] == self.parameters['start_time']:
+            self.num_steps, self.max_dt = self._get_num_steps()
 
+        time = float(self.time)
+        solution_fields = self.get_solution_fields()
 
-    # def step(self):
-    #     # Setup time stepping if running step function for the first time.
-    #     if self.time.values()[0] == self.parameters['start_time']:
-    #         self.num_steps, self.max_dt = self._get_num_steps()
+        if Physics.ELECTRO in self.physics:
+            for _ in range(self.num_steps[Physics.ELECTRO]):
+                electro_fields = solution_fields[str(Physics.ELECTRO)]
+                self.electro_solver.step(electro_fields[1])
 
-    #     time = float(self.time)
-    #     solution_fields = self.get_solution_fields()
+        if Physics.SOLID in self.physics:
+            for _ in range(self.num_steps[Physics.SOLID]):
+                self.solid_solver.step()
 
-    #     if Physics.ELECTRO in self.physics:
-    #         for _ in range(self.num_steps[Physics.ELECTRO]):
-    #             electro_fields = solution_fields[str(Physics.ELECTRO)]
-    #             self.electro_solver.step(electro_fields[1])
+        if Physics.FLUID in self.physics:
+            for _ in range(self.num_steps[Physics.FLUID]):
+                self.fluid_solver.step()
 
-    #     if Physics.SOLID in self.physics:
-    #         for _ in range(self.num_steps[Physics.SOLID]):
-    #             self.solid_solver.step()
-
-    #     if Physics.FLUID in self.physics:
-    #         for _ in range(self.num_steps[Physics.FLUID]):
-    #             self.fluid_solver.step()
-
-    #     if Physics.POROUS in self.physics:
-    #         for _ in range(self.num_steps[Physics.POROUS]):
-    #             self.porous_solver.step()
+        if Physics.POROUS in self.physics:
+            for _ in range(self.num_steps[Physics.POROUS]):
+                self.porous_solver.step()
                 
-    #     self.time.assign(time + self.max_dt)
-    #     return time, solution_fields
-
-    def step(self, interval):
-        if Physics.ELECTRO in self.physics:
-            self.electro_solver.step(interval)
-            # yield self.electro_solver.solution_fields()
-
-    def solve(self, interval, dt):
-        if Physics.ELECTRO in self.physics:
-            print("HERE")
-            return self.electro_solver.solve(interval, dt)
+        self.time.assign(time + self.max_dt)
+        return time, solution_fields
 
 
     def get_solution_fields(self):
@@ -181,47 +159,13 @@ class M3H3(object):
         interval = (self.parameters['start_time'], self.parameters['end_time'])
         solution_fields = self.get_solution_fields()
 
-        # if Physics.ELECTRO in self.physics:
-            # elabel = str(Physics.ELECTRO)
-            # electro_fields = solution_fields[elabel]
-            # parameters = self.parameters[elabel]['linear_variational_solver']
-            # self.electro_solver = BasicBidomainSolver(self.time,
-            #                         self.electro_problem._form, electro_fields,
-            #                         parameters, **kwargs)
-
-        ######################################################################################
         if Physics.ELECTRO in self.physics:
             elabel = str(Physics.ELECTRO)
-            # electro_fields = solution_fields[elabel]
-            # print("ELECTRO FIELDS:", electro_fields)
-            print("stimulus" in self.parameters)
-            # para = self.parameters[elabel]["linear_variational_solver"]
-            cell_model = self.electro_problem.get_cell_model() 
-            
-            stimulus = None
-
-            print(self.parameters.keys())
-
-            if "stimulus" in self.parameters:
-                stimulus = self.parameters["stimulus"]
-
-
-            stimulus = Expression("10*t*x[0]", t=self.time, degree=1)
-
-            cardiac_model = CardiacModel(self.geometries[Physics.ELECTRO].mesh, self.time, self.parameters["M_i"], self.parameters["M_e"], cell_model, stimulus = stimulus)
-            ps = SplittingSolver.default_parameters()
-            ps["theta"] = 0.5                        # Second order splitting scheme
-            ps["pde_solver"] = "monodomain"          # Use Monodomain model for the PDEs
-            ps["CardiacODESolver"]["scheme"] = "RL1" # 1st order Rush-Larsen for the ODEs
-            ps["MonodomainSolver"]["linear_solver_type"] = "iterative"
-            ps["MonodomainSolver"]["algorithm"] = "cg"
-            ps["MonodomainSolver"]["preconditioner"] = "petsc_amg"
-            
-            self.electro_solver = SplittingSolver(cardiac_model, ps)
-
-            (vs_, vs, vur) = self.electro_solver.solution_fields()
-            vs_.assign(cell_model.initial_conditions())
-        ######################################################################################
+            electro_fields = solution_fields[elabel]
+            parameters = self.parameters[elabel]['linear_variational_solver']
+            self.electro_solver = BasicBidomainSolver(self.time,
+                                    self.electro_problem._form, electro_fields,
+                                    parameters, **kwargs)
 
         if Physics.SOLID in self.physics:
             parameters = self.parameters[str(Physics.SOLID)]
