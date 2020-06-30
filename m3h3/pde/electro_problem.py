@@ -24,7 +24,13 @@ class Stimulus(UserExpression):
 
     def eval_cell(self, values, x, cell):
         periodic_t = float(self.t) % self.period
+        # print("self.markers = ", self.markers)
+        # print("cell.index = ", cell.index)
+        # print("Stimulus marker", self.stimulus_marker)
         if self.markers[cell.index] == self.stimulus_marker\
+                                            and periodic_t < self.duration:
+            values[0] = self.amplitude
+        if self.markers["STIMULUS"] == self.stimulus_marker\
                                             and periodic_t < self.duration:
             values[0] = self.amplitude
         else:
@@ -42,6 +48,7 @@ class ElectroProblem(Problem):
     def __init__(self, geometry, time, parameters, **kwargs):
         super().__init__(geometry, time, parameters, **kwargs)
         self.geometry = geometry
+        # self.params = parameters
         self.time = time
         self._init_fields()
         self._init_form(**kwargs)
@@ -54,10 +61,17 @@ class ElectroProblem(Problem):
         """
         model = self.parameters['cell_model']
         if model == "Tentusscher_panfilov_2006_M_cell":
+            print("Self params 2: \n", self.parameters.keys())
+            print("Self params 2 done \n")
             return Tentusscher_panfilov_2006_M_cell()
+
+        # Check if cell model is given:
+
+        # Can probably just drop the if-test and return model(params = self.parameters). 
 
 
     def add_stimulus(self, stimulus):
+        (v, v_) = self._get_solution_fields()
         k = (v-v_)/dt
         stim_markers = set(stimulus.markers.array())
         dx = Measure("dx", domain=self.geometry.mesh, subdomain_data=I_s)

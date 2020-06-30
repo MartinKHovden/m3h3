@@ -32,6 +32,7 @@ N = lambda v: int(np.rint(v))
 mesh = df.RectangleMesh(comm, df.Point(0.0, 0.0), df.Point(Lx, Ly),
                             N(Lx/dx), N(Ly/dx))
 
+print("mesh", mesh)
 
 # Setup stimulation protocol
 class PacingCells(df.SubDomain):
@@ -41,6 +42,7 @@ class PacingCells(df.SubDomain):
 markers = {'STIMULUS': 1, 'NONE': 0}
 mf = df.MeshFunction('size_t', mesh, mesh.geometric_dimension()-1)
 mf.set_all(0)
+print("mf", mf)
 pacing_cells = PacingCells()
 pacing_cells.mark(mf, markers['STIMULUS'])
 markerfunctions = MarkerFunctions2D(ffun=mf)
@@ -49,7 +51,9 @@ geo = Geometry2D(mesh, markers=markers, markerfunctions=markerfunctions)
 
 # Setup parameters
 parameters = Parameters('M3H3')
-parameters['end_time'] = 30.0 # ms
+parameters['end_time'] = 10.0 # ms
+
+print("test1")
 
 parameters.set_electro_parameters()
 eparam = parameters[str(Physics.ELECTRO)]
@@ -64,6 +68,7 @@ dt = eparam['dt']
 time = df.Constant(starttime)
 steps = int((endtime-starttime)/dt)
 
+print("Test2")
 # Setup simulation
 model = M3H3(geo, parameters, time=time)
 
@@ -73,14 +78,17 @@ f.parameters["flush_output"] = True
 f.parameters["rewrite_function_mesh"] = True
 f.parameters["functions_share_mesh"] = True
 
+
 # Loop over time
 for step in range(steps):
     time, fields = model.step()
-    print("TEST", time, fields)
+    print(time)
+    if time % 10 < dt:
+        for field in fields:
+            if field is not None:
+                print(field)
+                # f.write(field, int(time))
 
-    # if time % 10 < dt:
-    #     for field in fields:
-    #         if field is not None:
-    #             f.write(field, int(time))
+print(model.get_solution_fields())
 
 f.close()
