@@ -47,6 +47,35 @@ def set_dolfin_compiler_parameters():
     df.parameters["form_compiler"]["cpp_optimize_flags"] = " ".join(flags)
 
 
+class ElectroParameters(df.Parameters):
+    def __init__(self, label, **kwargs):
+        super().__init__(label, **kwargs)
+        self.stimulus = None 
+    
+    # FIXME: Fix this function: 
+    def add(self, *args):
+        print(args)
+        if args[0] == "stimulus" :
+            print("Here")
+            self.stimulus = args[1]
+        else:
+            print("not stimulus")
+            super().add(*args)
+
+    def __getitem__(self, key):
+        if key == "stimulus":
+            return self.stimulus 
+        else:
+            return super().__getitem__(key)
+    
+    def __setitem__(self, key, item):
+        print("Setitem")
+        if "stimulus" == key:
+            self.stimulus = item
+        else:
+            super().__setitem__(key, item)
+
+
 class Parameters(df.Parameters):
     """This class handles parameters for cardiac simulations. It inherits
     from `dolfin`'s Parameters class.
@@ -54,9 +83,10 @@ class Parameters(df.Parameters):
 
     def __init__(self, label, **kwargs):
         super().__init__(label, **kwargs)
+        self.stimulus = None
         set_dolfin_compiler_parameters()
         self.set_default_parameters()
-
+    
 
     def set_default_parameters(self):
         """Sets default simulation parameters.
@@ -75,9 +105,16 @@ class Parameters(df.Parameters):
         """
         if not self.has_parameter_set(Physics.ELECTRO.value):
             self._set_electro_default_parameters()
+            self._set_electro_solver_default_parameters()
         if self.has_parameter_set(Physics.ELECTRO.value) and parameters:
             self[Physics.ELECTRO.value].update(parameters)
 
+    # # FIXME: Fix this function: 
+    # def add(self, *args):
+    #     if "stimulus" in args:
+    #         self.stimulus = args[1]
+    #     else:
+    #         super().add(*args)
 
     def set_solid_parameters(self, parameters=None):
         """Sets parameters for solid mechanics problems and solver. If
@@ -110,7 +147,9 @@ class Parameters(df.Parameters):
 
 
     def _set_electro_default_parameters(self):
-        electro = df.Parameters(Physics.ELECTRO.value)
+        # electro = df.Parameters(Physics.ELECTRO.value)
+        electro = ElectroParameters(Physics.ELECTRO.value)
+
 
         # Set default parameters
         electro.add("dt", 1e-3)
@@ -121,7 +160,7 @@ class Parameters(df.Parameters):
         electro.add("M_e", 2.0)
         electro.add("I_a", 0.0)
         electro.add(df.Parameters("I_s"))
-        electro["I_s"].add("period", 0)
+        electro["I_s"].add("period", 0) 
         electro["I_s"].add("amplitude", 0)
         electro["I_s"].add("duration", 5)
         electro.add("cell_model", "Tentusscher_panfilov_2006_M_cell")
@@ -132,7 +171,19 @@ class Parameters(df.Parameters):
 
         electro.add(df.LinearVariationalSolver.default_parameters())
 
+        electro.add("stimulus", None)
+
         self.add(electro)
+
+    def _set_electro_solver_default_parameters(self):
+        """ Sets the default splitting solver parameters to be used in the
+        simulation. Default parameters are given by the splittingsolver class 
+        in cbcbeat. 
+        """ 
+
+        electro_solver = cbcbeat.splittingsolver.SplittingSolver.default_parameters()
+        electro_solver.rename("ElectroSolver")
+        self.add(electro_solver)
 
 
     def _set_solid_default_parameters(self):
@@ -190,3 +241,4 @@ class Parameters(df.Parameters):
         porous["Solver"].add("dummy_parameter", False)
 
         self.add(porous)
+    

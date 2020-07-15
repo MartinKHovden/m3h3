@@ -18,7 +18,8 @@ import numpy as np
 import m3h3
 from m3h3 import M3H3, Parameters, Physics, Stimulus
 from geometry import Geometry2D, MarkerFunctions2D
-
+from cbcbeat import plot
+import matplotlib.pyplot as plt 
 
 comm = df.MPI.comm_world
 
@@ -46,6 +47,9 @@ pacing_cells.mark(mf, markers['STIMULUS'])
 markerfunctions = MarkerFunctions2D(ffun=mf)
 
 geo = Geometry2D(mesh, markers=markers, markerfunctions=markerfunctions)
+
+plot(geo.mesh)
+plt.savefig("mesh.png")
 
 # Setup parameters
 parameters = Parameters('M3H3')
@@ -78,9 +82,9 @@ for step in range(steps):
     time, fields = model.step()
     print("TEST", time, fields)
 
-    # if time % 10 < dt:
-    #     for field in fields:
-    #         if field is not None:
-    #             f.write(field, int(time))
+#     # if time % 10 < dt:
+#     #     for field in fields:
+#     #         if field is not None:
+#     #             f.write(field, int(time))
 
-f.close()
+# f.close()

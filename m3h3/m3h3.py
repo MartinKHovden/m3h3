@@ -5,21 +5,70 @@ from dolfin import (Constant, Parameters)
 from geometry import HeartGeometry, MultiGeometry
 
 from m3h3.setup_parameters import Parameters, Physics
-from m3h3.pde import *
+from m3h3.pde import ElectroProblem, SolidProblem, PorousProblem, FluidProblem
 from m3h3.pde.solver import *
-from m3h3.pde.solver.electro_solver import BasicMonodomainSolver, SplittingSolver
+from m3h3.pde.solver.electro_solver import SplittingSolver
 
 from cbcbeat.cardiacmodels import CardiacModel
-from cbcbeat import Expression
+from cbcbeat import Expression, plot
 
+""" 
+TODO:
+How to handle initial conditions. 
+Ok method for handling stimulus? Should include method for adding multiple stimulus? 
+Is geometry needed?
+Fix how to cell models are searched through and given in params. 
+Fix readthedocs, make the code look better. 
+
+
+M3H3 is a framework used for modelling and simulating the heart. It inherits 
+much of the functionality from other libaries and combines it into a full 
+framework that encompasses the different branches of physics relevant to 
+caridac modelling. The goal is for the framework to be able to simulate 
+the cardiac mechanics, cardiac electrophysiology, hemodynamic modelling, etc.
+
+For now, only methods for simluating the electrical activity is implemented. 
+For modelling the electrical activity in the heart, the splittingsolver from 
+cbcbeat is used. Most of the functionality is inherited from the cbcbeat package.
+It solves the coupled heart equations, presented in Sundnes et. al.:
+https://www.researchgate.net/publication/265487224_Computing_the_Electrical_Activity_in_the_Human_Heart#:~:text=The%20contraction%20of%20the%20heart,called%20the%20electrocardiogram%20(ECG).
+
+"""
 class M3H3(object):
+    """ A class for representing the full cardiac system. 
 
+    To add stimulus, add it as a keyword argument with the keyword "stimulus". 
+    If stimulus is dependent on time, use keyword "t" or "time" to connect it 
+    to the internal timer in the m3h3-object. The stimulus should either be of 
+    type Expression or Markewise. Use Markerwise if the position of the 
+    stimulus should be used as well as if multiple stimuluses should be applied. 
+
+    *Arguments*
+        geometry :py:class:`geometry.Geometry`
+            A geometry object that contains the mesh of the simulation domain. 
+        parameters (:py:class:`dolfin.Parameters`)
+            A Parameters object that contains parameters for setting up the 
+            cardiac simulation. 
+    
+
+    The idea is to set up a M3H3 object that can be used to run simulations. 
+    The basic usage is:
+        - Set up the geometry with a mesh using the fenics.geometry package.  
+        - Set the parameters for the cardiac model. 
+        - Set the solver parameters. 
+        - Create the M3H3 object given the geometry and parameters
+        - Use the M3H3 objects step or solve function for running the simulations. 
+        - Do some post-processing of the output from the simulations. 
+    
+
+    """
     def __init__(self, geometry, parameters, *args, **kwargs):
         self.parameters = parameters
-        print(self.parameters.keys())
         self.physics = [Physics(p) for p in parameters.keys()
                                                     if Physics.has_value(p)]
         self.interactions = kwargs.get('interactions', [])
+        self.t_step_lengths = self._get_physics_dt()
+
         if len(self.interactions) > 0:
             self._check_physics_interactions()
 
@@ -29,76 +78,109 @@ class M3H3(object):
         else:
             self.time = Constant(self.parameters['start_time'])
 
-        print(geometry)
-
-        print(self.physics)
-
-    
-
         self._setup_geometries(geometry, self.physics)
         self._setup_problems(**kwargs)
         self._setup_solvers(**kwargs)
 
 
 
+    def step(self):
+        """ Does one step for the solvers. Finds the interval using the internal 
+        time variable. If each problems solver uses different size of time step, 
+        it runs the number of steps to make up for the difference. 
 
-    # def step(self):
-    #     # Setup time stepping if running step function for the first time.
-    #     if self.time.values()[0] == self.parameters['start_time']:
-    #         self.num_steps, self.max_dt = self._get_num_steps()
+        Usage:
+        system = m3h3(...)
+        for i in range(num_steps):
+            pre-process the data. 
+            system.step()
+            post-process the data.
+        """
 
-    #     time = float(self.time)
-    #     solution_fields = self.get_solution_fields()
+        # Setup the number of steps for each solver if it is the first iteration. 
+        if self.time.values()[0] == self.parameters["start_time"]:
+            self.num_step, self.max_dt = self._get_num_steps()
 
-    #     if Physics.ELECTRO in self.physics:
-    #         for _ in range(self.num_steps[Physics.ELECTRO]):
-    #             electro_fields = solution_fields[str(Physics.ELECTRO)]
-    #             self.electro_solver.step(electro_fields[1])
+        time = float(self.time)
 
-    #     if Physics.SOLID in self.physics:
-    #         for _ in range(self.num_steps[Physics.SOLID]):
-    #             self.solid_solver.step()
-
-    #     if Physics.FLUID in self.physics:
-    #         for _ in range(self.num_steps[Physics.FLUID]):
-    #             self.fluid_solver.step()
-
-    #     if Physics.POROUS in self.physics:
-    #         for _ in range(self.num_steps[Physics.POROUS]):
-    #             self.porous_solver.step()
-                
-    #     self.time.assign(time + self.max_dt)
-    #     return time, solution_fields
-
-    def step(self, interval):
+        dt = self._get_physics_dt()
+        
         if Physics.ELECTRO in self.physics:
-            self.electro_solver.step(interval)
-            # yield self.electro_solver.solution_fields()
+            for _ in range(self.num_step[str(Physics.ELECTRO)]):
+                # Interval to solve for: 
+                interval = (time, time+dt[str(Physics.ELECTRO)])
 
-    def solve(self, interval, dt):
+                # Does one step and extracts the solution fields. 
+                self.electro_solver.step(interval)
+                solution_fields = self.electro_solver.solution_fields()
+
+                # Updates m3h3's solution fields. 
+                self.electro_problem.update_solution_fields(solution_fields[0],
+                                                            solution_fields[1])  
+        
+        if Physics.SOLID in self.physics:
+            pass
+    
+        if Physics.FLUID in self.physics:
+            pass 
+
+        if Physics.POROUS in self.physics:
+            pass 
+        
+        self.time.assign(time + self.max_dt)
+
+
+    def solve(self):
+        """ Solves the problem by running multiple steps for the full interval 
+            ("start_time", "end_time"), where "start_time" and "end_time" are 
+            given as parameters to the m3h3 object. 
+
+            Returns a generator that can be iterated over:
+            system = m3h3(...)
+            for (timestep, fields) in system.solve():
+                do something with the fields. 
+
+            # FIXME: Update so that it uses the internal step function instead. 
+        """
+        interval = (self.parameters["start_time"], self.parameters["end_time"])
+
         if Physics.ELECTRO in self.physics:
-            print("HERE")
-            return self.electro_solver.solve(interval, dt)
+            generator = self.electro_solver.solve(interval, 
+                                                self.parameters["Electro"]["dt"])
+            solution_fields = self.electro_solver.solution_fields()
+            self.electro_problem.update_solution_fields(solution_fields[0], 
+                                                        solution_fields[1])
+            return generator
+
+        if Physics.ELECTRO in self.physics:
+            pass 
+
+        if Physics.FLUID in self.physics:
+            pass 
+
+        if Physics.POROUS in self.physics:
+            pass 
+
+
 
 
     def get_solution_fields(self):
+        """ Returns the solution fields for the different problems. Return a 
+        dictionary with keys given by strings representing which problem they 
+        correspond to. 
+        """ 
+
         solution_fields = {}
         if Physics.ELECTRO in self.physics:
             solution_fields[str(Physics.ELECTRO)] =\
                                     self.electro_problem._get_solution_fields()
-        if Physics.SOLID in self.physics:
+        if Physics.SOLID in self.physics: 
             pass
         if Physics.FLUID in self.physics:
             pass
         if Physics.POROUS in self.physics:
             pass
         return solution_fields
-
-
-    def add_stimulus(self, stimulus):
-        assert hasattr(self, 'electro_problem'), \
-            "Cannot add stimulus if electrophysiology has not been set up."
-        self.electro_problem.add_stimulus(stimulus)
 
 
     def _get_num_steps(self):
@@ -126,6 +208,9 @@ class M3H3(object):
 
 
     def _check_dt_is_multiple(self, dt, min_dt):
+        """ Function for checking if two time steps for different 
+        problems are multiples of each other. 
+        """ 
         if not (dt/min_dt).is_integer():
             msg = "Time step sizes have to be multiples of each other."\
                     "{} is not a multiple of {}".format(dt, min_dt)
@@ -135,6 +220,9 @@ class M3H3(object):
 
 
     def _get_physics_dt(self):
+        """ Returns a dictionary containing the time steps for each 
+        problems solver. 
+        """ 
         dt = {}
         if Physics.ELECTRO in self.physics:
             dt[Physics.ELECTRO] = self.parameters[str(Physics.ELECTRO)]['dt']
@@ -148,6 +236,8 @@ class M3H3(object):
 
 
     def _setup_problems(self, **kwargs):
+        """ Set up the problems with the given parameters and geometry. 
+        """
         if Physics.ELECTRO in self.physics:
             self.electro_problem = ElectroProblem(
                                         self.geometries[Physics.ELECTRO],
@@ -178,50 +268,21 @@ class M3H3(object):
 
 
     def _setup_solvers(self, **kwargs):
+        """Set up the solvers for the problems.  
+        """
+
         interval = (self.parameters['start_time'], self.parameters['end_time'])
-        solution_fields = self.get_solution_fields()
 
-        # if Physics.ELECTRO in self.physics:
-            # elabel = str(Physics.ELECTRO)
-            # electro_fields = solution_fields[elabel]
-            # parameters = self.parameters[elabel]['linear_variational_solver']
-            # self.electro_solver = BasicBidomainSolver(self.time,
-            #                         self.electro_problem._form, electro_fields,
-            #                         parameters, **kwargs)
-
-        ######################################################################################
         if Physics.ELECTRO in self.physics:
-            elabel = str(Physics.ELECTRO)
-            # electro_fields = solution_fields[elabel]
-            # print("ELECTRO FIELDS:", electro_fields)
-            print("stimulus" in self.parameters)
-            # para = self.parameters[elabel]["linear_variational_solver"]
-            cell_model = self.electro_problem.get_cell_model() 
-            
-            stimulus = None
 
-            print(self.parameters.keys())
+            electrosolver_parameters = self.parameters["ElectroSolver"]
+            print(electrosolver_parameters.keys())
+            self.electro_solver = SplittingSolver(
+                                    self.electro_problem.cardiac_model, 
+                                    electrosolver_parameters)
 
-            if "stimulus" in self.parameters:
-                stimulus = self.parameters["stimulus"]
-
-
-            stimulus = Expression("10*t*x[0]", t=self.time, degree=1)
-
-            cardiac_model = CardiacModel(self.geometries[Physics.ELECTRO].mesh, self.time, self.parameters["M_i"], self.parameters["M_e"], cell_model, stimulus = stimulus)
-            ps = SplittingSolver.default_parameters()
-            ps["theta"] = 0.5                        # Second order splitting scheme
-            ps["pde_solver"] = "monodomain"          # Use Monodomain model for the PDEs
-            ps["CardiacODESolver"]["scheme"] = "RL1" # 1st order Rush-Larsen for the ODEs
-            ps["MonodomainSolver"]["linear_solver_type"] = "iterative"
-            ps["MonodomainSolver"]["algorithm"] = "cg"
-            ps["MonodomainSolver"]["preconditioner"] = "petsc_amg"
-            
-            self.electro_solver = SplittingSolver(cardiac_model, ps)
-
-            (vs_, vs, vur) = self.electro_solver.solution_fields()
-            vs_.assign(cell_model.initial_conditions())
-        ######################################################################################
+            (vs_, _, _) = self.electro_solver.solution_fields()
+            vs_.assign(self.electro_problem.cell_model.initial_conditions())
 
         if Physics.SOLID in self.physics:
             parameters = self.parameters[str(Physics.SOLID)]
@@ -246,6 +307,8 @@ class M3H3(object):
 
 
     def _setup_geometries(self, geometry, physics):
+        """ Sets up a dictionary with the geometries for the different problems.
+        """ 
         self.geometries = {}
 
         if isinstance(geometry, MultiGeometry):
@@ -289,26 +352,6 @@ class M3H3(object):
                     raise KeyError(msg)
 
 
-    def _setup_electro_problem(self, parameters):
-        self.electro_problem = ElectroProblem(self.geometries[Physics.ELECTRO],
-                                                self.time, parameters)
-
-
-    def _setup_solid_problem(self, parameters):
-        self.solid_problem = SolidProblem(self.geometries[Physics.SOLID],
-                                                self.time, parameters)
-
-
-    def _setup_fluid_problem(self, parameters):
-        self.fluid_problem = FluidProblem(self.geometries[Physics.FLUID],
-                                                self.time, parameters)
-
-
-    def _setup_porous_problem(self, parameters):
-        self.porous_problem = PorousProblem(self.geometries[Physics.POROUS],
-                                                self.time, parameters)
-
-
     def update_parameters(self, physics, parameters):
         if physics == Physics.ELECTRO:
             self.parameters.set_electro_parameters(parameters)
@@ -318,3 +361,10 @@ class M3H3(object):
             self.parameters.set_fluid_parameters(parameters)
         elif physics == Physics.POROUS:
             self.parameters.set_porous_parameters(parameters)
+
+    def set_initial_conditions(self, initial_condition):
+        """ Function for setting the initial conditions for each problem. 
+        """ 
+        # TODO: Update function for setting the intial conditions. 
+        pass
+

@@ -1,11 +1,13 @@
-from dolfin import (system, LinearVariationalProblem, LinearVariationalSolver, info, Function)
+from cbcbeat.splittingsolver import SplittingSolver, BasicSplittingSolver
+
+from dolfin import (system, LinearVariationalProblem, LinearVariationalSolver, 
+                    info, Function)
 
 from m3h3 import Physics
 
 # from cbcbeat.monodomainsolver import BasicMonodomainSolver, MonodomainSolver 
 import cbcbeat.monodomainsolver as ms
 from cbcbeat.utils import * 
-from cbcbeat.splittingsolver import SplittingSolver, BasicSplittingSolver
 
 __all__ = ['BasicBidomainSolver',
             'BasicMonodomainSolverM3H3',
@@ -63,7 +65,7 @@ class BasicBidomainSolver(object):
         *Returns*
           (previous v, current vur) (:py:class:`tuple` of :py:class:`dolfin.Function`)
         """
-        return (self.v_, self.vur)
+        return (self._prev_current, self._solution)
 
 
     def solve(self, interval, dt=None):
@@ -115,15 +117,15 @@ class BasicBidomainSolver(object):
 
             # If not: update members and move to next time
             # Subfunction assignment would be good here.
-            if isinstance(self.v_, Function):
-                self.merger.assign(self.v_, self.vur.sub(0))
+            if isinstance(self._prev_current, Function):
+                self.merger.assign(self._prev_current, self.vur.sub(0))
             else:
                 debug("Assuming that v_ is updated elsewhere. Experimental.")
             t0 = t1
             t1 = t0 + dt
 
 
-    def step(self, solution_fields):
+    def step(self, solution_field):
         """
         Solve on the given time interval (t0, t1).
 
@@ -138,7 +140,7 @@ class BasicBidomainSolver(object):
 
         # Define variational problem
         a, L = system(self._form)
-        problem = LinearVariationalProblem(a, L, solution_fields)
+        problem = LinearVariationalProblem(a, L, solution_field)
 
         # Set-up solver
         solver = LinearVariationalSolver(problem)
@@ -146,10 +148,13 @@ class BasicBidomainSolver(object):
         solver.solve()
 
 class BasicMonodomainSolver(ms.BasicMonodomainSolver):
+  def __init__(self):
+    super.__init__()
   pass
 
 class MonodomainSolver(ms.MonodomainSolver):
   pass
+
 
 
 
