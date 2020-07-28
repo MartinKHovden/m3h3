@@ -1,22 +1,18 @@
 # -*- coding: utf-8 -*-
-"""This module implements the variational form for electrophysiology problems
+"""This module keeps track of the cell models and the cardiac models for the 
+electro problem. It also stores the solution fields for the electro problem. 
 """
 
-from dolfin import (grad, inner, Constant, FiniteElement, Function,
-                    FunctionAssigner, FunctionSpace, Measure, MixedElement,
-                    TestFunctions, TrialFunctions, UserExpression, Expression)
 import cbcbeat
 from cbcbeat.cardiacmodels import CardiacModel
 
 from m3h3.pde import Problem
-# from m3h3.ode import Tentusscher_panfilov_2006_M_cell
 import m3h3.ode
 
 import os
 import importlib
 
-
-class Stimulus(UserExpression):
+class Stimulus(cbcbeat.UserExpression):
 
     def __init__(self, markers, stimulus_marker, **kwargs):
         super().__init__(degree=kwargs['degree'])
@@ -53,15 +49,25 @@ class ElectroProblem(Problem):
     def __init__(self, geometry, time, parameters, **kwargs):
         super().__init__(geometry, time, parameters, **kwargs)
 
+        # Set up the stimulus for the electro problem:
         self.stimulus = None
         self._set_up_stimulus(**kwargs)
 
+        # Set up the applied current for the electro problem: 
         self.applied_current = None
         self._set_up_current(**kwargs)
+
+        # Set up the initial conditions for the electro problem: 
+        self.cell_model_initial_conditions = None
+        self._set_up_initial_conditions(**kwargs)
+
+        # Not sure how to handle the cell model params: 
+        self.cell_model_parameters = None 
 
         # Sets up the cell model and cardiac model. 
         self.cell_model = self.get_cell_model()
         self.cardiac_model = self.get_cardiac_model()
+
 
 
     def get_cell_model(self):
@@ -71,41 +77,47 @@ class ElectroProblem(Problem):
         models are stored) and checks if the cell model specified in 
         the parameteres are implemented. If not, it raises an error and returns
         a list of the implemented cell models. All implemented cell models 
-        should also be included in __all__ in __init__.py in the ode-folder. 
+        should also be included in __all__ in __init__.py in the ode-folder.
+
+        Assumes that all cell-models are implemented in the ode-folder. The 
+        naming convention is that the .py-file is named the same as the 
+        cell-class in the file, but with a lower-case first letter. The 
+        class name is the same but with an upper-case first letter.  
+
 
         """
+
+        # Get the cell model name from the user parameters: 
         model = self.parameters['cell_model']
 
         cell_model = None
 
-        # FIXME: Check if everything works properly when adding new files. 
-        # Also try to make it more robust if user provides different 
-        # capitalization of words. 
-
-
-        # Iterates over all files in the ode-folder where the cell models are 
-        # stored:
+        # Iterates over all files in the ode-folder to see if model is implemented:
         for filename in os.listdir(str(os.path.dirname(__file__)) + "/../ode"):
+            # Checks if filename is a Python-file: 
             if filename.endswith(".py"):
                 filename_split = filename.split(".")
+                # Checks if model name is same as filename:
                 if filename_split[0].lower() == model.lower():
+                    # Get the cell model from the corresponding file: 
                     cell_model = getattr(importlib.import_module("m3h3.ode." + 
                                         filename_split[0]), 
                                         filename_split[0][:1].capitalize() +
                                         filename_split[0][1:])
                             
+        # If the cell model is found in the ode-folder, return it:
         if cell_model != None:
-            return cell_model()
+            return cell_model(params = self.cell_model_parameters, 
+                    init_conditions = self.cell_model_initial_conditions)
+        # If cell model not in ode-folder, raise NotImplementedError: 
         else: 
             raise NotImplementedError("""Cell model not implemented, 
                         try one of the following:""", m3h3.ode.__all__)
 
-
     def get_cardiac_model(self):
         """Returns the cardiac model for the electro problem given the cell 
-        model and parameters.  
+        model and the user-parameters.  
         """ 
-        print(self.parameters["M_i"])
         return CardiacModel(domain = self.geometry.mesh,
                                 time = self.time, 
                                 M_i = self.parameters["M_i"], 
@@ -116,7 +128,7 @@ class ElectroProblem(Problem):
 
 
     def update_solution_fields(self, solution, prev_current):
-        """ Function for updating the solution field. Used in step 
+        """Function for updating the solution field. Used in step 
         function of m3h3. 
         """
         self.solution = solution 
@@ -128,24 +140,26 @@ class ElectroProblem(Problem):
 
 
     def _set_up_stimulus(self, **kwargs):
-        """ Add the given stimulus to the electro problem. Stimulus is 
+        """Add the given stimulus to the electro problem. Stimulus is 
         suposed to be of type Expression or Markerwise. 
         """ 
-        if "stimulus" in kwargs.keys():
-            if isinstance(kwargs["stimulus"], cbcbeat.Markerwise):
-                self.stimulus = kwargs["stimulus"]
+
+        self.problem_specifications = kwargs["problem_specifications"]
+        self.stimulus = self.problem_specifications["stimulus"]
+
+        if self.stimulus != None:
+            if isinstance(self.stimulus, cbcbeat.Markerwise):
                 for stim in self.stimulus.values():
                     if "t" in stim.user_parameters:
                         stim.t = self.time
-                    elif "time" in self.applied_current.user_parameters:
-                        self.applied_current.time = self.time
+                    elif "time" in stim.user_parameters:
+                        stim.time = self.time
 
-            elif isinstance(kwargs["stimulus"], cbcbeat.Expression):
-                self.stimulus = kwargs["stimulus"]
+            elif isinstance(self.stimulus, cbcbeat.Expression):
                 if "t" in self.stimulus.user_parameters:
                     self.stimulus.t = self.time
-                elif "time" in self.applied_current.user_parameters:
-                    self.applied_current.time = self.time
+                elif "time" in self.stimulus.user_parameters:
+                    self.stimulus.time = self.time
 
             else:
                 msg = """Stimulus should be an Expression 
@@ -154,14 +168,21 @@ class ElectroProblem(Problem):
 
 
     def _set_up_current(self, **kwargs):
-        """ Add the given applied current to the electro problem. Applied 
-        current is suposed to be of type ufl.Expr. 
+        """ Add the given applied current to the electro problem. 
         """
-        if "applied_current" in kwargs.keys():
-            self.applied_current = kwargs["applied_current"]
+        self.applied_current = kwargs["problem_specifications"]["applied_current"]
+
+        # if "applied_current" in kwargs.keys():
+        if self.applied_current != None:
             if "t" in self.applied_current.user_parameters:
                 self.applied_current.t = self.time
             elif "time" in self.applied_current.user_parameters:
                 self.applied_current.time = self.time
+
+    def _set_up_initial_conditions(self, **kwargs):
+        """ Set the initial conditions for the problem. 
+        """
+
+        self.cell_model_initial_conditions = kwargs["problem_specifications"]["initial_conditions"]
 
 

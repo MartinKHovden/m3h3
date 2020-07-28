@@ -7,19 +7,18 @@ from geometry import HeartGeometry, MultiGeometry
 from m3h3.setup_parameters import Parameters, Physics
 from m3h3.pde import ElectroProblem, SolidProblem, PorousProblem, FluidProblem
 from m3h3.pde.solver import *
-from m3h3.pde.solver.electro_solver import SplittingSolver
 
 from cbcbeat.cardiacmodels import CardiacModel
 from cbcbeat import Expression, plot
 
 """ 
 TODO:
-How to handle initial conditions. 
-Ok method for handling stimulus? Should include method for adding multiple stimulus? 
-Is geometry needed?
 Fix how to cell models are searched through and given in params. 
 Fix readthedocs, make the code look better. 
-
+Check if stimulus works properly. Ok way to add stimulus.
+Update initial conditions. 
+Explain how to add more cell models (lower case in filename, upper case for class name.)
+Write unit tests. 
 
 M3H3 is a framework used for modelling and simulating the heart. It inherits 
 much of the functionality from other libaries and combines it into a full 
@@ -57,10 +56,9 @@ class M3H3(object):
         - Set the parameters for the cardiac model. 
         - Set the solver parameters. 
         - Create the M3H3 object given the geometry and parameters
-        - Use the M3H3 objects step or solve function for running the simulations. 
-        - Do some post-processing of the output from the simulations. 
+        - Use M3H3 object's step/solve functions for running the simulations. 
+        - Do post-processing of the output. 
     
-
     """
     def __init__(self, geometry, parameters, *args, **kwargs):
         self.parameters = parameters
@@ -142,26 +140,16 @@ class M3H3(object):
 
             # FIXME: Update so that it uses the internal step function instead. 
         """
-        interval = (self.parameters["start_time"], self.parameters["end_time"])
+        max_dt = self._get_num_steps()
+        end_time = self.parameters["end_time"]
+        t0 = self.time
+        t1 = t0 + max_dt
 
-        if Physics.ELECTRO in self.physics:
-            generator = self.electro_solver.solve(interval, 
-                                                self.parameters["Electro"]["dt"])
-            solution_fields = self.electro_solver.solution_fields()
-            self.electro_problem.update_solution_fields(solution_fields[0], 
-                                                        solution_fields[1])
-            return generator
-
-        if Physics.ELECTRO in self.physics:
-            pass 
-
-        if Physics.FLUID in self.physics:
-            pass 
-
-        if Physics.POROUS in self.physics:
-            pass 
-
-
+        while self.time + max_dt <= end_time:
+            self.step()
+            yield (t0, t1), self.get_solution_fields()
+            t0 = t1 
+            t1 += max_dt
 
 
     def get_solution_fields(self):
@@ -243,7 +231,8 @@ class M3H3(object):
                                         self.geometries[Physics.ELECTRO],
                                         self.time,
                                         self.parameters[str(Physics.ELECTRO)],
-                                        **kwargs)
+                                        **kwargs, problem_specifications = 
+                                        self.parameters["problem_specifications"])
             
         if Physics.SOLID in self.physics:
             self.solid_problem = SolidProblem(
@@ -276,7 +265,6 @@ class M3H3(object):
         if Physics.ELECTRO in self.physics:
 
             electrosolver_parameters = self.parameters["ElectroSolver"]
-            print(electrosolver_parameters.keys())
             self.electro_solver = SplittingSolver(
                                     self.electro_problem.cardiac_model, 
                                     electrosolver_parameters)
@@ -361,10 +349,3 @@ class M3H3(object):
             self.parameters.set_fluid_parameters(parameters)
         elif physics == Physics.POROUS:
             self.parameters.set_porous_parameters(parameters)
-
-    def set_initial_conditions(self, initial_condition):
-        """ Function for setting the initial conditions for each problem. 
-        """ 
-        # TODO: Update function for setting the intial conditions. 
-        pass
-

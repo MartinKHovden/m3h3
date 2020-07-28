@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This module handles parameters for cardiac simulations.
+"""This module handles parameters for cardiac simulations. 
 """
 
 from enum import Enum
@@ -47,45 +47,101 @@ def set_dolfin_compiler_parameters():
     df.parameters["form_compiler"]["cpp_optimize_flags"] = " ".join(flags)
 
 
-class ElectroParameters(df.Parameters):
+class ProblemSpecifications(df.Parameters):
+    """ This class handles some of the problem specifications that can't 
+        be held by the Parameters class. The class are used as storage for 
+        stimulus, applied current and initial conditions. This class should 
+        be updated with more specifications when needed in later versions. 
+    """
     def __init__(self, label, **kwargs):
         super().__init__(label, **kwargs)
+
+        # Add storage for the problem specifications:
         self.stimulus = None 
+        self.applied_current = None
+        self.initial_conditions = None
     
-    # FIXME: Fix this function: 
     def add(self, *args):
-        print(args)
-        if args[0] == "stimulus" :
-            print("Here")
-            self.stimulus = args[1]
-        else:
-            print("not stimulus")
-            super().add(*args)
+        """ Function for adding new specifications. Should only be used 
+        for adding new elements to the set. For updating already defined 
+        specifications, use:
+        problem_specifications["specification"] = Something...
+
+        # FIXME: Raise error if adding stimulus, applied current or intial conditions. 
+
+        """
+        if args[0] == "stimulus":
+            print("Stimulus is already in the parameter set") 
+        elif args[0] == "applied_current":
+            print("Applied current is already in the parameter set")
+        elif args[0] == "initial_conditions":
+            print("Initial conditions is already in the parameter set")
+        else :
+            super().add(args)
 
     def __getitem__(self, key):
         if key == "stimulus":
             return self.stimulus 
+        elif key == "applied_current":
+            return self.applied_current
+        elif key == "initial_conditions":
+            return self.initial_conditions
         else:
             return super().__getitem__(key)
     
-    def __setitem__(self, key, item):
-        print("Setitem")
+    def __setitem__(self, key, value):
         if "stimulus" == key:
-            self.stimulus = item
+            self.stimulus = value
+        elif key == "applied_current":
+            self.applied_current = value
+        elif key == "initial_conditions":
+            self.initial_conditions = value
         else:
-            super().__setitem__(key, item)
+            super().__setitem__(key, value)
+
+    def get(self, key):
+        if key == "stimulus":
+            return self.stimulus 
+        elif key == "applied_current":
+            return self.applied_current
+        elif key == "initial_conditions":
+            return self.initial_conditions
+        else :
+            return super().get(key)    
+
+    def keys(self):
+        return_list = ["stimulus", "applied_current", "initial_conditions"]
+        return_list += super().keys()
+        return return_list
+
+    def has_key(self, key):
+        if key == "stimulus":
+            return True
+        elif key == "applied_current":
+            return True
+        elif key == "initial_conditions":
+            return True
+        else :
+            return super().has_key(key)
+
+    def clear(self):
+        self.stimulus = None 
+        self.applied_current = None 
+        self.initial_conditions = None
+        super().clear()
 
 
 class Parameters(df.Parameters):
-    """This class handles parameters for cardiac simulations. It inherits
+    """This class handles electro parameteres for cardiac simulations. It inherits
     from `dolfin`'s Parameters class.
     """
 
     def __init__(self, label, **kwargs):
-        super().__init__(label, **kwargs)
-        self.stimulus = None
+        super().__init__(label, **kwargs) 
         set_dolfin_compiler_parameters()
         self.set_default_parameters()
+
+        self.problem_specifications = ProblemSpecifications("ProblemSpecifications") 
     
 
     def set_default_parameters(self):
@@ -98,6 +154,12 @@ class Parameters(df.Parameters):
         self.add("start_time", 0.0)
         self.add("end_time", 1.0)
 
+    def __getitem__(self, key):
+        if key == "problem_specifications":
+            return self.problem_specifications
+        else:
+            return super().__getitem__(key)
+
 
     def set_electro_parameters(self, parameters=None):
         """Sets parameters for electrophysiology problems and solver. If
@@ -109,12 +171,6 @@ class Parameters(df.Parameters):
         if self.has_parameter_set(Physics.ELECTRO.value) and parameters:
             self[Physics.ELECTRO.value].update(parameters)
 
-    # # FIXME: Fix this function: 
-    # def add(self, *args):
-    #     if "stimulus" in args:
-    #         self.stimulus = args[1]
-    #     else:
-    #         super().add(*args)
 
     def set_solid_parameters(self, parameters=None):
         """Sets parameters for solid mechanics problems and solver. If
@@ -147,9 +203,9 @@ class Parameters(df.Parameters):
 
 
     def _set_electro_default_parameters(self):
-        # electro = df.Parameters(Physics.ELECTRO.value)
-        electro = ElectroParameters(Physics.ELECTRO.value)
-
+        """Sets the default parameters for the electro problem.
+        """
+        electro = df.Parameters(Physics.ELECTRO.value)
 
         # Set default parameters
         electro.add("dt", 1e-3)
@@ -171,9 +227,8 @@ class Parameters(df.Parameters):
 
         electro.add(df.LinearVariationalSolver.default_parameters())
 
-        electro.add("stimulus", None)
-
         self.add(electro)
+
 
     def _set_electro_solver_default_parameters(self):
         """ Sets the default splitting solver parameters to be used in the

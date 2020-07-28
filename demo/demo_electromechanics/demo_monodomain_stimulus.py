@@ -1,6 +1,14 @@
 """ 
-A more complex example on how to use m3h3 to do simulations of the electrical 
+An example on how to use m3h3 to do simulations of the electrical 
 activity of the heart for a more complex stimulus applied to the domain. 
+
+This example shows how to:
+- Set up a simple geometry 
+- Update the parameters of the electro problem
+- Update the solver parameters for the electro solver 
+- Add a more complex stimulususing Meshfunctions and Compiled subdomains. 
+- Run the electro simulation 
+- Plot the results 
 
 """
 
@@ -17,7 +25,7 @@ stimulus_domain.set_all(0)
 stimulus_1 = CompiledSubDomain("pow(x[0],2) + pow(x[1],2) <= 0.5 + tol", tol = 1e-15 )
 stimulus_1.mark(stimulus_domain, 1)
 
-stimulus_2 = CompiledSubDomain("pow(x[0]-1.0,2) + pow(x[1]-1, 2) <= 0.1 + tol", tol = 1e-15)
+stimulus_2 = CompiledSubDomain("pow(x[0]-0.5,2) + pow(x[1]-1, 2) <= 0.1 + tol", tol = 1e-15)
 stimulus_2.mark(stimulus_domain, 2)
 
 # Set up the geometry given the computational domain: 
@@ -42,13 +50,6 @@ I_s = Expression("t >= start ? (t <= (duration + start) ? amplitude : 0.0) : 0.0
 # Set up Markerwise object for stimulus: 
 stimulus = Markerwise((I_s, I_s), (1,2), stimulus_domain)
 
-
-class Stim(str):
-    def __init__(self, stimulus):
-        self.stim = stimulus
-
-stimulus = Stim(stimulus)
-
 # Set up dt, t_0, and t_max: 
 dt = 0.1
 t_0 = 0.0
@@ -56,12 +57,9 @@ t_max = 1.0
 num_steps = int((t_max - t_0)/dt)
 interval = (t_0, t_max)
 
-
 # Define the conductivity (tensors):
 M_i = 2.0
 M_e = 1.0
-
-# stim = Expression("10*t*x[0]", t = 0, degree=1)
 
 # Set up the parameteres for the heart-model: 
 params = Parameters("M3H3")
@@ -77,11 +75,10 @@ electro_params["M_i"] = M_i
 electro_params["M_e"] = M_e
 electro_params["cell_model"]  = "Beeler_reuter_1977"#"Tentusscher_panfilov_2006_M_cell"
 
-electro_params = params["Electro"]
-# import pdb; pdb.set_trace()
-electro_params.add("stimulus", stimulus)
-# electro_params["stimulus"] = stimulus  # FIXME: Should be added to the electro_params dict. 
-
+# Set up the problem specifications: 
+problem_specifications = params["problem_specifications"]
+problem_specifications["stimulus"] = stimulus
+problem_specifications["applied_current"] = None
 
 # Set up the parameters for the splitting solver: 
 electrosolver_parameters = params["ElectroSolver"]
@@ -93,21 +90,16 @@ electrosolver_parameters["MonodomainSolver"]["algorithm"] = "cg"
 electrosolver_parameters["MonodomainSolver"]["preconditioner"] = "sor"#"petsc_amg"
 electrosolver_parameters["apply_stimulus_current_to_pde"] = True
 
-
-# Initialize the system with parameters and geometry. Can also add stimulus. 
-# Stimulus implementation should be changed so that it is a part of the parameters instead:  
-system = M3H3(geo, params, stimulus = stimulus, t=Constant(0.0), degree=3)
-
+# Initialize the system with parameters and geometry.
+system = M3H3(geo, params)
 
 # Run the simulation by using the step function:
 for i in range(num_steps):
     print("Time interval: ", (float(system.time), float(system.time) + dt) )
     system.step()
 
-
 # Extract the solution:
 vs_, vs = system.get_solution_fields()[str(Physics.ELECTRO)]
-
 
 # Plot the resulting solution fields:
 plt.figure()
@@ -116,6 +108,5 @@ plt.savefig("TransmembranePot.png")
 plt.figure()
 plot(vs[-1], title="1st state variable (s_0) at end time")
 plt.savefig("s_0(T).png")
-
 
 print("Done!!")
