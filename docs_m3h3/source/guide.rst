@@ -5,8 +5,15 @@ An introduction to doing cardiac simulations in M3H3
 This guide is a work in progress. 
 
 In this guide we will go through the most important steps in setting up a cardiac
-simulation in M3H3. The only problem currently implemented is finding the 
-electrical activity in the heart.  
+simulation in M3H3. Currently, the only solver implemented is for the 
+electrical activity in the heart. This solver solves the monodomain or the bidomain
+equations presented in Sundnes (2006) to find the transmembrane potential. 
+
+The goal is for the framework to be able to combine simulations of the 
+electrical activity with the simulations of the solid mechanics, fluid 
+mechanics, as well as the porous properties of the heart. For each step in 
+setting up the simulation, we will describe it from the most basic to more 
+advanced. For full working examples, see the demos folder. 
 
 Importing M3H3 
 ===============

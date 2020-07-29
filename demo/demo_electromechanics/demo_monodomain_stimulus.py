@@ -3,12 +3,12 @@ An example on how to use m3h3 to do simulations of the electrical
 activity of the heart for a more complex stimulus applied to the domain. 
 
 This example shows how to:
-- Set up a simple geometry 
-- Update the parameters of the electro problem
-- Update the solver parameters for the electro solver 
+- Set up a simple geometry using functionality from fenics. 
+- Update the parameters of the electro problem.
+- Update the solver parameters for the electro solver.
 - Add a more complex stimulususing Meshfunctions and Compiled subdomains. 
-- Run the electro simulation 
-- Plot the results 
+- Run the electro simulation.
+- Plot the results.
 
 """
 
@@ -25,7 +25,7 @@ stimulus_domain.set_all(0)
 stimulus_1 = CompiledSubDomain("pow(x[0],2) + pow(x[1],2) <= 0.5 + tol", tol = 1e-15 )
 stimulus_1.mark(stimulus_domain, 1)
 
-stimulus_2 = CompiledSubDomain("pow(x[0]-0.5,2) + pow(x[1]-0.5, 2) <= 0.1 + tol", tol = 1e-15)
+stimulus_2 = CompiledSubDomain("pow(x[0]-0.5,2) + pow(x[1]-1, 2) <= 0.1 + tol", tol = 1e-15)
 stimulus_2.mark(stimulus_domain, 2)
 
 # Set up the geometry given the computational domain: 
@@ -69,8 +69,6 @@ params["start_time"] = t_0
 
 params.set_electro_parameters()
 
-print(params.keys())
-
 electro_params = params["Electro"]
 electro_params["dt"] = dt
 electro_params["M_i"] = M_i
@@ -78,8 +76,6 @@ electro_params["M_e"] = M_e
 electro_params["cell_model"]  = "Beeler_reuter_1977"#"Tentusscher_panfilov_2006_M_cell"
 electro_params["stimulus"]= stimulus
 electro_params["applied_current"] = None
-
-print(electro_params.keys())
 
 # Set up the parameters for the splitting solver: 
 electrosolver_parameters = params["ElectroSolver"]
@@ -90,8 +86,6 @@ electrosolver_parameters["MonodomainSolver"]["linear_solver_type"] = "iterative"
 electrosolver_parameters["MonodomainSolver"]["algorithm"] = "cg"
 electrosolver_parameters["MonodomainSolver"]["preconditioner"] = "sor"#"petsc_amg"
 electrosolver_parameters["apply_stimulus_current_to_pde"] = True
-
-print(params.keys())
 
 # Initialize the system with parameters and geometry.
 system = M3H3(geo, params)

@@ -3,12 +3,12 @@ A simple example on how to use the m3h3 module for solving for the electrical
 activity of the heart. 
 
 This example shows how to:
-- Set up a simple geometry 
-- Update the parameters of the electro problem
-- Update the solver parameters for the electro solver 
-- Add a simple stimulus
-- Run the electro simulation 
-- Plot the results 
+- Set up a simple geometry. 
+- Update the parameters of the electro problem.
+- Update the solver parameters for the electro solver. 
+- Add a simple stimulus.
+- Run the electro simulation. 
+- Plot the results. 
 
 """
 
@@ -63,7 +63,6 @@ system = M3H3(geo, params)
 # Run the simulation by using the step function:
 for i in range(num_steps):
     print("Time interval: ", (float(system.time), float(system.time) + dt) )
-
     system.step()
 
 # Extract the solution:

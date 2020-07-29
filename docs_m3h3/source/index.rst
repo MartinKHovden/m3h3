@@ -23,6 +23,10 @@ framework is based on the agorithms described in Sundnes et al (2006).
 The software includes functionality for doing full simulations of the 
 electrical activity, fluid flow, and solid properties of the heart. 
 
+The installation page shows how to obtain m3h3. At the bottom of this page
+a simple example of how to use the framework is shown. To get more details
+on how the framework can be used, see the guide and demos. 
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
