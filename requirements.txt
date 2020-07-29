@@ -3,3 +3,4 @@ sphinx
 fenics
 --no-binary=h5py
 h5py
+cbcbeat
