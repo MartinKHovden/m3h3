@@ -62,6 +62,7 @@ class M3H3(object):
     """
     def __init__(self, geometry, parameters, *args, **kwargs):
         self.parameters = parameters
+        print(self.parameters.keys())
         self.physics = [Physics(p) for p in parameters.keys()
                                                     if Physics.has_value(p)]
         self.interactions = kwargs.get('interactions', [])
@@ -75,6 +76,8 @@ class M3H3(object):
             kwargs.pop('time', None)
         else:
             self.time = Constant(self.parameters['start_time'])
+
+        print()
 
         self._setup_geometries(geometry, self.physics)
         self._setup_problems(**kwargs)
@@ -140,12 +143,12 @@ class M3H3(object):
 
             # FIXME: Update so that it uses the internal step function instead. 
         """
-        max_dt = self._get_num_steps()
+        max_dt = self._get_num_steps()[1]
         end_time = self.parameters["end_time"]
-        t0 = self.time
+        t0 = float(self.time)
         t1 = t0 + max_dt
 
-        while self.time + max_dt <= end_time:
+        while float(self.time) + max_dt <= end_time:
             self.step()
             yield (t0, t1), self.get_solution_fields()
             t0 = t1 
@@ -173,6 +176,7 @@ class M3H3(object):
 
     def _get_num_steps(self):
         dt_physics = self._get_physics_dt()
+        print(dt_physics)
         min_dt = min(dt_physics.values())
         max_dt = max(dt_physics.values())
         num_steps = {}
@@ -213,6 +217,7 @@ class M3H3(object):
         """ 
         dt = {}
         if Physics.ELECTRO in self.physics:
+            print("TEst", self.parameters["Electro"]["dt"])
             dt[Physics.ELECTRO] = self.parameters[str(Physics.ELECTRO)]['dt']
         if Physics.SOLID in self.physics:
             dt[Physics.SOLID] = self.parameters[str(Physics.SOLID)]['dt']
@@ -231,8 +236,7 @@ class M3H3(object):
                                         self.geometries[Physics.ELECTRO],
                                         self.time,
                                         self.parameters[str(Physics.ELECTRO)],
-                                        **kwargs, problem_specifications = 
-                                        self.parameters["problem_specifications"])
+                                        **kwargs)
             
         if Physics.SOLID in self.physics:
             self.solid_problem = SolidProblem(

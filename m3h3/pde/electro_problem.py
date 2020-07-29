@@ -144,8 +144,10 @@ class ElectroProblem(Problem):
         suposed to be of type Expression or Markerwise. 
         """ 
 
-        self.problem_specifications = kwargs["problem_specifications"]
-        self.stimulus = self.problem_specifications["stimulus"]
+        # self.problem_specifications = kwargs["problem_specifications"]
+        # self.stimulus = self.problem_specifications["stimulus"]
+
+        self.stimulus = self.parameters["stimulus"]
 
         if self.stimulus != None:
             if isinstance(self.stimulus, cbcbeat.Markerwise):
@@ -170,7 +172,7 @@ class ElectroProblem(Problem):
     def _set_up_current(self, **kwargs):
         """ Add the given applied current to the electro problem. 
         """
-        self.applied_current = kwargs["problem_specifications"]["applied_current"]
+        self.applied_current = self.parameters["applied_current"]
 
         # if "applied_current" in kwargs.keys():
         if self.applied_current != None:
@@ -183,6 +185,6 @@ class ElectroProblem(Problem):
         """ Set the initial conditions for the problem. 
         """
 
-        self.cell_model_initial_conditions = kwargs["problem_specifications"]["initial_conditions"]
+        self.cell_model_initial_conditions = self.parameters["initial_conditions"]
 
 

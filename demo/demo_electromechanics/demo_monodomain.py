@@ -15,8 +15,6 @@ This example shows how to:
 from m3h3 import *
 import matplotlib.pyplot as plt 
 
-# set_dolfin_compiler_parameters()
-
 # Define the computational domain.
 mesh = UnitSquareMesh(100, 100)
 
@@ -48,10 +46,7 @@ electro_params["M_i"] = M_i
 electro_params["M_e"] = M_e
 electro_params["cell_model"] = "Beeler_reuter_1977"#"Tentusscher_panfilov_2006_M_cell"
 electro_params["dt"] = dt
-
-# Update the problem specifications:
-problem_specifications = params["problem_specifications"]
-problem_specifications["stimulus"] = Expression("10*x[1]*t", t = Constant(0.0), degree = 1)
+electro_params["stimulus"] = Expression("10*x[1]*t", t = Constant(0.0), degree = 1)
 
 # Set the electro solver parameters: 
 electrosolver_params = params["ElectroSolver"]

@@ -1,11 +1,12 @@
+*******************************************************
 An introduction to doing cardiac simulations in M3H3
 *******************************************************
 
 This guide is a work in progress. 
 
 In this guide we will go through the most important steps in setting up a cardiac
-simulation in M3H3. The only problem currently implemented is the elctrical 
-activity. 
+simulation in M3H3. The only problem currently implemented is finding the 
+electrical activity in the heart.  
 
 Importing M3H3 
 ===============
@@ -30,12 +31,48 @@ The mesh is set up by using
 
     mesh = UnitSquareMesh(100, 100)
 
-Setting up the electrical simulations
-=======================================
-For the electrical simulations a stimulus should be given. It uses the splittingsolver 
-technique introduced in Sundes et al (2006). It solves the monodomain and bidomain
-coupled equations of the electrical activity of the heart. The equations are given by
-$$a^2$$
+Alternatively, the mesh can be taken from a file. This is done using the...
+
+
+Setting up the parameters and specifying the problems 
+=======================================================
+The Parameter class is where the user can specify what parameters they want to 
+use in the simulations. It is a subclass of fenics' Parameter class and contains 
+most of the information about the electro problem (and later also Fluid 
+parameters, Solid parameters, and porous parameters). The Parameter class 
+contains nested Parameter classes that contains the parameters for each 
+of the problems. The Parameter class can be used like this 
+
+.. code-block:: python 
+
+    parameters = Parameters("M3H3")
+
+Setting up the electro simulations
+++++++++++++++++++++++++++++++++++++++++
+
+The parameters of the electro problem can easily be set by using the Parameters class 
+
+.. code-block:: python 
+
+    electro_parameters = params["Electro"]
+
+There are multiple ways to set the parameters for the electro simulations. The 
+easiest is to first set them equal to the default electro parameters and then 
+updating them from there 
+
+.. code-block:: python 
+
+    dfdbg
+
+Alternatively, they can be set manually as a function argument: 
+
+.. code-block:: python 
+
+    dfvdn
+
+
+For the electrical simulations a stimulus, applied current, and initial conditions
+can be given. 
 
 Stimulus 
 ++++++++++
@@ -93,27 +130,19 @@ Note that the string in expression can be any expression allowed in c++. The sti
     stimulus = Markerwise((I_s_1, I_s_2), (1,2), stimulus_domain)
 
 
-Parameters 
-++++++++++++
-The parameters of the electro problem can easily be set by using the Parameters class 
-
-.. code-block:: python 
-
-    params = Parameters("M3H3")
-
-Note that the string sent in to Parameters can be chosen freely by the user. 
 
 Setting up the fluid simulations 
-==================================
++++++++++++++++++++++++++++++++++++
 
 Setting up the porous simulations 
-====================================
++++++++++++++++++++++++++++++++++++++
 
 Setting up the interactions
-============================
+++++++++++++++++++++++++++++++
 
 Running the simulation 
 =======================
 
 Post-processing 
-==================
+================
+The last part is to 

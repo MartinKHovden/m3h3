@@ -70,7 +70,7 @@ class ProblemSpecifications(df.Parameters):
         # FIXME: Raise error if adding stimulus, applied current or intial conditions. 
 
         """
-        if args[0] == "stimulus":
+        if args[0] == "stimulus": 
             print("Stimulus is already in the parameter set") 
         elif args[0] == "applied_current":
             print("Applied current is already in the parameter set")
@@ -78,6 +78,89 @@ class ProblemSpecifications(df.Parameters):
             print("Initial conditions is already in the parameter set")
         else :
             super().add(args)
+
+    def __getitem__(self, key):
+        if key == "stimulus":
+            return self.stimulus 
+        elif key == "applied_current":
+            return self.applied_current
+        elif key == "initial_conditions":
+            return self.initial_conditions
+        else:
+            return super().__getitem__(key)
+    
+    def __setitem__(self, key, value):
+        if "stimulus" == key:
+            self.stimulus = value
+        elif key == "applied_current":
+            self.applied_current = value
+        elif key == "initial_conditions":
+            self.initial_conditions = value
+        else:
+            super().__setitem__(key, value)
+
+    def get(self, key):
+        if key == "stimulus":
+            return self.stimulus 
+        elif key == "applied_current":
+            return self.applied_current
+        elif key == "initial_conditions":
+            return self.initial_conditions
+        else :
+            return super().get(key)    
+
+    def keys(self):
+        return_list = ["stimulus", "applied_current", "initial_conditions"]
+        return_list += super().keys()
+        return return_list
+
+    def has_key(self, key):
+        if key == "stimulus":
+            return True
+        elif key == "applied_current":
+            return True
+        elif key == "initial_conditions":
+            return True
+        else :
+            return super().has_key(key)
+
+    def clear(self):
+        self.stimulus = None 
+        self.applied_current = None 
+        self.initial_conditions = None
+        super().clear()
+
+class ElectroParameters(df.Parameters):
+    """ This class handles some of the problem specifications that can't 
+        be held by the Parameters class. The class are used as storage for 
+        stimulus, applied current and initial conditions. This class should 
+        be updated with more specifications when needed in later versions. 
+    """
+    def __init__(self, label, **kwargs):
+        super().__init__(label, **kwargs)
+
+        # Add storage for the problem specifications:
+        self.stimulus = None 
+        self.applied_current = None
+        self.initial_conditions = None
+    
+    def add(self, *args):
+        """ Function for adding new specifications. Should only be used 
+        for adding new elements to the set. For updating already defined 
+        specifications, use:
+        problem_specifications["specification"] = Something...
+
+        # FIXME: Raise error if adding stimulus, applied current or intial conditions. 
+
+        """
+        if args[0] == "stimulus": 
+            print("Stimulus is already in the parameter set") 
+        elif args[0] == "applied_current":
+            print("Applied current is already in the parameter set")
+        elif args[0] == "initial_conditions":
+            print("Initial conditions is already in the parameter set")
+        else :
+            super().add(*args)
 
     def __getitem__(self, key):
         if key == "stimulus":
@@ -141,7 +224,8 @@ class Parameters(df.Parameters):
         set_dolfin_compiler_parameters()
         self.set_default_parameters()
 
-        self.problem_specifications = ProblemSpecifications("ProblemSpecifications") 
+        # self.problem_specifications = ProblemSpecifications("ProblemSpecifications") 
+        self.electro_parameters = None
     
 
     def set_default_parameters(self):
@@ -155,17 +239,35 @@ class Parameters(df.Parameters):
         self.add("end_time", 1.0)
 
     def __getitem__(self, key):
-        if key == "problem_specifications":
-            return self.problem_specifications
+        if key == Physics.ELECTRO.value:
+            return self.electro_parameters
         else:
             return super().__getitem__(key)
+
+    def keys(self):
+        keys = super().keys()
+        print(self.electro_parameters)
+        if self.electro_parameters != None:
+            print("Here")
+            keys = keys + [Physics.ELECTRO.value]
+        return keys
+
+    def has_parameter_set(self, parameter_set):
+        if (parameter_set == Physics.ELECTRO.value) and (self.electro_parameters != None):
+            return True
+        elif parameter_set == Physics.ELECTRO.value and self.electro_parameters == None:
+            return False 
+        else:
+            return super().has_parameter_set(parameter_set)
 
 
     def set_electro_parameters(self, parameters=None):
         """Sets parameters for electrophysiology problems and solver. If
         argument is None, default parameters are applied.
         """
+        print()
         if not self.has_parameter_set(Physics.ELECTRO.value):
+            print("here")
             self._set_electro_default_parameters()
             self._set_electro_solver_default_parameters()
         if self.has_parameter_set(Physics.ELECTRO.value) and parameters:
@@ -202,32 +304,51 @@ class Parameters(df.Parameters):
             self[Physics.POROUS.value].update(parameters)
 
 
+    # def _set_electro_default_parameters(self):
+    #     """Sets the default parameters for the electro problem.
+    #     """
+    #     electro = df.Parameters(Physics.ELECTRO.value)
+
+    #     # Set default parameters
+    #     electro.add("dt", 1e-3)
+    #     electro.add("theta", 0.5)
+    #     electro.add("polynomial_degree", 1)
+    #     electro.add("use_average_u_constraint", False)
+    #     electro.add("M_i", 1.0)
+    #     electro.add("M_e", 2.0)
+    #     electro.add("I_a", 0.0)
+    #     electro.add(df.Parameters("I_s"))
+    #     electro["I_s"].add("period", 0) 
+    #     electro["I_s"].add("amplitude", 0)
+    #     electro["I_s"].add("duration", 5)
+    #     electro.add("cell_model", "Tentusscher_panfilov_2006_M_cell")
+    #     electro.add("pde_model", "bidomain")
+
+    #     electro.add(df.Parameters("ODESolver"))
+    #     electro["ODESolver"].add("scheme", "RL1")
+
+    #     electro.add(df.LinearVariationalSolver.default_parameters())
+
+    #     self.add(electro)
+
     def _set_electro_default_parameters(self):
         """Sets the default parameters for the electro problem.
         """
-        electro = df.Parameters(Physics.ELECTRO.value)
+
+        self.electro_parameters = ElectroParameters(Physics.ELECTRO.value)
 
         # Set default parameters
-        electro.add("dt", 1e-3)
-        electro.add("theta", 0.5)
-        electro.add("polynomial_degree", 1)
-        electro.add("use_average_u_constraint", False)
-        electro.add("M_i", 1.0)
-        electro.add("M_e", 2.0)
-        electro.add("I_a", 0.0)
-        electro.add(df.Parameters("I_s"))
-        electro["I_s"].add("period", 0) 
-        electro["I_s"].add("amplitude", 0)
-        electro["I_s"].add("duration", 5)
-        electro.add("cell_model", "Tentusscher_panfilov_2006_M_cell")
-        electro.add("pde_model", "bidomain")
+        self.electro_parameters.add("dt", 0.001)
+        self.electro_parameters.add("theta", 0.5)
+        self.electro_parameters.add("polynomial_degree", 1)
+        self.electro_parameters.add("use_average_u_constraint", False)
+        self.electro_parameters.add("M_i", 1.0)
+        self.electro_parameters.add("M_e", 2.0)
+        self.electro_parameters.add("I_a", 0.0)
+        self.electro_parameters.add("cell_model", "Tentusscher_panfilov_2006_M_cell")
+        self.electro_parameters.add("pde_model", "bidomain")
 
-        electro.add(df.Parameters("ODESolver"))
-        electro["ODESolver"].add("scheme", "RL1")
-
-        electro.add(df.LinearVariationalSolver.default_parameters())
-
-        self.add(electro)
+        self.electro_parameters.add(df.LinearVariationalSolver.default_parameters())
 
 
     def _set_electro_solver_default_parameters(self):

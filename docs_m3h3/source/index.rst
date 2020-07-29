@@ -3,8 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+#############################################
 M3H3: A framework for cardiac simulations. 
-============================================
+#############################################
 
 M3H3 is an Python-based open source framework for doing cardiac simulations. 
 It build on the finite element solver FEniCS and combines functionality from various 
@@ -29,7 +30,7 @@ electrical activity, fluid flow, and solid properties of the heart.
    installation
    guide
    demos
-   documentation
+   API
 
 
 Quickstart
@@ -43,7 +44,7 @@ simulation:
 
    from m3h3 import *
 
-   mesh = ...
+   mesh = UnitSquareMesh(100, 100)
 
    geo = Geometry2D(mesh)
 
@@ -53,6 +54,8 @@ simulation:
       # do something with the solution. 
    
    plot(solution_field[0])
+
+This simple example creates a square domain of 100 points in each dimension. 
 
 
 Indices and tables

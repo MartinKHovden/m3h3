@@ -25,7 +25,7 @@ stimulus_domain.set_all(0)
 stimulus_1 = CompiledSubDomain("pow(x[0],2) + pow(x[1],2) <= 0.5 + tol", tol = 1e-15 )
 stimulus_1.mark(stimulus_domain, 1)
 
-stimulus_2 = CompiledSubDomain("pow(x[0]-0.5,2) + pow(x[1]-1, 2) <= 0.1 + tol", tol = 1e-15)
+stimulus_2 = CompiledSubDomain("pow(x[0]-0.5,2) + pow(x[1]-0.5, 2) <= 0.1 + tol", tol = 1e-15)
 stimulus_2.mark(stimulus_domain, 2)
 
 # Set up the geometry given the computational domain: 
@@ -69,16 +69,17 @@ params["start_time"] = t_0
 
 params.set_electro_parameters()
 
+print(params.keys())
+
 electro_params = params["Electro"]
 electro_params["dt"] = dt
 electro_params["M_i"] = M_i
 electro_params["M_e"] = M_e
 electro_params["cell_model"]  = "Beeler_reuter_1977"#"Tentusscher_panfilov_2006_M_cell"
+electro_params["stimulus"]= stimulus
+electro_params["applied_current"] = None
 
-# Set up the problem specifications: 
-problem_specifications = params["problem_specifications"]
-problem_specifications["stimulus"] = stimulus
-problem_specifications["applied_current"] = None
+print(electro_params.keys())
 
 # Set up the parameters for the splitting solver: 
 electrosolver_parameters = params["ElectroSolver"]
@@ -90,6 +91,8 @@ electrosolver_parameters["MonodomainSolver"]["algorithm"] = "cg"
 electrosolver_parameters["MonodomainSolver"]["preconditioner"] = "sor"#"petsc_amg"
 electrosolver_parameters["apply_stimulus_current_to_pde"] = True
 
+print(params.keys())
+
 # Initialize the system with parameters and geometry.
 system = M3H3(geo, params)
 
@@ -97,6 +100,10 @@ system = M3H3(geo, params)
 for i in range(num_steps):
     print("Time interval: ", (float(system.time), float(system.time) + dt) )
     system.step()
+
+# Or run the simulations by using the solve function: 
+# for (t0, t1), solution_field in system.solve():
+#     print((t0, t1))
 
 # Extract the solution:
 vs_, vs = system.get_solution_fields()[str(Physics.ELECTRO)]
