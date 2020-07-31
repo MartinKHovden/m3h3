@@ -18,7 +18,10 @@ Fix readthedocs, make the code look better.
 Check if stimulus works properly. Ok way to add stimulus.
 Update initial conditions.
 Explain how to add more cell models (lower/upper case)
-Write unit tests.
+Should everything be imported from cbcbeat?
+Describe the parameters in detail, and where they are sent. 
+Make it work with 3D? 
+What is vs_ actually? Since it can be assigned initial conditions? Is it a bunch of state variables? 
 
 M3H3 is a framework used for modelling and simulating the heart. It inherits
 much of the functionality from other libaries and combines it into a full
@@ -92,10 +95,14 @@ class M3H3(object):
         self._setup_solvers(**kwargs)
 
     def step(self):
-        """ Does one step for the solvers. Finds the interval using the
-        internal time variable. If each problems solver uses different
-        size of time step, it runs the number of steps to make up for
-        the difference.
+        """ Does one step for the solvers for a time step equal to the largest
+        time step for all the solvers. Finds the interval using the
+        internal time variable and the get_max_dt function. Each problem have their own 
+        separate time steps. The time steps are assumed to be multiples of each other. 
+        This means that if one solver have twice the time step of another solver, 
+        the solver with the smallest time step will step two times in the 
+        same time interval as the one with the largest time step. This way the 
+        solvers will line up at certain times. 
 
         """
         # Setup the number of steps for each solver if first iteration.
@@ -135,7 +142,7 @@ class M3H3(object):
             ("start_time", "end_time"), where "start_time" and "end_time" are
             given as parameters to the m3h3 object.
 
-            Returns a generator that can be iterated over.
+            *Returns*
 
         """
         max_dt = self._get_num_steps()[1]
@@ -150,9 +157,25 @@ class M3H3(object):
             t1 += max_dt
 
     def get_solution_fields(self):
-        """ Returns the solution fields for the different problems. Return a
+        """ Returns the solution fields for the different problems. Returns a
         dictionary with keys given by strings representing which problem they
         correspond to.
+
+        *Returns*
+            solution_fields (:py:class:`dictionary` of :py:class:`dolfin.Function`)
+                Returns a dictionary with the solution fields for each problem.
+                Keys are the enum value for the problems.  
+
+        *Usage*
+            .. code-block:: python 
+
+                sf = system.get_solution_fields()
+                sf_electro = sf[Physics.ELECETRO.value]
+            
+            where system is an instance of m3h3 and the solution fields for 
+            the electro problem is returned. 
+
+
         """
 
         solution_fields = {}
@@ -168,6 +191,18 @@ class M3H3(object):
         return solution_fields
 
     def _get_num_steps(self):
+        """ Function for returning the number of steps for each solver
+
+        This function returns the number of step that each solver do. Since 
+        m3h3 allows different time-steps for each solver, some solver might 
+        have to do multiple steps compared to the other solvers. 
+
+        *Returns*
+            num_steps (:py:class:`dictionary` of :py:class:`float`)
+                Dictionary of the number of steps for each solver. 
+            max_dt (:py:class:`float`)
+                The longest time-step for all solvers. 
+        """
         dt_physics = self._get_physics_dt()
 
         min_dt = min(dt_physics.values())
@@ -195,7 +230,23 @@ class M3H3(object):
 
     def _check_dt_is_multiple(self, dt, min_dt):
         """ Function for checking if two time steps for different
-        problems are multiples of each other.
+        solvers are multiples of each other. This is important so that they
+        match up on certain times. The solvers with shorter time steps are then
+        run multiple times between each step of the solvers with longer time 
+        steps. See the step function for more information.  
+
+        *Arguments*
+            dt (:py:class:`float`)
+
+            min_dt (:py:class:`float`)
+
+        *Return*
+            (:py:class:`boolean`)
+                Returns True if the input are multiples of each other. 
+        
+        *Raises*
+            Raises an ValueError if the input is not multiples of each other. 
+
         """
         if not (dt/min_dt).is_integer():
             msg = "Time step sizes have to be multiples of each other."\
@@ -206,7 +257,7 @@ class M3H3(object):
 
     def _get_physics_dt(self):
         """ Returns a dictionary containing the time steps for each
-        problems solver.
+        solver.
         """
         dt = {}
         if Physics.ELECTRO in self.physics:
@@ -252,7 +303,11 @@ class M3H3(object):
                                         **kwargs)
 
     def _setup_solvers(self, **kwargs):
-        """Set up the solvers for the problems.
+        """Function for setting up the solvers.
+
+        This function sets up the solver for each problem with the given parameters
+        and keyword arguments. The solver parameters should be in the parameter 
+        object. 
         """
 
         interval = (self.parameters['start_time'], self.parameters['end_time'])
@@ -261,8 +316,8 @@ class M3H3(object):
 
             electrosolver_parameters = self.parameters["ElectroSolver"]
             self.electro_solver = ElectroSolver(
-                                    self.electro_problem.cardiac_model,
-                                    electrosolver_parameters)
+                                    model = self.electro_problem.cardiac_model,
+                                    params = electrosolver_parameters)
 
             (vs_, _, _) = self.electro_solver.solution_fields()
             vs_.assign(self.electro_problem.cell_model.initial_conditions())

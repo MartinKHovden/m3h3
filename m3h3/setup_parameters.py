@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 """This module handles parameters for cardiac simulations.
+It contains one main class for storing the general parameters for each problem.
+In addition, it contains a class for the parameters of the electro problem. This
+is because df.Parameters dont take Markerwise functiosn as elements. Since we 
+might want to add complex stimuluses, this should be possible. By using the 
+ElectroParameter class, this is now possible. 
+
 """
 
 from enum import Enum
@@ -49,7 +55,20 @@ class ElectroParameters(df.Parameters):
     This class handles some of the problem specifications that can't 
     be held by the Parameters class. The class are used as storage for 
     stimulus, applied current and initial conditions. This class should 
-    be updated with more specifications when needed in later versions. 
+    be updated with more specifications when needed in later versions.
+    The reason why this class i needed is that df.Parameters dont hold 
+    Markerwise functions (As far as I know). Instead of storing the stimulus
+    in the actual df.Parameter dictionary, they are stored in separate variables.
+    They can be accessed and added in the same way as for normal Parameters.
+
+    *Arguments*
+        label (:py:class:`str`)
+            The label of the parameter set.  
+
+    *Notes*
+        When creating an instance of ElectroParameters, the stimulus, applied 
+        current, and initial conditions are already in the set with default
+        values of None. Those can updated as usual.  
     """
     def __init__(self, label, **kwargs):
         super().__init__(label, **kwargs)
@@ -71,10 +90,13 @@ class ElectroParameters(df.Parameters):
         """
         if args[0] == "stimulus": 
             print("Stimulus is already in the parameter set") 
+            raise ValueError("Stimulus is already in the parameter set")
         elif args[0] == "applied_current":
             print("Applied current is already in the parameter set")
+            raise ValueError("Applied current is already in the parameter set")
         elif args[0] == "initial_conditions":
             print("Initial conditions is already in the parameter set")
+            raise ValueError("Initial condition is already in the parameter set")
         else :
             super().add(*args)
 
@@ -142,7 +164,27 @@ class Parameters(df.Parameters):
     variable self.electro_parameters instead of in the actual df.Parameter dict. 
 
     The parameter set can be nested. Each problem have their own nested
-    Parameter set that contains the parameters. Those can be accessed using:
+    Parameter set that contains the parameters. 
+
+    Paramaters can be added as follows:
+
+    .. code-block:: python 
+
+        params = Parameters("M3H3")
+        params.add("param1", 1.0)
+
+    They can be changed as follows:
+
+    .. code-block:: python 
+
+        params["param1"] = 2.0
+
+    They can be extracted as follows:
+
+    .. code-block:: python 
+
+        p1 = params["param1"]
+
 
     """
     def __init__(self, label, **kwargs):

@@ -1,3 +1,0 @@
-Installation
-======================
-The M3H3 package can be installed using ...

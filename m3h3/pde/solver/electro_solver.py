@@ -11,6 +11,9 @@ class ElectroSolver(SplittingSolver):
   in Sundnes (2006). For more information, see the documentation for the 
   SplittingSolver in CBCBeat. 
 
+  It solves the bidomain (or monodomain) equations given by: 
+  
+
   """ 
   pass 
 
