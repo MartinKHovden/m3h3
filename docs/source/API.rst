@@ -1,50 +1,11 @@
-.. sectnum::
+API reference
+==============
 
-##############
-API reference 
-##############
+This API reference gives a detailed overview of the the different 
+classes in the m3h3 package. For a guide on how to use the framework, see 
+"An introduction to doing cardiac simulations in M3H3". 
 
-This reference guide gives details about the classes and function in the 
-m3h3 package. 
-   
-m3h3 
-======
+.. toctree::
+    :maxdepth: 4
 
-m3h3
------
-
-.. automodule:: m3h3.m3h3
-   :members:
-   :undoc-members:
-   :show-inheritance:
-   :private-members:
-
-.. automodule:: m3h3.setup_parameters
-   :members: 
-   :undoc-members:
-   :show-inheritance:
-   :private-members:
-
-
-pde 
-----
-
-.. automodule:: m3h3.pde
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-pde solver 
------------
-
-.. automodule:: m3h3.pde.solver
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-ode
--------
-.. automodule:: m3h3.ode   
-   :members:
-   :undoc-members:
-   :show-inheritance:
+    m3h3
