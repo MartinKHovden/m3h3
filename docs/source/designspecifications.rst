@@ -90,7 +90,7 @@ M3H3's "hello world" will consist of setting up an simulation of electrophysiolo
   for t in time:
   	# do some preprocessing
 
-  	m2h2.solve()
+  	m2h2.step()
 
     # do some postprocessing, for example saving to file
 
