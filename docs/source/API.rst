@@ -1,18 +1,17 @@
-API reference
-**************
+.. sectnum::
+
+##############
+API reference 
+##############
+
 This reference guide gives details about the classes and function in the 
 m3h3 package. 
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-
    
+m3h3 
+======
 
-======
-M3H3 
-======
+m3h3
+-----
 
 .. automodule:: m3h3.m3h3
    :members:
@@ -27,27 +26,24 @@ M3H3
    :private-members:
 
 
-======= 
-PDE 
-=======
+pde 
+----
 
 .. automodule:: m3h3.pde
    :members:
    :undoc-members:
    :show-inheritance:
 
-===========
-PDE solver 
-===========
+pde solver 
+-----------
 
 .. automodule:: m3h3.pde.solver
    :members:
    :undoc-members:
    :show-inheritance:
 
-=======
-ODE 
-=======
+ode
+-------
 .. automodule:: m3h3.ode   
    :members:
    :undoc-members:
