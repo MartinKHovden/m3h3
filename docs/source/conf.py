@@ -45,6 +45,8 @@ mathjax_config = {
 autodoc_mock_imports = ["dolfin", "mpi4py", "h5py", "pulse", "geometry",
                         "cbcbeat", "numpy", "ufl"]
 
+master_doc = 'index'
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
