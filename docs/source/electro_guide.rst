@@ -1,6 +1,6 @@
-*******************************************************
-An introduction to doing cardiac simulations in M3H3
-*******************************************************
+*********************************************************************************
+An introduction to doing cardiac simulations of the electrical activity in M3H3
+*********************************************************************************
 
 This guide is a work in progress. 
 

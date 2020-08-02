@@ -35,7 +35,7 @@ on how the framework can be used, see the guide and demos.
 
    designspecifications
    installation
-   guide
+   user_guide
    demos
    API
 

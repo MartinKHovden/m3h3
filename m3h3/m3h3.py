@@ -237,9 +237,10 @@ class M3H3(object):
 
         *Arguments*
             dt (:py:class:`float`)
-
+                Time step
             min_dt (:py:class:`float`)
-
+                Time step
+                
         *Return*
             (:py:class:`boolean`)
                 Returns True if the input are multiples of each other. 
