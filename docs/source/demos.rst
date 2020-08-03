@@ -5,6 +5,6 @@ The same files can also be found at the GitHub repository in the demos folder.
 For a guide on how to set up such simulations, see the user guide. 
 
 .. toctree::
-    :maxdepth: 5
+    :maxdepth: 5 
 
     electro_demos

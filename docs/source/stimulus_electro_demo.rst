@@ -1,5 +1,5 @@
 Demo for running the electro solver with a stimulus
-=====================================================
+===================================================== 
 
 .. code-block:: python 
 

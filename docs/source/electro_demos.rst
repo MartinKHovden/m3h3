@@ -1,4 +1,4 @@
-Demos for simulating electrical activity
+Demos for simulating electrical activity 
 ==========================================
 
 .. toctree::

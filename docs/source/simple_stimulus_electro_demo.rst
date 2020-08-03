@@ -3,7 +3,7 @@ Demo for running the electro solver with a simple stimulus
 This example shows how to set up m3h3 to run a simple simulation 
 of the electrical activity with a basic stimulus. 
 
-.. code-block:: python 
+.. code-block:: python  
     
     """ 
     A simple example on how to use the m3h3 module for solving for the electrical 
