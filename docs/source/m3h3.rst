@@ -7,6 +7,9 @@ m3h3
    :show-inheritance:
    :private-members:
 
+setup_parameters
+------------------
+
 .. automodule:: m3h3.setup_parameters
    :members: 
    :undoc-members:

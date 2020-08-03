@@ -9,12 +9,6 @@ simulation in M3H3. Currently, only the electrical activity can be simulated.
 This solver solves the monodomain or the bidomain equations presented in 
 Sundnes (2006) to find the transmembrane potential. 
 
-The goal is for the framework to be able to combine simulations of the 
-electrical activity with the simulations of the solid mechanics, fluid 
-mechanics, as well as the porous properties of the heart. For each step in 
-setting up the simulation, we will describe it from the most basic to more 
-advanced. For full working examples, see the demos folder. 
-
 Importing M3H3 
 ===============
 To import all the functionality of M3H3, run 
@@ -68,7 +62,7 @@ end-time to default values of 0 and 1. This can be changed as follows
     parameters["end_time"] = 10.0
     parameters["start_time"] = 0.0
 
-to decide the timespan of the simulations. To add a nested set of electro parameters, 
+to set the timespan of the simulations. To add a nested set of electro parameters, 
 you can run 
 
 .. code-block:: python 
@@ -79,6 +73,35 @@ This will set the electro parameters to the default values, which can be changed
 in the same way as for the start- and end-time. Since no argument is given, 
 the parameters are set to the default values. For more information on the function, 
 see the API. 
+
+We can now print out the parameters in the electro parameters to see what 
+can be updated. 
+
+.. code-block:: python  
+
+    electro_params = parameters["Electro"]
+
+Printing this to the terminal should give 
+
+.. code-block:: python 
+
+    ['stimulus', 'applied_current', 'initial_conditions', 'I_a', 'M_e', 'M_i', 'cell_model', 'dt', 'linear_variational_solver', 'pde_model', 'polynomial_degree', 'theta', 'use_average_u_constraint']
+
+where the values can be updated as before. We will look closer at the stimulus and applied current later in the guide. 
+
+When setting the electro parameters, we can also change the solver parameters. Those 
+have their own parameter set within the main parameter object that can be accessed:
+
+.. code-block:: python 
+
+    electro_solver_parameters = parameters["ElectroSolver"]
+
+
+and again, printing out the keys gives
+
+.. code-block:: python 
+
+    ['BasicCardiacODESolver', 'BidomainSolver', 'CardiacODESolver', 'MonodomainSolver', 'apply_stimulus_current_to_pde', 'enable_adjoint', 'ode_solver_choice', 'pde_solver', 'theta']
 
 Setting up the electro simulations
 ++++++++++++++++++++++++++++++++++++++++

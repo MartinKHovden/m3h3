@@ -12,22 +12,15 @@ It build on the finite element solver FEniCS and combines functionality from
 various frameworks for simulating different processes in the heart. 
 The goal is for M3H3 to be able to combine simulations of electrical 
 activivty, solid mechanics, fluid mechanics, and the porous properties of 
-the heart. This documentation and the framework is a work in progress. 
+the heart. This documentation and m3h3 is a work in progress. 
 
-M3H3 builds on the functionality of software specific for solving the 
-various parts that goes into the simulation of the heart. This is the 
-electrical activity, fluid flow, continuum mechanics and ... 
+The documentation is split into different parts. In the design specification, 
+the aim of the framework is described as reference for further development of the library. 
+In the installation guide different methods of obtaining the software is described. 
+In the user guide we go through the main parts in setting up various simulations 
+in m3h3. In demos, full examples of running programs are shown. Finally, the 
+API reference gives an detailed overview of the classes and functions in m3h3. 
 
-CBCBeat is used for simulations of the electrical activity. See 
-https://cbcbeat.readthedocs.io/en/latest/index.html for more info. The 
-framework is based on the agorithms described in Sundnes et al (2006). 
-
-The software includes functionality for doing full simulations of the 
-electrical activity, fluid flow, and solid properties of the heart. 
-
-The installation page shows how to obtain m3h3. At the bottom of this page
-a simple example of how to use the framework is shown. To get more details
-on how the framework can be used, see the guide and demos. 
 
 .. toctree::
    :maxdepth: 2

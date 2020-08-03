@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """This module handles parameters for cardiac simulations.
+
 It contains one main class for storing the general parameters for each problem.
 In addition, it contains a class for the parameters of the electro problem. This
 is because df.Parameters dont take Markerwise functiosn as elements. Since we 
@@ -50,7 +51,7 @@ def set_dolfin_compiler_parameters():
     df.parameters["form_compiler"]["cpp_optimize_flags"] = " ".join(flags)
 
 class ElectroParameters(df.Parameters):
-    """ Class for handling the electro parameters 
+    """Class for handling the electro parameters 
 
     This class handles some of the problem specifications that can't 
     be held by the Parameters class. The class are used as storage for 
@@ -210,13 +211,29 @@ class Parameters(df.Parameters):
         else:
             return super().__getitem__(key)
 
+    def __setitem__(self, key, value):
+        if key == Physics.ELECTRO.value:
+            self.electro_parameters = value
+        else:
+            super().__setitem__(key, value)
+
     def keys(self):
         keys = super().keys()
-        print(self.electro_parameters)
+        # print(self.electro_parameters)
         if self.electro_parameters != None:
             print("Here")
             keys = keys + [Physics.ELECTRO.value]
         return keys
+
+    def remove(self, key):
+        """ Function for removing parameters or parameter sets
+
+        # FIXME: Don't know why remove does not work from super class.
+        """ 
+        if key == "electro_parameter":
+            self.electro_parameters = None 
+        # else:
+        #     super().remove(key)
 
     def has_parameter_set(self, parameter_set):
         if (parameter_set == Physics.ELECTRO.value and

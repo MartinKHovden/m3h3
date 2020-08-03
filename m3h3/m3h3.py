@@ -15,6 +15,7 @@ from cbcbeat import Expression
 TODO:
 Fix how to cell models are searched through and given in params.
 Fix readthedocs, make the code look better.
+Fix init files. 
 Check if stimulus works properly. Ok way to add stimulus.
 Update initial conditions.
 Explain how to add more cell models (lower/upper case)

@@ -1,21 +1,10 @@
 Demos
 ==========
-This guide provides an basic introduction on how to run a simple simluation 
-of the electrical activity in the heart using the M3H3 framework. The normal 
-workflow when doing simulation with M3H3 is 
+This page contains full examples on how to do simulations using m3h3. 
+The same files can also be found at the GitHub repository in the demos folder. 
+For a guide on how to set up such simulations, see the user guide. 
 
-1. Import M3H3 as 
+.. toctree::
+    :maxdepth: 5
 
-    .. code-block:: python
-        :linenos:
-
-        from m3h3 import *
-
-2. Set up the mesh and the geometry
-    .. code-block:: python 
-        :linenos:
-
-        mesh = UnitSquareMesh(100, 100)
-        geo = Geometry2D(mesh)
-
-3. 
+    electro_demos
