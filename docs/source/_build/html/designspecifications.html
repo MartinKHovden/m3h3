@@ -1,0 +1,340 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Design specification &mdash; M3H3 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+    <link rel="prev" title="M3H3: A framework for cardiac simulations." href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> M3H3
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Design specification</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#physiological-basis">Physiological basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#software-design">Software design</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#architecture">Architecture</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#user-interface">User interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#physics-enumerator">Physics Enumerator</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="demos.html">Demos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">M3H3</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Design specification</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/designspecifications.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="design-specification">
+<h1>Design specification<a class="headerlink" href="#design-specification" title="Permalink to this headline">¶</a></h1>
+<p>This page outlines the design specification that M3H3 is built against and gives
+an overiew of the intended structure and functionality of the program.</p>
+<div class="section" id="physiological-basis">
+<h2>Physiological basis<a class="headerlink" href="#physiological-basis" title="Permalink to this headline">¶</a></h2>
+<p>Historically, the physiology of the heart has mostly been studied in separation to resolve specific questions related to either electrophysiology, soft tissue mechanics or hemodynamics. However, in reality, the different branches of physics that involved in the functioning of the heart in health as well as disease, are highly interconnected, both across spatial and time scales.</p>
+<img alt="_images/multiphysics_schematic.png" src="_images/multiphysics_schematic.png" />
+<p>Some of these interactions have a larger influence on other interactions than others. We will refer to these as &quot;forward&quot; interactions, while the exact definition of a &quot;forward interaction&quot; remains to be decided on.</p>
+</div>
+<div class="section" id="software-design">
+<h2>Software design<a class="headerlink" href="#software-design" title="Permalink to this headline">¶</a></h2>
+<p>Parts of the problem have been tackled before, and we have the following FEniCS based software available:</p>
+<ul class="simple">
+<li><p><cite>fenics-geometry</cite>: based on Henrik's pulse.geometry (<a class="reference external" href="https://github.com/ComputationalPhysiology/pulse">https://github.com/ComputationalPhysiology/pulse</a>), extended to handle arbitrary geometries.</p></li>
+<li><p><cite>cbcbeat</cite>: mono- and bidomain module of electrophysiology, including cell ODE models.</p></li>
+<li><p><cite>pulse</cite>: cardiac specific solid mechanics module.</p></li>
+<li><p><cite>oasis</cite>: hemodynamics specific Navier-Stokes module.</p></li>
+<li><p><cite>perspect</cite>: perfusion module.</p></li>
+</ul>
+<p>M3H3 specifically does <em>not</em> aim at reinventing the wheel, and therefore it will be a wrapper module in the first instance.</p>
+<div class="section" id="architecture">
+<h3>Architecture<a class="headerlink" href="#architecture" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">dolfin</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">geometry</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="k">class</span> <span class="nc">M3H3</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+
+      <span class="k">class</span> <span class="nc">Problem</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+
+              <span class="k">class</span> <span class="nc">ElectroProblem</span><span class="p">(</span><span class="n">Problem</span><span class="p">):</span> <span class="kn">import</span> <span class="nn">cbcbeat</span>
+              <span class="k">class</span> <span class="nc">SolidProblem</span><span class="p">(</span><span class="n">Problem</span><span class="p">):</span> <span class="kn">import</span> <span class="nn">pulse</span>
+              <span class="k">class</span> <span class="nc">FluidProblem</span><span class="p">(</span><span class="n">Problem</span><span class="p">):</span> <span class="kn">import</span> <span class="nn">oasis</span>
+              <span class="k">class</span> <span class="nc">PorousProblem</span><span class="p">(</span><span class="n">Problem</span><span class="p">):</span> <span class="kn">import</span> <span class="nn">perspect</span>
+
+
+      <span class="k">class</span> <span class="nc">Interaction</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+
+      <span class="k">class</span> <span class="nc">Solver</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+
+              <span class="k">class</span> <span class="nc">ElectroSolver</span><span class="p">(</span><span class="n">Solver</span><span class="p">):</span> <span class="kn">import</span> <span class="nn">cbcbeat</span>
+              <span class="k">class</span> <span class="nc">SolidSolver</span><span class="p">(</span><span class="n">Solver</span><span class="p">):</span> <span class="kn">import</span> <span class="nn">pulse</span>
+              <span class="k">class</span> <span class="nc">FluidSolver</span><span class="p">(</span><span class="n">Solver</span><span class="p">):</span> <span class="kn">import</span> <span class="nn">oasis</span>
+              <span class="k">class</span> <span class="nc">PorousSolver</span><span class="p">(</span><span class="n">Solver</span><span class="p">):</span> <span class="kn">import</span> <span class="nn">perspect</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="user-interface">
+<h3>User interface<a class="headerlink" href="#user-interface" title="Permalink to this headline">¶</a></h3>
+<p>M3H3's &quot;hello world&quot; will consist of setting up an simulation of electrophysiology driven contraction:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>import m3h3
+from geometry import *
+
+# Load a heart mesh including markers and marker functions
+# from file
+geo = HeartGeometry.load_from_file(‘heart_mesh.h5’)
+
+# By instantiating parameters of a certain physics module we
+# tell m3h3 which physics to involve in the simulation. In
+# this case we are only interested in simulating EP and soft
+# tissue dyamics at the continuum level.
+electro_params = m3h3.set_electro_default_parameters()
+solid_params = m3h3.set_solid_default_parameters()
+
+# The user specifies the interactions included in the
+# simulation by instantiating Interaction objects
+ep2solid = m3h3.Interaction(Physics.ELECTRO, Physics.SOLID)
+
+# Once all physics and interactions are defined we can
+# instantiate the M3H3 object. The M3H3 object infers from
+# the ´set_physics_default_parameters´ functions that have
+# been called, which physics the user would like to run.
+m3h3 = M3H3(geo, interactions=[ep2solid])
+
+# Loop over time
+for t in time:
+      # do some preprocessing
+
+      m2h2.step()
+
+  # do some postprocessing, for example saving to file
+</pre></div>
+</div>
+</div>
+<div class="section" id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this headline">¶</a></h3>
+<p>Parameters are handled through <cite>dolfin</cite>'s Parameter class. The module <cite>setup_parameters.py</cite> instantiates a <cite>dolfin.Parameters</cite> object at runtime:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">parameters</span> <span class="o">=</span> <span class="n">dolfin</span><span class="o">.</span><span class="n">Parameters</span><span class="p">(</span><span class="s2">&quot;M3H3&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>that is accessible from within <cite>m3h3</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">m3h3</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">m3h3</span><span class="o">.</span><span class="n">parameters</span>
+</pre></div>
+</div>
+<p>The module <cite>setup_parameters.py</cite> also contains methods to set up default physics parameters that can be called by the user and return their respective <cite>dolfin.Parameters</cite> object:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">electro_params</span> <span class="o">=</span> <span class="n">m3h3</span><span class="o">.</span><span class="n">set_electro_default_parameters</span><span class="p">()</span>
+<span class="n">solid_params</span> <span class="o">=</span> <span class="n">m3h3</span><span class="o">.</span><span class="n">set_solid_default_parameters</span><span class="p">()</span>
+<span class="n">fluid_params</span> <span class="o">=</span> <span class="n">m3h3</span><span class="o">.</span><span class="n">set_fluid_default_parameters</span><span class="p">()</span>
+<span class="n">porous_params</span> <span class="o">=</span> <span class="n">m3h3</span><span class="o">.</span><span class="n">set_porous_default_parameters</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>M3H3 infers from the instantiated physics parameter objects which physics the user would like to run in their simulation.</p>
+</div>
+<div class="section" id="physics-enumerator">
+<h3>Physics Enumerator<a class="headerlink" href="#physics-enumerator" title="Permalink to this headline">¶</a></h3>
+<p>M3H3 contains a Python enumerator object <cite>Physics</cite>, which contains placeholders for the physics labels used by M3H3. These are currently</p>
+<ul class="simple">
+<li><p><cite>Physics.ELECTRO</cite>: electrodynamics</p></li>
+<li><p><cite>Physics.SOLID</cite>: solid mechanics</p></li>
+<li><p><cite>Physics.FLUID</cite>: fluid dynamics</p></li>
+<li><p><cite>Physics.POROUS</cite>: porous mechanics</p></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="M3H3: A framework for cardiac simulations." accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Martin Krokan Hovden
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,304 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>M3H3: A framework for cardiac simulations. &mdash; M3H3 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Design specification" href="designspecifications.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home" alt="Documentation Home"> M3H3
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="designspecifications.html">Design specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="demos.html">Demos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">M3H3</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>M3H3: A framework for cardiac simulations.</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="m3h3-a-framework-for-cardiac-simulations">
+<h1>M3H3: A framework for cardiac simulations.<a class="headerlink" href="#m3h3-a-framework-for-cardiac-simulations" title="Permalink to this headline">¶</a></h1>
+<p>Welcome to M3H3's documentation. M3H3 is an Python-based open source framework for doing cardiac simulations.
+It is built on the finite element solver FEniCS, and combines functionality from
+various frameworks for simulating different processes in the heart.
+The goal is for M3H3 to be able to combine simulations of electrical
+activivty, solid mechanics, fluid mechanics, and the porous properties of
+the heart. For more information, see the design specification.
+The documentation and m3h3 is a work in progress.</p>
+<p>The documentation is split into different parts. In the design specification,
+the aim of the framework is described as reference for further development of the library.
+In the installation guide different methods for obtaining the software is described.
+In the user guide we go through the main parts in setting up various simulations
+in m3h3. In demos, full examples of running programs are shown. Finally, the
+API reference gives an detailed overview of the classes and functions in m3h3.</p>
+<div class="section" id="github-repository">
+<h2>GitHub-repository<a class="headerlink" href="#github-repository" title="Permalink to this headline">¶</a></h2>
+<p>The m3h3 source code can be found at: <a class="reference external" href="https://github.com/ComputationalPhysiology/m3h3">https://github.com/ComputationalPhysiology/m3h3</a></p>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="designspecifications.html">Design specification</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="designspecifications.html#physiological-basis">Physiological basis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="designspecifications.html#software-design">Software design</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installation-using-docker-containers">Installation using Docker containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="installation.html#installation-using-anaconda">Installation using Anaconda</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="electro_guide.html">An introduction to doing cardiac simulations of the electrical activity in M3H3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="solid_guide.html">An introduction to doing cardiac simulations of the solid mechanics in M3H3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fluid_guide.html">An introduction to doing cardiac simulations of the fluid mechanics in M3H3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="porous_guide.html">An introduction to doing cardiac simulations of the porous properties in M3H3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interaction_guide.html">An introduction to doing cardiac simulations of an interacting system in M3H3</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="demos.html">Demos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="electro_demos.html">Demos for simulating electrical activity</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="m3h3.html">m3h3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="m3h3.html#module-m3h3.setup_parameters">setup_parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="m3h3.html#module-m3h3.pde">pde</a></li>
+<li class="toctree-l2"><a class="reference internal" href="m3h3.html#module-m3h3.pde.solver">pde solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="m3h3.html#module-m3h3.ode">ode</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="quickstart">
+<h3>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h3>
+<p>An general example of how the M3H3 library can be used for doing cardiac
+simulation:</p>
+<div class="highlight-python notranslate"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">m3h3</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">mesh</span> <span class="o">=</span> <span class="n">UnitSquareMesh</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+<span class="n">geo</span> <span class="o">=</span> <span class="n">Geometry2D</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+
+<span class="n">system</span> <span class="o">=</span> <span class="n">m3h3</span><span class="p">(</span><span class="n">geo</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">solution_fields</span><span class="p">)</span> <span class="ow">in</span> <span class="n">system</span><span class="o">.</span><span class="n">solve</span><span class="p">():</span>
+   <span class="c1"># do something with the solution.</span>
+
+<span class="c1"># post-process the data</span>
+</pre></div>
+</td></tr></table></div>
+<div class="section" id="indices-and-tables">
+<h4>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="designspecifications.html" class="btn btn-neutral float-right" title="Design specification" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Martin Krokan Hovden
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

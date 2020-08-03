@@ -104,6 +104,11 @@ class M3H3(object):
         same time interval as the one with the largest time step. This way the 
         solvers will line up at certain times. 
 
+        It then extracts the solvers solutions fields, and updates the m3h3
+        objects internal solution fields with it. 
+
+        At the end, it updates m3h3's internal time-variable. 
+
         """
         # Setup the number of steps for each solver if first iteration.
         if self.time.values()[0] == self.parameters["start_time"]:
@@ -122,7 +127,7 @@ class M3H3(object):
                 self.electro_solver.step(interval)
                 solution_fields = self.electro_solver.solution_fields()
 
-                # Updates m3h3's solution fields.
+                # Updates m3h3's internal solution fields.
                 self.electro_problem.update_solution_fields(solution_fields[0],
                                                             solution_fields[1])
 
@@ -145,16 +150,15 @@ class M3H3(object):
             *Returns*
 
         """
-        max_dt = self._get_num_steps()[1]
-        end_time = self.parameters["end_time"]
-        t0 = float(self.time)
-        t1 = t0 + max_dt
+        self.max_dt = self._get_num_steps()[1]
+        t0 = self.parameters["start_time"]
+        t1 = t0 + self.max_dt
 
-        while float(self.time) + max_dt <= end_time:
+        while float(self.time) <= self.parameters["end_time"]:
             self.step()
             yield (t0, t1), self.get_solution_fields()
             t0 = t1
-            t1 += max_dt
+            t1 += self.max_dt
 
     def get_solution_fields(self):
         """ Returns the solution fields for the different problems. Returns a

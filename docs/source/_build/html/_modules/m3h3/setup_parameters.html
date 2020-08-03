@@ -1,0 +1,566 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>m3h3.setup_parameters &mdash; M3H3 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> M3H3
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../designspecifications.html">Design specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide.html">User guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../demos.html">Demos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../API.html">API reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">M3H3</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>m3h3.setup_parameters</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for m3h3.setup_parameters</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;This module handles parameters for cardiac simulations.</span>
+
+<span class="sd">It contains one main class for storing the general parameters for each problem.</span>
+<span class="sd">In addition, it contains a class for the parameters of the electro problem. This</span>
+<span class="sd">is because df.Parameters dont take Markerwise functiosn as elements. Since we </span>
+<span class="sd">might want to add complex stimuluses, this should be possible. By using the </span>
+<span class="sd">ElectroParameter class, this is now possible. </span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+
+<span class="kn">import</span> <span class="nn">dolfin</span> <span class="k">as</span> <span class="nn">df</span>
+<span class="kn">from</span> <span class="nn">dolfin</span> <span class="kn">import</span> <span class="p">(</span><span class="n">LogLevel</span><span class="p">,</span> <span class="n">LUSolver</span><span class="p">,</span> <span class="n">PETScKrylovSolver</span><span class="p">,</span>
+                    <span class="n">NonlinearVariationalSolver</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">cbcbeat</span>
+
+<span class="kn">import</span> <span class="nn">m3h3</span>
+
+
+<div class="viewcode-block" id="Physics"><a class="viewcode-back" href="../../m3h3.html#m3h3.setup_parameters.Physics">[docs]</a><span class="k">class</span> <span class="nc">Physics</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This Enum contains physics descriptors for cardiac simulations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ELECTRO</span> <span class="o">=</span> <span class="s2">&quot;Electro&quot;</span>
+    <span class="n">SOLID</span> <span class="o">=</span> <span class="s2">&quot;Solid&quot;</span>
+    <span class="n">FLUID</span> <span class="o">=</span> <span class="s2">&quot;Fluid&quot;</span>
+    <span class="n">POROUS</span> <span class="o">=</span> <span class="s2">&quot;Porous&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
+
+<div class="viewcode-block" id="Physics.has_value"><a class="viewcode-back" href="../../m3h3.html#m3h3.setup_parameters.Physics.has_value">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">has_value</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_value2member_map_</span></div>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="set_dolfin_compiler_parameters"><a class="viewcode-back" href="../../m3h3.html#m3h3.setup_parameters.set_dolfin_compiler_parameters">[docs]</a><span class="k">def</span> <span class="nf">set_dolfin_compiler_parameters</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Sets dolfin parameters to speed up the compiler.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">flags</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;-O3&quot;</span><span class="p">,</span> <span class="s2">&quot;-ffast-math&quot;</span><span class="p">,</span> <span class="s2">&quot;-march=native&quot;</span><span class="p">]</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;form_compiler&quot;</span><span class="p">][</span><span class="s2">&quot;quadrature_degree&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;form_compiler&quot;</span><span class="p">][</span><span class="s2">&quot;representation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;uflacs&quot;</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;form_compiler&quot;</span><span class="p">][</span><span class="s2">&quot;cpp_optimize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;form_compiler&quot;</span><span class="p">][</span><span class="s2">&quot;cpp_optimize_flags&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">flags</span><span class="p">)</span></div>
+
+<span class="k">class</span> <span class="nc">ElectroParameters</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Parameters</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for handling the electro parameters </span>
+
+<span class="sd">    This class handles some of the problem specifications that can&#39;t </span>
+<span class="sd">    be held by the Parameters class. The class are used as storage for </span>
+<span class="sd">    stimulus, applied current and initial conditions. This class should </span>
+<span class="sd">    be updated with more specifications when needed in later versions.</span>
+<span class="sd">    The reason why this class i needed is that df.Parameters dont hold </span>
+<span class="sd">    Markerwise functions (As far as I know). Instead of storing the stimulus</span>
+<span class="sd">    in the actual df.Parameter dictionary, they are stored in separate variables.</span>
+<span class="sd">    They can be accessed and added in the same way as for normal Parameters.</span>
+
+<span class="sd">    *Arguments*</span>
+<span class="sd">        label (:py:class:`str`)</span>
+<span class="sd">            The label of the parameter set.  </span>
+
+<span class="sd">    *Notes*</span>
+<span class="sd">        When creating an instance of ElectroParameters, the stimulus, applied </span>
+<span class="sd">        current, and initial conditions are already in the set with default</span>
+<span class="sd">        values of None. Those can updated as usual.  </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Add storage for the problem specifications:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">applied_current</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_conditions</span> <span class="o">=</span> <span class="kc">None</span>
+    
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Function for adding new specifications. Should only be used </span>
+<span class="sd">        for adding new elements to the set. For updating already defined </span>
+<span class="sd">        specifications, use:</span>
+<span class="sd">        problem_specifications[&quot;specification&quot;] = Something...</span>
+
+<span class="sd">        # FIXME: Raise error if adding stimulus, applied current or </span>
+<span class="sd">        # intial conditions. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;stimulus&quot;</span><span class="p">:</span> 
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Stimulus is already in the parameter set&quot;</span><span class="p">)</span> 
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Stimulus is already in the parameter set&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;applied_current&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Applied current is already in the parameter set&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Applied current is already in the parameter set&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;initial_conditions&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Initial conditions is already in the parameter set&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Initial condition is already in the parameter set&quot;</span><span class="p">)</span>
+        <span class="k">else</span> <span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;stimulus&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span> 
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;applied_current&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">applied_current</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;initial_conditions&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_conditions</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;stimulus&quot;</span> <span class="o">==</span> <span class="n">key</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;applied_current&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">applied_current</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;initial_conditions&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">initial_conditions</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;stimulus&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span> 
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;applied_current&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">applied_current</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;initial_conditions&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_conditions</span>
+        <span class="k">else</span> <span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>    
+
+    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">return_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;stimulus&quot;</span><span class="p">,</span> <span class="s2">&quot;applied_current&quot;</span><span class="p">,</span> <span class="s2">&quot;initial_conditions&quot;</span><span class="p">]</span>
+        <span class="n">return_list</span> <span class="o">+=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        
+        <span class="k">return</span> <span class="n">return_list</span>
+
+    <span class="k">def</span> <span class="nf">has_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;stimulus&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;applied_current&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;initial_conditions&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span> <span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">applied_current</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_conditions</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">Parameters</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Parameters</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for handling the parameters for the cardiac simulations. </span>
+<span class="sd">    </span>
+<span class="sd">    This class is for handling the parameters for the cardiac simulations. It </span>
+<span class="sd">    inherits most of the functionality from  `dolfin`&#39;s Parameters class. </span>
+<span class="sd">    The main difference is that this class have an alternative way </span>
+<span class="sd">    of handling the electro parameters, since we should be able to add stimulus</span>
+<span class="sd">    as a Markerwise function (df.Parmeters does not allow Markerwise elements).</span>
+<span class="sd">    Therefore, the ElectroParameter class is used, and are stored in a separate</span>
+<span class="sd">    variable self.electro_parameters instead of in the actual df.Parameter dict. </span>
+
+<span class="sd">    The parameter set can be nested. Each problem have their own nested</span>
+<span class="sd">    Parameter set that contains the parameters. </span>
+
+<span class="sd">    Paramaters can be added as follows:</span>
+
+<span class="sd">    .. code-block:: python </span>
+
+<span class="sd">        params = Parameters(&quot;M3H3&quot;)</span>
+<span class="sd">        params.add(&quot;param1&quot;, 1.0)</span>
+
+<span class="sd">    They can be changed as follows:</span>
+
+<span class="sd">    .. code-block:: python </span>
+
+<span class="sd">        params[&quot;param1&quot;] = 2.0</span>
+
+<span class="sd">    They can be extracted as follows:</span>
+
+<span class="sd">    .. code-block:: python </span>
+
+<span class="sd">        p1 = params[&quot;param1&quot;]</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> 
+        <span class="n">set_dolfin_compiler_parameters</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_default_parameters</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">set_default_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets default simulation parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;log_level&quot;</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">get_log_level</span><span class="p">())</span>
+        <span class="n">m3h3</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;log_level&quot;</span><span class="p">],</span> <span class="s2">&quot;Log level is set to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">LogLevel</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;log_level&quot;</span><span class="p">])</span>
+        <span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;start_time&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;end_time&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="c1"># print(self.electro_parameters)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Here&quot;</span><span class="p">)</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="n">keys</span> <span class="o">+</span> <span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">keys</span>
+
+    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Function for removing parameters or parameter sets</span>
+
+<span class="sd">        # FIXME: Don&#39;t know why remove does not work from super class.</span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;electro_parameter&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span> <span class="o">=</span> <span class="kc">None</span> 
+        <span class="c1"># else:</span>
+        <span class="c1">#     super().remove(key)</span>
+
+    <span class="k">def</span> <span class="nf">has_parameter_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_set</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">parameter_set</span> <span class="o">==</span> <span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="o">.</span><span class="n">value</span> <span class="ow">and</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">parameter_set</span> <span class="o">==</span> <span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="o">.</span><span class="n">value</span> <span class="ow">and</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span> <span class="o">==</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">False</span> 
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">has_parameter_set</span><span class="p">(</span><span class="n">parameter_set</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_electro_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets parameters for electrophysiology problems and solver. If</span>
+<span class="sd">        argument is None, default parameters are applied.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_parameter_set</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_electro_default_parameters</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_electro_solver_default_parameters</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_parameter_set</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="n">parameters</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="o">.</span><span class="n">value</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_solid_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets parameters for solid mechanics problems and solver. If</span>
+<span class="sd">        argument is None, default parameters are applied.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_parameter_set</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">SOLID</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_solid_default_parameters</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_parameter_set</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">SOLID</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="n">parameters</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">SOLID</span><span class="o">.</span><span class="n">value</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_fluid_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets parameters for fluid mechanics problems and solver. If</span>
+<span class="sd">        argument is None, default parameters are applied.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_parameter_set</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">FLUID</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_fluid_default_parameters</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_parameter_set</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">FLUID</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="n">parameters</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">FLUID</span><span class="o">.</span><span class="n">value</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_porous_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets parameters for porous mechanics problems and solver. If</span>
+<span class="sd">        argument is None, default parameters are applied.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_parameter_set</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">POROUS</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_porous_default_parameters</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_parameter_set</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">POROUS</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="ow">and</span> <span class="n">parameters</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">POROUS</span><span class="o">.</span><span class="n">value</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_electro_default_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets the default parameters for the electro problem.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span> <span class="o">=</span> <span class="n">ElectroParameters</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="c1"># Set default parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;dt&quot;</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;theta&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;polynomial_degree&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;use_average_u_constraint&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;M_i&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;M_e&quot;</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;I_a&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;cell_model&quot;</span><span class="p">,</span> <span class="s2">&quot;Tentusscher_panfilov_2006_M_cell&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;pde_model&quot;</span><span class="p">,</span> <span class="s2">&quot;bidomain&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">LinearVariationalSolver</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">_set_electro_solver_default_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the default splitting solver parameters to be used in the</span>
+<span class="sd">        simulation. Default parameters are given by the splittingsolver class </span>
+<span class="sd">        in cbcbeat. </span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="n">electro_solver</span> <span class="o">=</span> <span class="n">cbcbeat</span><span class="o">.</span><span class="n">splittingsolver</span><span class="o">.</span><span class="n">SplittingSolver</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">()</span>
+        <span class="n">electro_solver</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;ElectroSolver&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">electro_solver</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_solid_default_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">solid</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Parameters</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">SOLID</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">solid</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;dt&quot;</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">)</span>
+        <span class="n">solid</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;dummy_parameter&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Add boundary condtion parameters</span>
+        <span class="n">solid</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Parameters</span><span class="p">(</span><span class="s2">&quot;BoundaryConditions&quot;</span><span class="p">))</span>
+        <span class="n">solid</span><span class="p">[</span><span class="s2">&quot;BoundaryConditions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;base_bc&quot;</span><span class="p">,</span> <span class="s2">&quot;fixed&quot;</span><span class="p">)</span>
+        <span class="n">solid</span><span class="p">[</span><span class="s2">&quot;BoundaryConditions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;lv_pressure&quot;</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">)</span>
+        <span class="n">solid</span><span class="p">[</span><span class="s2">&quot;BoundaryConditions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;rv_pressure&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">solid</span><span class="p">[</span><span class="s2">&quot;BoundaryConditions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;pericardium_spring&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">solid</span><span class="p">[</span><span class="s2">&quot;BoundaryConditions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;base_spring&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+        <span class="c1"># Add default parameters from both LU and Krylov solvers</span>
+        <span class="n">solid</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">NonlinearVariationalSolver</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">())</span>
+        <span class="n">solid</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">LUSolver</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">())</span>
+        <span class="n">solid</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">PETScKrylovSolver</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">())</span>
+
+        <span class="c1"># Add solver parameters</span>
+        <span class="n">solid</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Parameters</span><span class="p">(</span><span class="s2">&quot;Solver&quot;</span><span class="p">))</span>
+        <span class="n">solid</span><span class="p">[</span><span class="s2">&quot;Solver&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;dummy_parameter&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">solid</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_fluid_default_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">fluid</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Parameters</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">FLUID</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">fluid</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;dt&quot;</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">)</span>
+        <span class="n">fluid</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;dummy_parameter&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Add default parameters from both LU and Krylov solvers</span>
+        <span class="n">fluid</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">LUSolver</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">())</span>
+        <span class="n">fluid</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">PETScKrylovSolver</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">())</span>
+
+        <span class="c1"># Add solver parameters</span>
+        <span class="n">fluid</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Parameters</span><span class="p">(</span><span class="s2">&quot;Solver&quot;</span><span class="p">))</span>
+        <span class="n">fluid</span><span class="p">[</span><span class="s2">&quot;Solver&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;dummy_parameter&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">fluid</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_porous_default_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">porous</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">Parameters</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">POROUS</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">porous</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;dt&quot;</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">)</span>
+        <span class="n">porous</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;dummy_parameter&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Add default parameters from both LU and Krylov solvers</span>
+        <span class="n">porous</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">LUSolver</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">())</span>
+        <span class="n">porous</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">PETScKrylovSolver</span><span class="o">.</span><span class="n">default_parameters</span><span class="p">())</span>
+
+        <span class="c1"># Add solver parameters</span>
+        <span class="n">porous</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Parameters</span><span class="p">(</span><span class="s2">&quot;Solver&quot;</span><span class="p">))</span>
+        <span class="n">porous</span><span class="p">[</span><span class="s2">&quot;Solver&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;dummy_parameter&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">porous</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Martin Krokan Hovden
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

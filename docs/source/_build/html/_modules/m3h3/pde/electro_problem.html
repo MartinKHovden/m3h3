@@ -1,0 +1,392 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>m3h3.pde.electro_problem &mdash; M3H3 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> M3H3
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../designspecifications.html">Design specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user_guide.html">User guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../demos.html">Demos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../API.html">API reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">M3H3</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>m3h3.pde.electro_problem</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for m3h3.pde.electro_problem</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;This module keeps track of the cell models and the cardiac models for the </span>
+<span class="sd">electro problem. It also stores the solution fields for the electro problem. </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">cbcbeat</span>
+<span class="kn">from</span> <span class="nn">cbcbeat.cardiacmodels</span> <span class="kn">import</span> <span class="n">CardiacModel</span>
+
+<span class="kn">from</span> <span class="nn">m3h3.pde</span> <span class="kn">import</span> <span class="n">Problem</span>
+<span class="kn">import</span> <span class="nn">m3h3.ode</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
+
+<span class="k">class</span> <span class="nc">Stimulus</span><span class="p">(</span><span class="n">cbcbeat</span><span class="o">.</span><span class="n">UserExpression</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">markers</span><span class="p">,</span> <span class="n">stimulus_marker</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">degree</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;degree&#39;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">markers</span> <span class="o">=</span> <span class="n">markers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stimulus_marker</span> <span class="o">=</span> <span class="n">stimulus_marker</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">amplitude</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;amplitude&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">period</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;period&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">eval_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">cell</span><span class="p">):</span>
+        <span class="n">periodic_t</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">period</span>
+        <span class="c1"># if self.markers[cell.index] == self.stimulus_marker\</span>
+        <span class="c1">#                                     and periodic_t &lt; self.duration:</span>
+        <span class="c1">#     values[0] = self.amplitude</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">markers</span><span class="p">[</span><span class="s2">&quot;STIMULUS&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimulus_marker</span>\
+                                            <span class="ow">and</span> <span class="n">periodic_t</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">:</span>
+            <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplitude</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            
+    <span class="k">def</span> <span class="nf">value_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">()</span>
+
+
+<div class="viewcode-block" id="ElectroProblem"><a class="viewcode-back" href="../../../m3h3.html#m3h3.pde.ElectroProblem">[docs]</a><span class="k">class</span> <span class="nc">ElectroProblem</span><span class="p">(</span><span class="n">Problem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;This class implements the variational form for electrophysiology</span>
+<span class="sd">    problems.</span>
+
+<span class="sd">    It initiates the cardiac cell model and the cardiac model with the </span>
+<span class="sd">    given stimulus and applied current. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Set up the stimulus for the electro problem:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_up_stimulus</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Set up the applied current for the electro problem: </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">applied_current</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_up_current</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Set up the initial conditions for the electro problem: </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell_model_initial_conditions</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_up_initial_conditions</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Not sure how to handle the cell model params: </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell_model_parameters</span> <span class="o">=</span> <span class="kc">None</span> 
+
+        <span class="c1"># Sets up the cell model and cardiac model. </span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cell_model</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cardiac_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cardiac_model</span><span class="p">()</span>
+
+
+
+<div class="viewcode-block" id="ElectroProblem.get_cell_model"><a class="viewcode-back" href="../../../m3h3.html#m3h3.pde.ElectroProblem.get_cell_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_cell_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the cell model specified in the parameters.</span>
+<span class="sd">        </span>
+<span class="sd">        Iterates over all files in the ode-folder (which is where the cell </span>
+<span class="sd">        models are stored) and checks if the cell model specified in </span>
+<span class="sd">        the parameteres are implemented. If not, it raises an error and returns</span>
+<span class="sd">        a list of the implemented cell models. All implemented cell models </span>
+<span class="sd">        should also be included in __all__ in __init__.py in the ode-folder.</span>
+
+<span class="sd">        Assumes that all cell-models are implemented in the ode-folder. The </span>
+<span class="sd">        naming convention is that the .py-file is named the same as the </span>
+<span class="sd">        cell-class in the file, but with a lower-case first letter. The </span>
+<span class="sd">        class name is the same but with an upper-case first letter.  </span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Get the cell model name from the user parameters: </span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;cell_model&#39;</span><span class="p">]</span>
+
+        <span class="n">cell_model</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Iterates over all files in the ode-folder to see if model is implemented:</span>
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;/../ode&quot;</span><span class="p">):</span>
+            <span class="c1"># Checks if filename is a Python-file: </span>
+            <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.py&quot;</span><span class="p">):</span>
+                <span class="n">filename_split</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+                <span class="c1"># Checks if model name is same as filename:</span>
+                <span class="k">if</span> <span class="n">filename_split</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="n">model</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                    <span class="c1"># Get the cell model from the corresponding file: </span>
+                    <span class="n">cell_model</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="s2">&quot;m3h3.ode.&quot;</span> <span class="o">+</span> 
+                                        <span class="n">filename_split</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> 
+                                        <span class="n">filename_split</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="o">+</span>
+                                        <span class="n">filename_split</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:])</span>
+                            
+        <span class="c1"># If the cell model is found in the ode-folder, return it:</span>
+        <span class="k">if</span> <span class="n">cell_model</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cell_model</span><span class="p">(</span><span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_model_parameters</span><span class="p">,</span> 
+                    <span class="n">init_conditions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_model_initial_conditions</span><span class="p">)</span>
+        <span class="c1"># If cell model not in ode-folder, raise NotImplementedError: </span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;Cell model not implemented, </span>
+<span class="s2">                        try one of the following:&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">m3h3</span><span class="o">.</span><span class="n">ode</span><span class="o">.</span><span class="n">__all__</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ElectroProblem.get_cardiac_model"><a class="viewcode-back" href="../../../m3h3.html#m3h3.pde.ElectroProblem.get_cardiac_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_cardiac_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the cardiac model for the electro problem given the cell </span>
+<span class="sd">        model and the user-parameters.  </span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="k">return</span> <span class="n">CardiacModel</span><span class="p">(</span><span class="n">domain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">mesh</span><span class="p">,</span>
+                                <span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> 
+                                <span class="n">M_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;M_i&quot;</span><span class="p">],</span> 
+                                <span class="n">M_e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;M_e&quot;</span><span class="p">],</span> 
+                                <span class="n">cell_models</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_model</span><span class="p">,</span> 
+                                <span class="n">stimulus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span><span class="p">,</span>
+                                <span class="n">applied_current</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">applied_current</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ElectroProblem.update_solution_fields"><a class="viewcode-back" href="../../../m3h3.html#m3h3.pde.ElectroProblem.update_solution_fields">[docs]</a>    <span class="k">def</span> <span class="nf">update_solution_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">solution</span><span class="p">,</span> <span class="n">prev_current</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Function for updating the solution field. Used in step </span>
+<span class="sd">        function of m3h3. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">solution</span> <span class="o">=</span> <span class="n">solution</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">prev_current</span> <span class="o">=</span> <span class="n">prev_current</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_get_solution_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prev_current</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">_set_up_stimulus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add the given stimulus to the electro problem. Stimulus is </span>
+<span class="sd">        suposed to be of type Expression or Markerwise. </span>
+<span class="sd">        &quot;&quot;&quot;</span> 
+
+        <span class="c1"># self.problem_specifications = kwargs[&quot;problem_specifications&quot;]</span>
+        <span class="c1"># self.stimulus = self.problem_specifications[&quot;stimulus&quot;]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;stimulus&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span><span class="p">,</span> <span class="n">cbcbeat</span><span class="o">.</span><span class="n">Markerwise</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">stim</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="s2">&quot;t&quot;</span> <span class="ow">in</span> <span class="n">stim</span><span class="o">.</span><span class="n">user_parameters</span><span class="p">:</span>
+                        <span class="n">stim</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span>
+                    <span class="k">elif</span> <span class="s2">&quot;time&quot;</span> <span class="ow">in</span> <span class="n">stim</span><span class="o">.</span><span class="n">user_parameters</span><span class="p">:</span>
+                        <span class="n">stim</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span>
+
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span><span class="p">,</span> <span class="n">cbcbeat</span><span class="o">.</span><span class="n">Expression</span><span class="p">):</span>
+                <span class="k">if</span> <span class="s2">&quot;t&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span><span class="o">.</span><span class="n">user_parameters</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span>
+                <span class="k">elif</span> <span class="s2">&quot;time&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span><span class="o">.</span><span class="n">user_parameters</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Stimulus should be an Expression </span>
+<span class="s2">                or Markerwise, not </span><span class="si">%r</span><span class="s2">&quot;&quot;&quot;</span> <span class="o">%</span><span class="nb">type</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;stimulus&quot;</span><span class="p">])</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">_set_up_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Add the given applied current to the electro problem. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">applied_current</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;applied_current&quot;</span><span class="p">]</span>
+
+        <span class="c1"># if &quot;applied_current&quot; in kwargs.keys():</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">applied_current</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;t&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">applied_current</span><span class="o">.</span><span class="n">user_parameters</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">applied_current</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span>
+            <span class="k">elif</span> <span class="s2">&quot;time&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">applied_current</span><span class="o">.</span><span class="n">user_parameters</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">applied_current</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span>
+
+    <span class="k">def</span> <span class="nf">_set_up_initial_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the initial conditions for the problem. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell_model_initial_conditions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;initial_conditions&quot;</span><span class="p">]</span></div>
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Martin Krokan Hovden
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,411 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>An introduction to doing cardiac simulations of the electrical activity in M3H3 &mdash; M3H3 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="An introduction to doing cardiac simulations of the solid mechanics in M3H3" href="solid_guide.html" />
+    <link rel="prev" title="User guide" href="user_guide.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> M3H3
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="designspecifications.html">Design specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="user_guide.html">User guide</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">An introduction to doing cardiac simulations of the electrical activity in M3H3</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#importing-m3h3">Importing M3H3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-up-the-mesh">Setting up the mesh</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-up-the-parameters-and-specifying-the-problems">Setting up the parameters and specifying the problems</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#setting-up-the-electro-simulations">Setting up the electro simulations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stimulus">Stimulus</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#setting-up-the-fluid-simulations">Setting up the fluid simulations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#setting-up-the-porous-simulations">Setting up the porous simulations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#setting-up-the-interactions">Setting up the interactions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#running-the-simulation">Running the simulation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#post-processing">Post-processing</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="solid_guide.html">An introduction to doing cardiac simulations of the solid mechanics in M3H3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="fluid_guide.html">An introduction to doing cardiac simulations of the fluid mechanics in M3H3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="porous_guide.html">An introduction to doing cardiac simulations of the porous properties in M3H3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="interaction_guide.html">An introduction to doing cardiac simulations of an interacting system in M3H3</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="demos.html">Demos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">M3H3</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="user_guide.html">User guide</a> &raquo;</li>
+        
+      <li>An introduction to doing cardiac simulations of the electrical activity in M3H3</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/electro_guide.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="an-introduction-to-doing-cardiac-simulations-of-the-electrical-activity-in-m3h3">
+<h1>An introduction to doing cardiac simulations of the electrical activity in M3H3<a class="headerlink" href="#an-introduction-to-doing-cardiac-simulations-of-the-electrical-activity-in-m3h3" title="Permalink to this headline">¶</a></h1>
+<p>This guide is a work in progress. The reader is assumed to have some knowledge
+on how to use FEniCS. For an introduction to FEniCS, see: <a class="reference external" href="https://fenicsproject.org/tutorial/">https://fenicsproject.org/tutorial/</a></p>
+<p>In this guide we will go through the most important steps in setting up a cardiac
+simulation in M3H3. Currently, only the electrical activity can be simulated.
+This solver solves the monodomain or the bidomain equations presented in
+Sundnes (2006) to find the transmembrane potential.</p>
+<div class="section" id="importing-m3h3">
+<h2>Importing M3H3<a class="headerlink" href="#importing-m3h3" title="Permalink to this headline">¶</a></h2>
+<p>To import all the functionality of M3H3, run</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">m3h3</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+<p>This will also import the full functionality of FEniCS and CBCBeat, so those
+do not have to be imported separately.</p>
+</div>
+<div class="section" id="setting-up-the-mesh">
+<h2>Setting up the mesh<a class="headerlink" href="#setting-up-the-mesh" title="Permalink to this headline">¶</a></h2>
+<p>The first step is to set up the computational domain of interest. This
+is done by creating a mesh using the functionality of fenics. All fenics
+mesh functions are included in the initial import of m3h3.</p>
+<p>Setting up a simple mesh can easily be done by using the functionality from
+feincs:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span> <span class="o">=</span> <span class="n">UnitSquareMesh</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Alternatively, the mesh can be read from file. This can be done using the
+Mesh function.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span> <span class="o">=</span> <span class="n">Mesh</span><span class="p">(</span><span class="s2">&quot;data/mesh115_refined.xml.gz&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setting-up-the-parameters-and-specifying-the-problems">
+<h2>Setting up the parameters and specifying the problems<a class="headerlink" href="#setting-up-the-parameters-and-specifying-the-problems" title="Permalink to this headline">¶</a></h2>
+<p>The Parameter class is where the user can specify what parameters they want to
+use in the simulations. It is a subclass of fenics' Parameter class and contains
+most of the information about the electro problem (and later also Fluid
+parameters, Solid parameters, and porous parameters). The Parameter class
+contains nested Parameter classes that contains the parameters for each
+of the problems. The Parameter class can be used like this</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">parameters</span> <span class="o">=</span> <span class="n">Parameters</span><span class="p">(</span><span class="s2">&quot;M3H3&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When initiating the Parameters class it automatically sets the start-time and
+end-time to default values of 0 and 1. This can be changed as follows</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;end_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;start_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+</pre></div>
+</div>
+<p>to set the timespan of the simulations. To add a nested set of electro parameters,
+you can run</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">parameters</span><span class="o">.</span><span class="n">set_electro_parameters</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This will set the electro parameters to the default values, which can be changed
+in the same way as for the start- and end-time. Since no argument is given,
+the parameters are set to the default values. For more information on the function,
+see the API.</p>
+<p>We can now print out the parameters in the electro parameters to see what
+can be updated.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">electro_params</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;Electro&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Printing this to the terminal should give</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;stimulus&#39;</span><span class="p">,</span> <span class="s1">&#39;applied_current&#39;</span><span class="p">,</span> <span class="s1">&#39;initial_conditions&#39;</span><span class="p">,</span> <span class="s1">&#39;I_a&#39;</span><span class="p">,</span> <span class="s1">&#39;M_e&#39;</span><span class="p">,</span> <span class="s1">&#39;M_i&#39;</span><span class="p">,</span> <span class="s1">&#39;cell_model&#39;</span><span class="p">,</span> <span class="s1">&#39;dt&#39;</span><span class="p">,</span> <span class="s1">&#39;linear_variational_solver&#39;</span><span class="p">,</span> <span class="s1">&#39;pde_model&#39;</span><span class="p">,</span> <span class="s1">&#39;polynomial_degree&#39;</span><span class="p">,</span> <span class="s1">&#39;theta&#39;</span><span class="p">,</span> <span class="s1">&#39;use_average_u_constraint&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>where the values can be updated as before. We will look closer at how to set up the
+stimulus and applied current later in the guide.</p>
+<p>When setting the electro parameters, we can also change the solver parameters. Those
+have their own parameter set within the main parameter object that can be accessed:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">electro_solver_parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;ElectroSolver&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>and again, printing out the keys gives</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;BasicCardiacODESolver&#39;</span><span class="p">,</span> <span class="s1">&#39;BidomainSolver&#39;</span><span class="p">,</span> <span class="s1">&#39;CardiacODESolver&#39;</span><span class="p">,</span> <span class="s1">&#39;MonodomainSolver&#39;</span><span class="p">,</span> <span class="s1">&#39;apply_stimulus_current_to_pde&#39;</span><span class="p">,</span> <span class="s1">&#39;enable_adjoint&#39;</span><span class="p">,</span> <span class="s1">&#39;ode_solver_choice&#39;</span><span class="p">,</span> <span class="s1">&#39;pde_solver&#39;</span><span class="p">,</span> <span class="s1">&#39;theta&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="section" id="setting-up-the-electro-simulations">
+<h3>Setting up the electro simulations<a class="headerlink" href="#setting-up-the-electro-simulations" title="Permalink to this headline">¶</a></h3>
+<p>Now that the parametres contains a nested set of electro parameters, they can
+be changed as before.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">electro_parameters</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;Electro&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>There are multiple ways to set the parameters for the electro simulations. The
+easiest is to first set them equal to the default electro parameters and then
+updating them from there.</p>
+<p>Now that the electro parameters are set to default values, they can be changed
+as one would do in a dictionary.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">electro_params</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;Electro&quot;</span><span class="p">]</span>
+<span class="n">electro_params</span><span class="p">[</span><span class="s2">&quot;M_i&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">M_i</span>
+<span class="n">electro_params</span><span class="p">[</span><span class="s2">&quot;M_e&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">M_e</span>
+<span class="n">electro_params</span><span class="p">[</span><span class="s2">&quot;cell_model&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Beeler_reuter_1977&quot;</span>
+<span class="n">electro_params</span><span class="p">[</span><span class="s2">&quot;dt&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dt</span>
+<span class="n">electro_params</span><span class="p">[</span><span class="s2">&quot;stimulus&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Expression</span><span class="p">(</span><span class="s2">&quot;10*x[1]*t&quot;</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">degree</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note how the stimulus can be added to parameter set. We will look closer at how
+to set up the stimulus in a later section.</p>
+<p>Alternatively, they can be set manually as a function argument:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dfvdn</span>
+</pre></div>
+</div>
+<p>For the electrical simulations a stimulus, applied current, and initial conditions
+can be given.</p>
+<p>Now we can also change the parameters for the electro solver.
+This is done in a similar way by</p>
+</div>
+<div class="section" id="stimulus">
+<h3>Stimulus<a class="headerlink" href="#stimulus" title="Permalink to this headline">¶</a></h3>
+<p>The stimulus can be added as either a Constant, Expression, or a Markerwise function.
+By using a Markerwise function, the position of the stimulus can be given. For more
+info on how to use subdomains and set up stimuluses, see the FEniCS tutorial.</p>
+<p>Two examples of stimulus is shown below. The first is a simple stimulus using the
+Expression class.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stimulus</span> <span class="o">=</span> <span class="n">Expression</span><span class="p">(</span><span class="s2">&quot;x[0]*t&quot;</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">degree</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is a simple stimulus that moves along the x-axis with time.</p>
+<p>A more complex example uses the CompiledSubdomain functionality in combination
+with the Markerwise class to set up two separate stimuluses in the domain.
+The first step is to mark the two areas of the domain where the stimuluses should
+be applied.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stimulus_domain</span> <span class="o">=</span> <span class="n">MeshFunction</span><span class="p">(</span><span class="s2">&quot;size_t&quot;</span><span class="p">,</span> <span class="n">mesh</span><span class="p">,</span> <span class="n">mesh</span><span class="o">.</span><span class="n">topology</span><span class="p">()</span><span class="o">.</span><span class="n">dim</span><span class="p">())</span>
+<span class="n">stimulus_domain</span><span class="o">.</span><span class="n">set_all</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">stimulus_1</span> <span class="o">=</span> <span class="n">CompiledSubDomain</span><span class="p">(</span><span class="s2">&quot;pow(x[0],2) + pow(x[1],2) &lt;= 0.5 + tol&quot;</span><span class="p">,</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-15</span> <span class="p">)</span>
+<span class="n">stimulus_1</span><span class="o">.</span><span class="n">mark</span><span class="p">(</span><span class="n">stimulus_domain</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="n">stimulus_2</span> <span class="o">=</span> <span class="n">CompiledSubDomain</span><span class="p">(</span><span class="s2">&quot;pow(x[0]-1.0,2) + pow(x[1]-1, 2) &lt;= 0.1 + tol&quot;</span><span class="p">,</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-15</span><span class="p">)</span>
+<span class="n">stimulus_2</span><span class="o">.</span><span class="n">mark</span><span class="p">(</span><span class="n">stimulus_domain</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When the two subdomains are set up, the stimulus for each domain can be set the following way</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">I_s_1</span> <span class="o">=</span> <span class="n">Expression</span><span class="p">(</span><span class="s2">&quot;t &gt;= start ? (t &lt;= (duration + start) ? amplitude : 0.0) : 0.0&quot;</span><span class="p">,</span>
+            <span class="n">t</span><span class="o">=</span><span class="n">Constant</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span>
+            <span class="n">start</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">duration</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">amplitude</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="n">degree</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">I_s_2</span> <span class="o">=</span> <span class="n">Expression</span><span class="p">(</span><span class="s2">&quot;t &gt;= start ? (t &lt;= (duration + start) ? amplitude : 0.0) : 0.0&quot;</span><span class="p">,</span>
+            <span class="n">t</span><span class="o">=</span><span class="n">Constant</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span>
+            <span class="n">start</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">duration</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+            <span class="n">amplitude</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+            <span class="n">degree</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that the string in expression can be any expression allowed in c++. The stimuluses can now be connected to the subdomains via the Markerwise class</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stimulus</span> <span class="o">=</span> <span class="n">Markerwise</span><span class="p">((</span><span class="n">I_s_1</span><span class="p">,</span> <span class="n">I_s_2</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">stimulus_domain</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="setting-up-the-fluid-simulations">
+<h3>Setting up the fluid simulations<a class="headerlink" href="#setting-up-the-fluid-simulations" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="setting-up-the-porous-simulations">
+<h3>Setting up the porous simulations<a class="headerlink" href="#setting-up-the-porous-simulations" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="setting-up-the-interactions">
+<h3>Setting up the interactions<a class="headerlink" href="#setting-up-the-interactions" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="running-the-simulation">
+<h2>Running the simulation<a class="headerlink" href="#running-the-simulation" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="post-processing">
+<h2>Post-processing<a class="headerlink" href="#post-processing" title="Permalink to this headline">¶</a></h2>
+<p>The last part is to</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="solid_guide.html" class="btn btn-neutral float-right" title="An introduction to doing cardiac simulations of the solid mechanics in M3H3" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="user_guide.html" class="btn btn-neutral float-left" title="User guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Martin Krokan Hovden
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

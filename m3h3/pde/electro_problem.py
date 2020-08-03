@@ -12,32 +12,6 @@ import m3h3.ode
 import os
 import importlib
 
-class Stimulus(cbcbeat.UserExpression):
-
-    def __init__(self, markers, stimulus_marker, **kwargs):
-        super().__init__(degree=kwargs['degree'])
-        self.markers = markers
-        self.stimulus_marker = stimulus_marker
-        self.amplitude = kwargs['amplitude']
-        self.period = kwargs['period']
-        self.duration = kwargs['duration']
-        self.t = kwargs['t']
-
-    def eval_cell(self, values, x, cell):
-        periodic_t = float(self.t) % self.period
-        # if self.markers[cell.index] == self.stimulus_marker\
-        #                                     and periodic_t < self.duration:
-        #     values[0] = self.amplitude
-        if self.markers["STIMULUS"] == self.stimulus_marker\
-                                            and periodic_t < self.duration:
-            values[0] = self.amplitude
-        else:
-            values[0] = 0
-            
-    def value_shape(self):
-        return ()
-
-
 class ElectroProblem(Problem):
     """This class implements the variational form for electrophysiology
     problems.

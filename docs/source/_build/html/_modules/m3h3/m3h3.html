@@ -1,0 +1,601 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>m3h3.m3h3 &mdash; M3H3 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> M3H3
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../designspecifications.html">Design specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../user_guide.html">User guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../demos.html">Demos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../API.html">API reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">M3H3</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>m3h3.m3h3</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for m3h3.m3h3</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">dolfin</span> <span class="kn">import</span> <span class="n">Constant</span>
+
+<span class="kn">from</span> <span class="nn">geometry</span> <span class="kn">import</span> <span class="n">HeartGeometry</span><span class="p">,</span> <span class="n">MultiGeometry</span>
+
+<span class="kn">from</span> <span class="nn">m3h3.setup_parameters</span> <span class="kn">import</span> <span class="n">Physics</span>
+<span class="kn">from</span> <span class="nn">m3h3.pde</span> <span class="kn">import</span> <span class="n">ElectroProblem</span><span class="p">,</span> <span class="n">SolidProblem</span><span class="p">,</span> <span class="n">PorousProblem</span><span class="p">,</span> <span class="n">FluidProblem</span>
+<span class="kn">from</span> <span class="nn">m3h3.pde.solver</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1"># from cbcbeat.cardiacmodels import CardiacModel</span>
+<span class="kn">from</span> <span class="nn">cbcbeat</span> <span class="kn">import</span> <span class="n">Expression</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">TODO:</span>
+<span class="sd">Fix readthedocs, make the code look better.</span>
+<span class="sd">Fix init files. </span>
+<span class="sd">Update initial conditions.</span>
+<span class="sd">Explain how to add more cell models (lower/upper case)</span>
+<span class="sd">Should everything be imported from cbcbeat?</span>
+<span class="sd">Describe the parameters in detail, and where they are sent. </span>
+<span class="sd">Make it work with 3D? </span>
+<span class="sd">What is vs_? Since it can be assigned initial conditions? Is it a bunch of state variables? </span>
+<span class="sd">dt should be in solver parameters? </span>
+
+<span class="sd">M3H3 is a framework used for modelling and simulating the heart. It inherits</span>
+<span class="sd">much of the functionality from other libaries and combines it into a full</span>
+<span class="sd">framework that encompasses the different branches of physics relevant to</span>
+<span class="sd">caridac modelling. The goal is for the framework to be able to simulate</span>
+<span class="sd">the cardiac mechanics, cardiac electrophysiology, hemodynamic modelling, etc.</span>
+
+<span class="sd">For now, only methods for simluating the electrical activity is implemented.</span>
+<span class="sd">For modelling the electrical activity in the heart, the splittingsolver from</span>
+<span class="sd">cbcbeat is used. Most of the functionality is inherited from the cbcbeat</span>
+<span class="sd">package. It solves the coupled heart equations, presented in Sundnes et. al.:</span>
+<span class="sd">https://www.researchgate.net/publication/265487224_Computing_the_Electrical_Activity_in_the_Human_Heart#:~:text=The%20contraction%20of%20the%20heart,called%20the%20electrocardiogram%20(ECG).</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="M3H3"><a class="viewcode-back" href="../../m3h3.html#m3h3.m3h3.M3H3">[docs]</a><span class="k">class</span> <span class="nc">M3H3</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A class for representing the full cardiac system.</span>
+
+<span class="sd">    This is the class for representing the full cardiac system, and is used to</span>
+<span class="sd">    do the simulations of the system.</span>
+
+<span class="sd">    For the electro problem is solves the Bidomain equations using the</span>
+<span class="sd">    Splitting solver technique presented in Sundnes (2006). The bidomain</span>
+<span class="sd">    equations are given by:</span>
+
+
+<span class="sd">    To add stimulus, add it as a keyword argument with the keyword &quot;stimulus&quot;.</span>
+<span class="sd">    If stimulus is dependent on time, use keyword &quot;t&quot; or &quot;time&quot; to connect it</span>
+<span class="sd">    to the internal timer in the m3h3-object. The stimulus should either be of</span>
+<span class="sd">    type Expression or Markewise. Use Markerwise if the position of the</span>
+<span class="sd">    stimulus should be used as well as if multiple stimuluses should be</span>
+<span class="sd">    applied.</span>
+
+<span class="sd">    The idea is to set up a M3H3 object that can be used to run simulations.</span>
+<span class="sd">    The basic usage is:</span>
+
+<span class="sd">    #. Set up the geometry with a mesh using the fenics.geometry package.</span>
+<span class="sd">    #. Set the parameters for the cardiac model.</span>
+<span class="sd">    #. Set the solver parameters.</span>
+<span class="sd">    #. Create the M3H3 object given the geometry and parameters</span>
+<span class="sd">    #. Use M3H3 object&#39;s step/solve functions for running the simulations.</span>
+<span class="sd">    #. Do post-processing of the output.</span>
+
+<span class="sd">    *Arguments*</span>
+<span class="sd">        geometry (:py:class:`geometry.Geometry`)</span>
+<span class="sd">            A geometry object that contains the mesh of the simulation domain.</span>
+<span class="sd">        parameters (:py:class:`dolfin.Parameters`)</span>
+<span class="sd">            A Parameters object that contains parameters for setting up the</span>
+<span class="sd">            cardiac simulation.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">physics</span> <span class="o">=</span> <span class="p">[</span><span class="n">Physics</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">has_value</span><span class="p">(</span><span class="n">p</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">interactions</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;interactions&#39;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t_step_lengths</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_physics_dt</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interactions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_check_physics_interactions</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="s1">&#39;time&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span>
+            <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_geometries</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_problems</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setup_solvers</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="M3H3.step"><a class="viewcode-back" href="../../m3h3.html#m3h3.m3h3.M3H3.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Does one step for the solvers for a time step equal to the largest</span>
+<span class="sd">        time step for all the solvers. Finds the interval using the</span>
+<span class="sd">        internal time variable and the get_max_dt function. Each problem have their own </span>
+<span class="sd">        separate time steps. The time steps are assumed to be multiples of each other. </span>
+<span class="sd">        This means that if one solver have twice the time step of another solver, </span>
+<span class="sd">        the solver with the smallest time step will step two times in the </span>
+<span class="sd">        same time interval as the one with the largest time step. This way the </span>
+<span class="sd">        solvers will line up at certain times. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Setup the number of steps for each solver if first iteration.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;start_time&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_step</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_num_steps</span><span class="p">()</span>
+
+        <span class="n">time</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+
+        <span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_physics_dt</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_step</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="p">)]):</span>
+                <span class="c1"># Interval to solve for:</span>
+                <span class="n">interval</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">time</span><span class="o">+</span><span class="n">dt</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="p">)])</span>
+
+                <span class="c1"># Does one step and extracts the solution fields.</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">electro_solver</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>
+                <span class="n">solution_fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">electro_solver</span><span class="o">.</span><span class="n">solution_fields</span><span class="p">()</span>
+
+                <span class="c1"># Updates m3h3&#39;s solution fields.</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">electro_problem</span><span class="o">.</span><span class="n">update_solution_fields</span><span class="p">(</span><span class="n">solution_fields</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                            <span class="n">solution_fields</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">SOLID</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">FLUID</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">POROUS</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">time</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_dt</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="M3H3.solve"><a class="viewcode-back" href="../../m3h3.html#m3h3.m3h3.M3H3.solve">[docs]</a>    <span class="k">def</span> <span class="nf">solve</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Solves the problem by running multiple steps for the full interval</span>
+<span class="sd">            (&quot;start_time&quot;, &quot;end_time&quot;), where &quot;start_time&quot; and &quot;end_time&quot; are</span>
+<span class="sd">            given as parameters to the m3h3 object.</span>
+
+<span class="sd">            *Returns*</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">max_dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_num_steps</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">end_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;end_time&quot;</span><span class="p">]</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+        <span class="n">t1</span> <span class="o">=</span> <span class="n">t0</span> <span class="o">+</span> <span class="n">max_dt</span>
+
+        <span class="k">while</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span> <span class="o">+</span> <span class="n">max_dt</span> <span class="o">&lt;=</span> <span class="n">end_time</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="k">yield</span> <span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_solution_fields</span><span class="p">()</span>
+            <span class="n">t0</span> <span class="o">=</span> <span class="n">t1</span>
+            <span class="n">t1</span> <span class="o">+=</span> <span class="n">max_dt</span></div>
+
+<div class="viewcode-block" id="M3H3.get_solution_fields"><a class="viewcode-back" href="../../m3h3.html#m3h3.m3h3.M3H3.get_solution_fields">[docs]</a>    <span class="k">def</span> <span class="nf">get_solution_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the solution fields for the different problems. Returns a</span>
+<span class="sd">        dictionary with keys given by strings representing which problem they</span>
+<span class="sd">        correspond to.</span>
+
+<span class="sd">        *Returns*</span>
+<span class="sd">            solution_fields (:py:class:`dictionary` of :py:class:`dolfin.Function`)</span>
+<span class="sd">                Returns a dictionary with the solution fields for each problem.</span>
+<span class="sd">                Keys are the enum value for the problems.  </span>
+
+<span class="sd">        *Usage*</span>
+<span class="sd">            .. code-block:: python </span>
+
+<span class="sd">                sf = system.get_solution_fields()</span>
+<span class="sd">                sf_electro = sf[Physics.ELECETRO.value]</span>
+<span class="sd">            </span>
+<span class="sd">            where system is an instance of m3h3 and the solution fields for </span>
+<span class="sd">            the electro problem is returned. </span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">solution_fields</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="n">solution_fields</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="p">)]</span> <span class="o">=</span>\
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">electro_problem</span><span class="o">.</span><span class="n">_get_solution_fields</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">SOLID</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">FLUID</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">POROUS</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">solution_fields</span></div>
+
+<div class="viewcode-block" id="M3H3._get_num_steps"><a class="viewcode-back" href="../../m3h3.html#m3h3.m3h3.M3H3._get_num_steps">[docs]</a>    <span class="k">def</span> <span class="nf">_get_num_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Function for returning the number of steps for each solver</span>
+
+<span class="sd">        This function returns the number of step that each solver do. Since </span>
+<span class="sd">        m3h3 allows different time-steps for each solver, some solver might </span>
+<span class="sd">        have to do multiple steps compared to the other solvers. </span>
+
+<span class="sd">        *Returns*</span>
+<span class="sd">            num_steps (:py:class:`dictionary` of :py:class:`float`)</span>
+<span class="sd">                Dictionary of the number of steps for each solver. </span>
+<span class="sd">            max_dt (:py:class:`float`)</span>
+<span class="sd">                The longest time-step for all solvers. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dt_physics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_physics_dt</span><span class="p">()</span>
+
+        <span class="n">min_dt</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">dt_physics</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">max_dt</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">dt_physics</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+        <span class="n">num_steps</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">dt_physics</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_dt_is_multiple</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">min_dt</span><span class="p">):</span>
+                <span class="n">num_steps</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_dt</span><span class="o">/</span><span class="n">dt</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">SOLID</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">dt_physics</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">SOLID</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_dt_is_multiple</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">min_dt</span><span class="p">):</span>
+                <span class="n">num_steps</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">SOLID</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_dt</span><span class="o">/</span><span class="n">dt</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">FLUID</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">dt_physics</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">FLUID</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_dt_is_multiple</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">min_dt</span><span class="p">):</span>
+                <span class="n">num_steps</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">FLUID</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_dt</span><span class="o">/</span><span class="n">dt</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">POROUS</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">dt_physics</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">POROUS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_dt_is_multiple</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">min_dt</span><span class="p">):</span>
+                <span class="n">num_steps</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">POROUS</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_dt</span><span class="o">/</span><span class="n">dt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">num_steps</span><span class="p">,</span> <span class="n">max_dt</span></div>
+
+<div class="viewcode-block" id="M3H3._check_dt_is_multiple"><a class="viewcode-back" href="../../m3h3.html#m3h3.m3h3.M3H3._check_dt_is_multiple">[docs]</a>    <span class="k">def</span> <span class="nf">_check_dt_is_multiple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">min_dt</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Function for checking if two time steps for different</span>
+<span class="sd">        solvers are multiples of each other. This is important so that they</span>
+<span class="sd">        match up on certain times. The solvers with shorter time steps are then</span>
+<span class="sd">        run multiple times between each step of the solvers with longer time </span>
+<span class="sd">        steps. See the step function for more information.  </span>
+
+<span class="sd">        *Arguments*</span>
+<span class="sd">            dt (:py:class:`float`)</span>
+<span class="sd">                Time step</span>
+<span class="sd">            min_dt (:py:class:`float`)</span>
+<span class="sd">                Time step</span>
+<span class="sd">                </span>
+<span class="sd">        *Return*</span>
+<span class="sd">            (:py:class:`boolean`)</span>
+<span class="sd">                Returns True if the input are multiples of each other. </span>
+<span class="sd">        </span>
+<span class="sd">        *Raises*</span>
+<span class="sd">            Raises an ValueError if the input is not multiples of each other. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dt</span><span class="o">/</span><span class="n">min_dt</span><span class="p">)</span><span class="o">.</span><span class="n">is_integer</span><span class="p">():</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Time step sizes have to be multiples of each other.&quot;</span>\
+                    <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> is not a multiple of </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">min_dt</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="M3H3._get_physics_dt"><a class="viewcode-back" href="../../m3h3.html#m3h3.m3h3.M3H3._get_physics_dt">[docs]</a>    <span class="k">def</span> <span class="nf">_get_physics_dt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns a dictionary containing the time steps for each</span>
+<span class="sd">        solver.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TEst&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;Electro&quot;</span><span class="p">][</span><span class="s2">&quot;dt&quot;</span><span class="p">])</span>
+            <span class="n">dt</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="p">)][</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">SOLID</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="n">dt</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">SOLID</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">SOLID</span><span class="p">)][</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">FLUID</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="n">dt</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">FLUID</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">FLUID</span><span class="p">)][</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">POROUS</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="n">dt</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">POROUS</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">POROUS</span><span class="p">)][</span><span class="s1">&#39;dt&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">dt</span></div>
+
+<div class="viewcode-block" id="M3H3._setup_problems"><a class="viewcode-back" href="../../m3h3.html#m3h3.m3h3.M3H3._setup_problems">[docs]</a>    <span class="k">def</span> <span class="nf">_setup_problems</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set up the problems with the given parameters and geometry.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">electro_problem</span> <span class="o">=</span> <span class="n">ElectroProblem</span><span class="p">(</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">geometries</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="p">],</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="p">)],</span>
+                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">SOLID</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">solid_problem</span> <span class="o">=</span> <span class="n">SolidProblem</span><span class="p">(</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">geometries</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">SOLID</span><span class="p">],</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">SOLID</span><span class="p">)],</span>
+                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">FLUID</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fluid_problem</span> <span class="o">=</span> <span class="n">FluidProblem</span><span class="p">(</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">geometries</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">FLUID</span><span class="p">],</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">FLUID</span><span class="p">)],</span>
+                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">POROUS</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">porous_problem</span> <span class="o">=</span> <span class="n">PorousProblem</span><span class="p">(</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">geometries</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">POROUS</span><span class="p">],</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">POROUS</span><span class="p">)],</span>
+                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="M3H3._setup_solvers"><a class="viewcode-back" href="../../m3h3.html#m3h3.m3h3.M3H3._setup_solvers">[docs]</a>    <span class="k">def</span> <span class="nf">_setup_solvers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Function for setting up the solvers.</span>
+
+<span class="sd">        This function sets up the solver for each problem with the given parameters</span>
+<span class="sd">        and keyword arguments. The solver parameters should be in the parameter </span>
+<span class="sd">        object. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">interval</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;start_time&#39;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;end_time&#39;</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+
+            <span class="n">electrosolver_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;ElectroSolver&quot;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">electro_solver</span> <span class="o">=</span> <span class="n">ElectroSolver</span><span class="p">(</span>
+                                    <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">electro_problem</span><span class="o">.</span><span class="n">cardiac_model</span><span class="p">,</span>
+                                    <span class="n">params</span> <span class="o">=</span> <span class="n">electrosolver_parameters</span><span class="p">)</span>
+
+            <span class="p">(</span><span class="n">vs_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">electro_solver</span><span class="o">.</span><span class="n">solution_fields</span><span class="p">()</span>
+            <span class="n">vs_</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">electro_problem</span><span class="o">.</span><span class="n">cell_model</span><span class="o">.</span><span class="n">initial_conditions</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">SOLID</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">SOLID</span><span class="p">)]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">solid_solver</span> <span class="o">=</span> <span class="n">SolidSolver</span><span class="p">(</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">solid_problem</span><span class="o">.</span><span class="n">_form</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
+                                    <span class="n">interval</span><span class="p">,</span> <span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">],</span> <span class="n">parameters</span><span class="p">,</span>
+                                    <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">FLUID</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">FLUID</span><span class="p">)]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fluid_solver</span> <span class="o">=</span> <span class="n">FluidSolver</span><span class="p">(</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">fluid_problem</span><span class="o">.</span><span class="n">_form</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
+                                    <span class="n">interval</span><span class="p">,</span> <span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">],</span> <span class="n">parameters</span><span class="p">,</span>
+                                    <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">Physics</span><span class="o">.</span><span class="n">POROUS</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+            <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">POROUS</span><span class="p">)]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">porous_solver</span> <span class="o">=</span> <span class="n">PorousSolver</span><span class="p">(</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">porous_problem</span><span class="o">.</span><span class="n">_form</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
+                                    <span class="n">interval</span><span class="p">,</span> <span class="n">parameters</span><span class="p">[</span><span class="s1">&#39;dt&#39;</span><span class="p">],</span> <span class="n">parameters</span><span class="p">,</span>
+                                    <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="M3H3._setup_geometries"><a class="viewcode-back" href="../../m3h3.html#m3h3.m3h3.M3H3._setup_geometries">[docs]</a>    <span class="k">def</span> <span class="nf">_setup_geometries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="n">physics</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets up a dictionary with the geometries for the different problems.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">geometries</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">MultiGeometry</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">phys</span> <span class="ow">in</span> <span class="n">physics</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">geometries</span><span class="p">[</span><span class="n">phys</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">geometries</span><span class="p">[</span><span class="n">phys</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Could not find a geometry for </span><span class="si">{}</span><span class="s2"> physics in &quot;</span>\
+                            <span class="s2">&quot;MultiGeometry. Ensure that geometry labels &quot;</span>\
+                            <span class="s2">&quot;correspond to values in Physics &quot;</span>\
+                            <span class="s2">&quot;enum.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">phys</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geometries</span><span class="p">[</span><span class="n">phys</span><span class="p">],</span> <span class="n">HeartGeometry</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">physics</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">geometries</span><span class="p">[</span><span class="n">physics</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">geometry</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">phys</span> <span class="ow">in</span> <span class="n">physics</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">geometries</span><span class="p">[</span><span class="n">phys</span><span class="p">]</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">deepcopy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="M3H3._check_physics_interactions"><a class="viewcode-back" href="../../m3h3.html#m3h3.m3h3.M3H3._check_physics_interactions">[docs]</a>    <span class="k">def</span> <span class="nf">_check_physics_interactions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># If multiple physics are defined, check that all are involved in an</span>
+        <span class="c1"># interaction and that physics involved in an interaction are set up</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interactions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;At least one interaction has been set up, but no physics</span><span class="se">\n</span><span class="s2">&quot;</span>\
+                    <span class="s2">&quot;Interactions: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">interactions</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">int_physics</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">ia</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
+                                        <span class="k">for</span> <span class="n">ia</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">interactions</span><span class="p">])</span><span class="o">.</span><span class="n">flat</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">int_physics</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Physics </span><span class="si">{}</span><span class="s2"> appears in interaction, but is not set &quot;</span>\
+                            <span class="s2">&quot;up.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">physics</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">p</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">int_physics</span><span class="p">:</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Physcis </span><span class="si">{}</span><span class="s2"> is set up, but does not appear in any &quot;</span>\
+                            <span class="s2">&quot;interaction.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="M3H3.update_parameters"><a class="viewcode-back" href="../../m3h3.html#m3h3.m3h3.M3H3.update_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">update_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">physics</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">physics</span> <span class="o">==</span> <span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">set_electro_parameters</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">physics</span> <span class="o">==</span> <span class="n">Physics</span><span class="o">.</span><span class="n">SOLID</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">set_solid_parameters</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">physics</span> <span class="o">==</span> <span class="n">Physics</span><span class="o">.</span><span class="n">FLUID</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">set_fluid_parameters</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">physics</span> <span class="o">==</span> <span class="n">Physics</span><span class="o">.</span><span class="n">POROUS</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">set_porous_parameters</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Martin Krokan Hovden
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

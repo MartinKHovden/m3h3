@@ -1,0 +1,718 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="English" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>m3h3 &mdash; M3H3 1.0.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="API reference" href="API.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> M3H3
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="designspecifications.html">Design specification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="user_guide.html">User guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="demos.html">Demos</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="API.html">API reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">m3h3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-m3h3.setup_parameters">setup_parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-m3h3.pde">pde</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-m3h3.pde.solver">pde solver</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-m3h3.ode">ode</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">M3H3</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="API.html">API reference</a> &raquo;</li>
+        
+      <li>m3h3</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/m3h3.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-m3h3.m3h3">
+<span id="m3h3"></span><h1>m3h3<a class="headerlink" href="#module-m3h3.m3h3" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="m3h3.m3h3.M3H3">
+<em class="property">class </em><code class="sig-prename descclassname">m3h3.m3h3.</code><code class="sig-name descname">M3H3</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">geometry</span></em>, <em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/m3h3.html#M3H3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.m3h3.M3H3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class for representing the full cardiac system.</p>
+<p>This is the class for representing the full cardiac system, and is used to
+do the simulations of the system.</p>
+<p>For the electro problem is solves the Bidomain equations using the
+Splitting solver technique presented in Sundnes (2006). The bidomain
+equations are given by:</p>
+<p>To add stimulus, add it as a keyword argument with the keyword &quot;stimulus&quot;.
+If stimulus is dependent on time, use keyword &quot;t&quot; or &quot;time&quot; to connect it
+to the internal timer in the m3h3-object. The stimulus should either be of
+type Expression or Markewise. Use Markerwise if the position of the
+stimulus should be used as well as if multiple stimuluses should be
+applied.</p>
+<p>The idea is to set up a M3H3 object that can be used to run simulations.
+The basic usage is:</p>
+<ol class="arabic simple">
+<li><p>Set up the geometry with a mesh using the fenics.geometry package.</p></li>
+<li><p>Set the parameters for the cardiac model.</p></li>
+<li><p>Set the solver parameters.</p></li>
+<li><p>Create the M3H3 object given the geometry and parameters</p></li>
+<li><p>Use M3H3 object's step/solve functions for running the simulations.</p></li>
+<li><p>Do post-processing of the output.</p></li>
+</ol>
+<dl class="simple">
+<dt><em>Arguments</em></dt><dd><dl class="simple">
+<dt>geometry (<code class="xref py py-class docutils literal notranslate"><span class="pre">geometry.Geometry</span></code>)</dt><dd><p>A geometry object that contains the mesh of the simulation domain.</p>
+</dd>
+<dt>parameters (<code class="xref py py-class docutils literal notranslate"><span class="pre">dolfin.Parameters</span></code>)</dt><dd><p>A Parameters object that contains parameters for setting up the
+cardiac simulation.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="m3h3.m3h3.M3H3._check_dt_is_multiple">
+<code class="sig-name descname">_check_dt_is_multiple</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dt</span></em>, <em class="sig-param"><span class="n">min_dt</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/m3h3.html#M3H3._check_dt_is_multiple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.m3h3.M3H3._check_dt_is_multiple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for checking if two time steps for different
+solvers are multiples of each other. This is important so that they
+match up on certain times. The solvers with shorter time steps are then
+run multiple times between each step of the solvers with longer time
+steps. See the step function for more information.</p>
+<dl class="simple">
+<dt><em>Arguments</em></dt><dd><dl class="simple">
+<dt>dt (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>)</dt><dd><p>Time step</p>
+</dd>
+<dt>min_dt (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>)</dt><dd><p>Time step</p>
+</dd>
+</dl>
+</dd>
+<dt><em>Return</em></dt><dd><dl class="simple">
+<dt>(<code class="xref py py-class docutils literal notranslate"><span class="pre">boolean</span></code>)</dt><dd><p>Returns True if the input are multiples of each other.</p>
+</dd>
+</dl>
+</dd>
+<dt><em>Raises</em></dt><dd><p>Raises an ValueError if the input is not multiples of each other.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.m3h3.M3H3._check_physics_interactions">
+<code class="sig-name descname">_check_physics_interactions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/m3h3.html#M3H3._check_physics_interactions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.m3h3.M3H3._check_physics_interactions" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.m3h3.M3H3._get_num_steps">
+<code class="sig-name descname">_get_num_steps</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/m3h3.html#M3H3._get_num_steps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.m3h3.M3H3._get_num_steps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for returning the number of steps for each solver</p>
+<p>This function returns the number of step that each solver do. Since
+m3h3 allows different time-steps for each solver, some solver might
+have to do multiple steps compared to the other solvers.</p>
+<dl class="simple">
+<dt><em>Returns</em></dt><dd><dl class="simple">
+<dt>num_steps (<code class="xref py py-class docutils literal notranslate"><span class="pre">dictionary</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>)</dt><dd><p>Dictionary of the number of steps for each solver.</p>
+</dd>
+<dt>max_dt (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>)</dt><dd><p>The longest time-step for all solvers.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.m3h3.M3H3._get_physics_dt">
+<code class="sig-name descname">_get_physics_dt</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/m3h3.html#M3H3._get_physics_dt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.m3h3.M3H3._get_physics_dt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary containing the time steps for each
+solver.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.m3h3.M3H3._setup_geometries">
+<code class="sig-name descname">_setup_geometries</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">geometry</span></em>, <em class="sig-param"><span class="n">physics</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/m3h3.html#M3H3._setup_geometries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.m3h3.M3H3._setup_geometries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets up a dictionary with the geometries for the different problems.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.m3h3.M3H3._setup_problems">
+<code class="sig-name descname">_setup_problems</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/m3h3.html#M3H3._setup_problems"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.m3h3.M3H3._setup_problems" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set up the problems with the given parameters and geometry.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.m3h3.M3H3._setup_solvers">
+<code class="sig-name descname">_setup_solvers</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/m3h3.html#M3H3._setup_solvers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.m3h3.M3H3._setup_solvers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for setting up the solvers.</p>
+<p>This function sets up the solver for each problem with the given parameters
+and keyword arguments. The solver parameters should be in the parameter
+object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.m3h3.M3H3.get_solution_fields">
+<code class="sig-name descname">get_solution_fields</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/m3h3.html#M3H3.get_solution_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.m3h3.M3H3.get_solution_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the solution fields for the different problems. Returns a
+dictionary with keys given by strings representing which problem they
+correspond to.</p>
+<dl>
+<dt><em>Returns</em></dt><dd><dl class="simple">
+<dt>solution_fields (<code class="xref py py-class docutils literal notranslate"><span class="pre">dictionary</span></code> of <code class="xref py py-class docutils literal notranslate"><span class="pre">dolfin.Function</span></code>)</dt><dd><p>Returns a dictionary with the solution fields for each problem.
+Keys are the enum value for the problems.</p>
+</dd>
+</dl>
+</dd>
+<dt><em>Usage</em></dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sf</span> <span class="o">=</span> <span class="n">system</span><span class="o">.</span><span class="n">get_solution_fields</span><span class="p">()</span>
+<span class="n">sf_electro</span> <span class="o">=</span> <span class="n">sf</span><span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">ELECETRO</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>where system is an instance of m3h3 and the solution fields for
+the electro problem is returned.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.m3h3.M3H3.solve">
+<code class="sig-name descname">solve</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/m3h3.html#M3H3.solve"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.m3h3.M3H3.solve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Solves the problem by running multiple steps for the full interval
+(&quot;start_time&quot;, &quot;end_time&quot;), where &quot;start_time&quot; and &quot;end_time&quot; are
+given as parameters to the m3h3 object.</p>
+<p><em>Returns</em></p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.m3h3.M3H3.step">
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/m3h3.html#M3H3.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.m3h3.M3H3.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does one step for the solvers for a time step equal to the largest
+time step for all the solvers. Finds the interval using the
+internal time variable and the get_max_dt function. Each problem have their own
+separate time steps. The time steps are assumed to be multiples of each other.
+This means that if one solver have twice the time step of another solver,
+the solver with the smallest time step will step two times in the
+same time interval as the one with the largest time step. This way the
+solvers will line up at certain times.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.m3h3.M3H3.update_parameters">
+<code class="sig-name descname">update_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">physics</span></em>, <em class="sig-param"><span class="n">parameters</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/m3h3.html#M3H3.update_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.m3h3.M3H3.update_parameters" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-m3h3.setup_parameters">
+<span id="setup-parameters"></span><h1>setup_parameters<a class="headerlink" href="#module-m3h3.setup_parameters" title="Permalink to this headline">¶</a></h1>
+<p>This module handles parameters for cardiac simulations.</p>
+<p>It contains one main class for storing the general parameters for each problem.
+In addition, it contains a class for the parameters of the electro problem. This
+is because df.Parameters dont take Markerwise functiosn as elements. Since we
+might want to add complex stimuluses, this should be possible. By using the
+ElectroParameter class, this is now possible.</p>
+<dl class="py class">
+<dt id="m3h3.setup_parameters.Physics">
+<em class="property">class </em><code class="sig-prename descclassname">m3h3.setup_parameters.</code><code class="sig-name descname">Physics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/setup_parameters.html#Physics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.setup_parameters.Physics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>This Enum contains physics descriptors for cardiac simulations.</p>
+<dl class="py attribute">
+<dt id="m3h3.setup_parameters.Physics.ELECTRO">
+<code class="sig-name descname">ELECTRO</code><em class="property"> = 'Electro'</em><a class="headerlink" href="#m3h3.setup_parameters.Physics.ELECTRO" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="m3h3.setup_parameters.Physics.FLUID">
+<code class="sig-name descname">FLUID</code><em class="property"> = 'Fluid'</em><a class="headerlink" href="#m3h3.setup_parameters.Physics.FLUID" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="m3h3.setup_parameters.Physics.POROUS">
+<code class="sig-name descname">POROUS</code><em class="property"> = 'Porous'</em><a class="headerlink" href="#m3h3.setup_parameters.Physics.POROUS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="m3h3.setup_parameters.Physics.SOLID">
+<code class="sig-name descname">SOLID</code><em class="property"> = 'Solid'</em><a class="headerlink" href="#m3h3.setup_parameters.Physics.SOLID" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.setup_parameters.Physics.has_value">
+<em class="property">classmethod </em><code class="sig-name descname">has_value</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/setup_parameters.html#Physics.has_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.setup_parameters.Physics.has_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="m3h3.setup_parameters.set_dolfin_compiler_parameters">
+<code class="sig-prename descclassname">m3h3.setup_parameters.</code><code class="sig-name descname">set_dolfin_compiler_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/setup_parameters.html#set_dolfin_compiler_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.setup_parameters.set_dolfin_compiler_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets dolfin parameters to speed up the compiler.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-m3h3.pde">
+<span id="pde"></span><h1>pde<a class="headerlink" href="#module-m3h3.pde" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="m3h3.pde.ElectroProblem">
+<em class="property">class </em><code class="sig-prename descclassname">m3h3.pde.</code><code class="sig-name descname">ElectroProblem</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">geometry</span></em>, <em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/electro_problem.html#ElectroProblem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.ElectroProblem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">m3h3.pde.problem.Problem</span></code></p>
+<p>This class implements the variational form for electrophysiology
+problems.</p>
+<p>It initiates the cardiac cell model and the cardiac model with the
+given stimulus and applied current.</p>
+<dl class="py method">
+<dt id="m3h3.pde.ElectroProblem.get_cardiac_model">
+<code class="sig-name descname">get_cardiac_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/electro_problem.html#ElectroProblem.get_cardiac_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.ElectroProblem.get_cardiac_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the cardiac model for the electro problem given the cell
+model and the user-parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.pde.ElectroProblem.get_cell_model">
+<code class="sig-name descname">get_cell_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/electro_problem.html#ElectroProblem.get_cell_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.ElectroProblem.get_cell_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the cell model specified in the parameters.</p>
+<p>Iterates over all files in the ode-folder (which is where the cell
+models are stored) and checks if the cell model specified in
+the parameteres are implemented. If not, it raises an error and returns
+a list of the implemented cell models. All implemented cell models
+should also be included in __all__ in __init__.py in the ode-folder.</p>
+<p>Assumes that all cell-models are implemented in the ode-folder. The
+naming convention is that the .py-file is named the same as the
+cell-class in the file, but with a lower-case first letter. The
+class name is the same but with an upper-case first letter.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.pde.ElectroProblem.update_solution_fields">
+<code class="sig-name descname">update_solution_fields</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">solution</span></em>, <em class="sig-param"><span class="n">prev_current</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/electro_problem.html#ElectroProblem.update_solution_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.ElectroProblem.update_solution_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for updating the solution field. Used in step
+function of m3h3.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="m3h3.pde.FluidProblem">
+<em class="property">class </em><code class="sig-prename descclassname">m3h3.pde.</code><code class="sig-name descname">FluidProblem</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">geometry</span></em>, <em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/fluid_problem.html#FluidProblem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.FluidProblem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">m3h3.pde.problem.Problem</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="m3h3.pde.PorousProblem">
+<em class="property">class </em><code class="sig-prename descclassname">m3h3.pde.</code><code class="sig-name descname">PorousProblem</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">geometry</span></em>, <em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/porous_problem.html#PorousProblem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.PorousProblem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">m3h3.pde.problem.Problem</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="m3h3.pde.Problem">
+<em class="property">class </em><code class="sig-prename descclassname">m3h3.pde.</code><code class="sig-name descname">Problem</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">geometry</span></em>, <em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/problem.html#Problem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.Problem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-m3h3.pde.solver">
+<span id="pde-solver"></span><h1>pde solver<a class="headerlink" href="#module-m3h3.pde.solver" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="m3h3.pde.solver.FluidSolver">
+<em class="property">class </em><code class="sig-prename descclassname">m3h3.pde.solver.</code><code class="sig-name descname">FluidSolver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">form</span></em>, <em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">interval</span></em>, <em class="sig-param"><span class="n">dt</span></em>, <em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/solver/fluid_solver.html#FluidSolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.solver.FluidSolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">m3h3.pde.solver.solver.Solver</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="m3h3.pde.solver.PorousSolver">
+<em class="property">class </em><code class="sig-prename descclassname">m3h3.pde.solver.</code><code class="sig-name descname">PorousSolver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">form</span></em>, <em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">interval</span></em>, <em class="sig-param"><span class="n">dt</span></em>, <em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/solver/porous_solver.html#PorousSolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.solver.PorousSolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">m3h3.pde.solver.solver.Solver</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="m3h3.pde.solver.SolidSolver">
+<em class="property">class </em><code class="sig-prename descclassname">m3h3.pde.solver.</code><code class="sig-name descname">SolidSolver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">form</span></em>, <em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">interval</span></em>, <em class="sig-param"><span class="n">dt</span></em>, <em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/solver/solid_solver.html#SolidSolver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.solver.SolidSolver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">m3h3.pde.solver.solver.Solver</span></code></p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="m3h3.pde.solver.Solver">
+<em class="property">class </em><code class="sig-prename descclassname">m3h3.pde.solver.</code><code class="sig-name descname">Solver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">form</span></em>, <em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">interval</span></em>, <em class="sig-param"><span class="n">dt</span></em>, <em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/solver/solver.html#Solver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.solver.Solver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="m3h3.pde.solver.Solver.step">
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/solver/solver.html#Solver.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.solver.Solver.step" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-m3h3.ode">
+<span id="ode"></span><h1>ode<a class="headerlink" href="#module-m3h3.ode" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="m3h3.ode.CardiacCellModel">
+<em class="property">class </em><code class="sig-prename descclassname">m3h3.ode.</code><code class="sig-name descname">CardiacCellModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">init_conditions</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/cardiac_cell_model.html#CardiacCellModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.CardiacCellModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Base class for cardiac cell models. Specialized cell models should
+subclass this class.</p>
+<p>Essentially, a cell model represents a system of ordinary
+differential equations. A cell model is here described by two
+(Python) functions, named F and I. The model describes the
+behaviour of the transmembrane potential 'v' and a number of state
+variables 's'</p>
+<p>The function F gives the right-hand side for the evolution of the
+state variables:</p>
+<blockquote>
+<div><p>d/dt s = F(v, s)</p>
+</div></blockquote>
+<p>The function I gives the ionic current. If a single cell is
+considered, I gives the (negative) right-hand side for the
+evolution of the transmembrane potential</p>
+<p>(*)  d/dt v = - I(v, s)</p>
+<p>If used in a bidomain setting, the ionic current I enters into the
+parabolic partial differential equation of the bidomain equations.</p>
+<p>If a stimulus is provided via</p>
+<blockquote>
+<div><p>cell = CardiacCellModel()
+cell.stimulus = Expression(&quot;I_s(t)&quot;, degree=1)</p>
+</div></blockquote>
+<p>then I_s is added to the right-hand side of (*), which thus reads</p>
+<blockquote>
+<div><p>d/dt v = - I(v, s) + I_s</p>
+</div></blockquote>
+<p>Note that the cardiac cell model stimulus is ignored when the cell
+model is used a spatially-varying setting (for instance in the
+bidomain setting). In this case, the user is expected to specify a
+stimulus for the cardiac model instead.</p>
+<dl class="py method">
+<dt id="m3h3.ode.CardiacCellModel.F">
+<code class="sig-name descname">F</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">time</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/cardiac_cell_model.html#CardiacCellModel.F"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.CardiacCellModel.F" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return right-hand side for state variable evolution.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.ode.CardiacCellModel.I">
+<code class="sig-name descname">I</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">time</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/cardiac_cell_model.html#CardiacCellModel.I"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.CardiacCellModel.I" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the ionic current.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.ode.CardiacCellModel.default_initial_conditions">
+<em class="property">static </em><code class="sig-name descname">default_initial_conditions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/cardiac_cell_model.html#CardiacCellModel.default_initial_conditions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.CardiacCellModel.default_initial_conditions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set-up and return default initial conditions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.ode.CardiacCellModel.default_parameters">
+<em class="property">static </em><code class="sig-name descname">default_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/cardiac_cell_model.html#CardiacCellModel.default_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.CardiacCellModel.default_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set-up and return default parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.ode.CardiacCellModel.initial_conditions">
+<code class="sig-name descname">initial_conditions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/cardiac_cell_model.html#CardiacCellModel.initial_conditions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.CardiacCellModel.initial_conditions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return initial conditions for v and s as an Expression.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.ode.CardiacCellModel.num_states">
+<code class="sig-name descname">num_states</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/cardiac_cell_model.html#CardiacCellModel.num_states"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.CardiacCellModel.num_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return number of state variables (in addition to the
+membrane potential).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.ode.CardiacCellModel.parameters">
+<code class="sig-name descname">parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/cardiac_cell_model.html#CardiacCellModel.parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.CardiacCellModel.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the current parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.ode.CardiacCellModel.set_initial_conditions">
+<code class="sig-name descname">set_initial_conditions</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">init</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/cardiac_cell_model.html#CardiacCellModel.set_initial_conditions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.CardiacCellModel.set_initial_conditions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update initial_conditions in model</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.ode.CardiacCellModel.set_parameters">
+<code class="sig-name descname">set_parameters</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">params</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/cardiac_cell_model.html#CardiacCellModel.set_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.CardiacCellModel.set_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update parameters in model</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="m3h3.ode.MultiCellModel">
+<em class="property">class </em><code class="sig-prename descclassname">m3h3.ode.</code><code class="sig-name descname">MultiCellModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">models</span></em>, <em class="sig-param"><span class="n">keys</span></em>, <em class="sig-param"><span class="n">markers</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/cardiac_cell_model.html#MultiCellModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.MultiCellModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">m3h3.ode.cardiac_cell_model.CardiacCellModel</span></code></p>
+<dl class="py method">
+<dt id="m3h3.ode.MultiCellModel.F">
+<code class="sig-name descname">F</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">time</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">index</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/cardiac_cell_model.html#MultiCellModel.F"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.MultiCellModel.F" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return right-hand side for state variable evolution.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.ode.MultiCellModel.I">
+<code class="sig-name descname">I</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">time</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">index</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/cardiac_cell_model.html#MultiCellModel.I"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.MultiCellModel.I" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the ionic current.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.ode.MultiCellModel.initial_conditions">
+<code class="sig-name descname">initial_conditions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/cardiac_cell_model.html#MultiCellModel.initial_conditions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.MultiCellModel.initial_conditions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return initial conditions for v and s as a dolfin.GenericFunction.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.ode.MultiCellModel.keys">
+<code class="sig-name descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/cardiac_cell_model.html#MultiCellModel.keys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.MultiCellModel.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.ode.MultiCellModel.markers">
+<code class="sig-name descname">markers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/cardiac_cell_model.html#MultiCellModel.markers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.MultiCellModel.markers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.ode.MultiCellModel.mesh">
+<code class="sig-name descname">mesh</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/cardiac_cell_model.html#MultiCellModel.mesh"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.MultiCellModel.mesh" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.ode.MultiCellModel.models">
+<code class="sig-name descname">models</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/cardiac_cell_model.html#MultiCellModel.models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.MultiCellModel.models" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.ode.MultiCellModel.num_models">
+<code class="sig-name descname">num_models</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/cardiac_cell_model.html#MultiCellModel.num_models"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.MultiCellModel.num_models" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.ode.MultiCellModel.num_states">
+<code class="sig-name descname">num_states</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/cardiac_cell_model.html#MultiCellModel.num_states"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.MultiCellModel.num_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return number of state variables (in addition to the
+membrane potential).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="m3h3.ode.Tentusscher_panfilov_2006_M_cell">
+<em class="property">class </em><code class="sig-prename descclassname">m3h3.ode.</code><code class="sig-name descname">Tentusscher_panfilov_2006_M_cell</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">init_conditions</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/tentusscher_panfilov_2006_M_cell.html#Tentusscher_panfilov_2006_M_cell"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.Tentusscher_panfilov_2006_M_cell" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">m3h3.ode.cardiac_cell_model.CardiacCellModel</span></code></p>
+<dl class="py method">
+<dt id="m3h3.ode.Tentusscher_panfilov_2006_M_cell.F">
+<code class="sig-name descname">F</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">time</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/tentusscher_panfilov_2006_M_cell.html#Tentusscher_panfilov_2006_M_cell.F"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.Tentusscher_panfilov_2006_M_cell.F" title="Permalink to this definition">¶</a></dt>
+<dd><p>Right hand side for ODE system</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.ode.Tentusscher_panfilov_2006_M_cell.I">
+<code class="sig-name descname">I</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">v</span></em>, <em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">time</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/tentusscher_panfilov_2006_M_cell.html#Tentusscher_panfilov_2006_M_cell.I"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.Tentusscher_panfilov_2006_M_cell.I" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transmembrane current</p>
+<blockquote>
+<div><p>I = -dV/dt</p>
+</div></blockquote>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.ode.Tentusscher_panfilov_2006_M_cell.default_initial_conditions">
+<em class="property">static </em><code class="sig-name descname">default_initial_conditions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/tentusscher_panfilov_2006_M_cell.html#Tentusscher_panfilov_2006_M_cell.default_initial_conditions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.Tentusscher_panfilov_2006_M_cell.default_initial_conditions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set-up and return default initial conditions.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.ode.Tentusscher_panfilov_2006_M_cell.default_parameters">
+<em class="property">static </em><code class="sig-name descname">default_parameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/tentusscher_panfilov_2006_M_cell.html#Tentusscher_panfilov_2006_M_cell.default_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.Tentusscher_panfilov_2006_M_cell.default_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set-up and return default parameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.ode.Tentusscher_panfilov_2006_M_cell.num_states">
+<code class="sig-name descname">num_states</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/ode/tentusscher_panfilov_2006_M_cell.html#Tentusscher_panfilov_2006_M_cell.num_states"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.ode.Tentusscher_panfilov_2006_M_cell.num_states" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return number of state variables (in addition to the
+membrane potential).</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="API.html" class="btn btn-neutral float-left" title="API reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Martin Krokan Hovden
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
