@@ -53,9 +53,9 @@ simulation:
    for (time, solution_fields) in system.solve():
       # do something with the solution. 
    
-   plot(solution_field[0])
 
-This simple example creates a square domain of 100 points in each dimension. 
+   # post-process the data
+
 
 
 Indices and tables
