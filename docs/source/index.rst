@@ -53,7 +53,6 @@ simulation:
    for (time, solution_fields) in system.solve():
       # do something with the solution. 
    
-
    # post-process the data
 
 
