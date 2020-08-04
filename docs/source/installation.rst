@@ -80,3 +80,7 @@ for linux, and run the same steps as below.
 
 #. Now you have set up an environment with fenics, dolfin, cbcbeat, pulse 
    geometry, and m3h3. Enjoy! 
+
+############################
+Installation for developers
+############################
