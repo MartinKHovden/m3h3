@@ -7,14 +7,6 @@ echo installing fenics...
 conda install -c conda-forge fenics
 echo
 
-# m3h3
-echo installing m3h3...
-git clone https://github.com/MartinKHovden/m3h3.git
-cd m3h3
-python setup.py develop
-cd ..
-echo
-
 # pulse
 echo installing dependencies
 echo installing pulse...
