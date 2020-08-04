@@ -13,7 +13,9 @@ This example shows how to:
 
 """
 
+from cbcbeat import *
 from m3h3 import *
+
 import matplotlib.pyplot as plt 
 
 mesh = Mesh("data/mesh115_refined.xml.gz")
@@ -67,6 +69,8 @@ M_e = 1.0
 # Set up the parameteres for the heart-model: 
 params = Parameters("M3H3")
 
+print(params.keys())
+
 params["end_time"] = t_max
 params["start_time"] = t_0 
 
@@ -105,11 +109,15 @@ for i in range(num_steps):
 # Extract the solution:
 vs_, vs = system.get_solution_fields()[str(Physics.ELECTRO)]
 
+File("test.pvd") << vs.split()[0]
+
+
+
 # Plot the resulting solution fields:
-plt.figure()
+# plt.figure()
 plot(vs[0], title="Transmembrane potential (v) at end time")
 plt.savefig("TransmembranePot.png")
-plt.figure()
+# plt.figure()
 plot(vs[-1], title="1st state variable (s_0) at end time")
 plt.savefig("s_0(T).png")
 

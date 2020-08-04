@@ -320,6 +320,9 @@ This means that if one solver have twice the time step of another solver,
 the solver with the smallest time step will step two times in the
 same time interval as the one with the largest time step. This way the
 solvers will line up at certain times.</p>
+<p>It then extracts the solvers solutions fields, and updates the m3h3
+objects internal solution fields with it.</p>
+<p>At the end, it updates m3h3's internal time-variable.</p>
 </dd></dl>
 
 <dl class="py method">

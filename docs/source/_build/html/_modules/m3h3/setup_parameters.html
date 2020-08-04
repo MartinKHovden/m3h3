@@ -378,15 +378,15 @@
             <span class="n">keys</span> <span class="o">=</span> <span class="n">keys</span> <span class="o">+</span> <span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">keys</span>
 
-    <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Function for removing parameters or parameter sets</span>
+    <span class="c1"># def remove(self, key):</span>
+    <span class="c1">#     &quot;&quot;&quot; Function for removing parameters or parameter sets</span>
 
-<span class="sd">        # FIXME: Don&#39;t know why remove does not work from super class.</span>
-<span class="sd">        &quot;&quot;&quot;</span> 
-        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;electro_parameter&quot;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span> <span class="o">=</span> <span class="kc">None</span> 
-        <span class="c1"># else:</span>
-        <span class="c1">#     super().remove(key)</span>
+    <span class="c1">#     # FIXME: Don&#39;t know why remove does not work from super class.</span>
+    <span class="c1">#     &quot;&quot;&quot; </span>
+    <span class="c1">#     if key == &quot;electro_parameter&quot;:</span>
+    <span class="c1">#         self.electro_parameters = None </span>
+    <span class="c1">#     # else:</span>
+    <span class="c1">#     #     super().remove(key)</span>
 
     <span class="k">def</span> <span class="nf">has_parameter_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_set</span><span class="p">):</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">parameter_set</span> <span class="o">==</span> <span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="o">.</span><span class="n">value</span> <span class="ow">and</span>

@@ -11,8 +11,6 @@ RUN apt-get -qq update && \
 # Update pip
 RUN pip install --upgrade pip
 
-# Reinstall h5py without binaries
-RUN pip install h5py
 
 # Install cbcbeat
 RUN hg clone https://bitbucket.org/meg/cbcbeat

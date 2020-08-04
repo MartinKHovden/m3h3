@@ -225,15 +225,15 @@ class Parameters(df.Parameters):
             keys = keys + [Physics.ELECTRO.value]
         return keys
 
-    def remove(self, key):
-        """ Function for removing parameters or parameter sets
+    # def remove(self, key):
+    #     """ Function for removing parameters or parameter sets
 
-        # FIXME: Don't know why remove does not work from super class.
-        """ 
-        if key == "electro_parameter":
-            self.electro_parameters = None 
-        # else:
-        #     super().remove(key)
+    #     # FIXME: Don't know why remove does not work from super class.
+    #     """ 
+    #     if key == "electro_parameter":
+    #         self.electro_parameters = None 
+    #     # else:
+    #     #     super().remove(key)
 
     def has_parameter_set(self, parameter_set):
         if (parameter_set == Physics.ELECTRO.value and

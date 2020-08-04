@@ -257,6 +257,11 @@
 <span class="sd">        same time interval as the one with the largest time step. This way the </span>
 <span class="sd">        solvers will line up at certain times. </span>
 
+<span class="sd">        It then extracts the solvers solutions fields, and updates the m3h3</span>
+<span class="sd">        objects internal solution fields with it. </span>
+
+<span class="sd">        At the end, it updates m3h3&#39;s internal time-variable. </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Setup the number of steps for each solver if first iteration.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">values</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;start_time&quot;</span><span class="p">]:</span>
@@ -275,7 +280,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">electro_solver</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>
                 <span class="n">solution_fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">electro_solver</span><span class="o">.</span><span class="n">solution_fields</span><span class="p">()</span>
 
-                <span class="c1"># Updates m3h3&#39;s solution fields.</span>
+                <span class="c1"># Updates m3h3&#39;s internal solution fields.</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">electro_problem</span><span class="o">.</span><span class="n">update_solution_fields</span><span class="p">(</span><span class="n">solution_fields</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
                                                             <span class="n">solution_fields</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
@@ -298,16 +303,15 @@
 <span class="sd">            *Returns*</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">max_dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_num_steps</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">end_time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;end_time&quot;</span><span class="p">]</span>
-        <span class="n">t0</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
-        <span class="n">t1</span> <span class="o">=</span> <span class="n">t0</span> <span class="o">+</span> <span class="n">max_dt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_num_steps</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">t0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;start_time&quot;</span><span class="p">]</span>
+        <span class="n">t1</span> <span class="o">=</span> <span class="n">t0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_dt</span>
 
-        <span class="k">while</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span> <span class="o">+</span> <span class="n">max_dt</span> <span class="o">&lt;=</span> <span class="n">end_time</span><span class="p">:</span>
+        <span class="k">while</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;end_time&quot;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
             <span class="k">yield</span> <span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_solution_fields</span><span class="p">()</span>
             <span class="n">t0</span> <span class="o">=</span> <span class="n">t1</span>
-            <span class="n">t1</span> <span class="o">+=</span> <span class="n">max_dt</span></div>
+            <span class="n">t1</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_dt</span></div>
 
 <div class="viewcode-block" id="M3H3.get_solution_fields"><a class="viewcode-back" href="../../m3h3.html#m3h3.m3h3.M3H3.get_solution_fields">[docs]</a>    <span class="k">def</span> <span class="nf">get_solution_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the solution fields for the different problems. Returns a</span>

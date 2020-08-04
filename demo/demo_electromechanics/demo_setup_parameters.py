@@ -36,6 +36,10 @@ params.set_electro_parameters()
 electro_parameters = params["Electro"]
 electro_solver_parameters = params["ElectroSolver"]
 
+print("1", params.keys())
+params.add("tst", 1)
+print(params.keys())
+
 # The default values can then be 
 
 print(electro_parameters.keys())

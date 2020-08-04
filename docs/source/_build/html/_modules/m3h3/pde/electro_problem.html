@@ -165,32 +165,6 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">importlib</span>
 
-<span class="k">class</span> <span class="nc">Stimulus</span><span class="p">(</span><span class="n">cbcbeat</span><span class="o">.</span><span class="n">UserExpression</span><span class="p">):</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">markers</span><span class="p">,</span> <span class="n">stimulus_marker</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">degree</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;degree&#39;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">markers</span> <span class="o">=</span> <span class="n">markers</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stimulus_marker</span> <span class="o">=</span> <span class="n">stimulus_marker</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">amplitude</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;amplitude&#39;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">period</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;period&#39;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">duration</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;t&#39;</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">eval_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">cell</span><span class="p">):</span>
-        <span class="n">periodic_t</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">period</span>
-        <span class="c1"># if self.markers[cell.index] == self.stimulus_marker\</span>
-        <span class="c1">#                                     and periodic_t &lt; self.duration:</span>
-        <span class="c1">#     values[0] = self.amplitude</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">markers</span><span class="p">[</span><span class="s2">&quot;STIMULUS&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimulus_marker</span>\
-                                            <span class="ow">and</span> <span class="n">periodic_t</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">duration</span><span class="p">:</span>
-            <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplitude</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-            
-    <span class="k">def</span> <span class="nf">value_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">()</span>
-
-
 <div class="viewcode-block" id="ElectroProblem"><a class="viewcode-back" href="../../../m3h3.html#m3h3.pde.ElectroProblem">[docs]</a><span class="k">class</span> <span class="nc">ElectroProblem</span><span class="p">(</span><span class="n">Problem</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This class implements the variational form for electrophysiology</span>
 <span class="sd">    problems.</span>

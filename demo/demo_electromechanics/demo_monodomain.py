@@ -68,6 +68,11 @@ for i in range(num_steps):
 # Extract the solution:
 vs_, vs = system.get_solution_fields()[str(Physics.ELECTRO)]
 
+File("test.pvd") << vs.split()[0]
+
+
+# print(vs_.vector().get_local().shape)
+
 # Plot the resulting solution fields:
 plt.figure()
 plot(vs[0], title="Transmembrane potential (v) at end time")
@@ -77,3 +82,4 @@ plot(vs[-1], title="1st state variable (s_0) at end time")
 plt.savefig("s_0(T).png")
 
 print("Done!!")
+
