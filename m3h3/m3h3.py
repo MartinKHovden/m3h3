@@ -22,7 +22,7 @@ Describe the parameters in detail, and where t hey are sent.
 Make it work with 3D? 
 What is vs_? Since it can be assigned initial conditions? Is it a bunch of state variables? 
 dt should be in solver parameters? 
-Maybe change name of parameter class to avoid confusion with dolfin imports?
+Rename parameter class to avoid confusion with dolfin imports?
 Credit where the cell models come from, or add them straight from cbcbeat instead
 of imports? 
 Credit cbcbeat for the demos. 

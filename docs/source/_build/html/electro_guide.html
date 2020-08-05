@@ -215,6 +215,11 @@ Mesh function.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mesh</span> <span class="o">=</span> <span class="n">Mesh</span><span class="p">(</span><span class="s2">&quot;data/mesh115_refined.xml.gz&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>When the mesh it created, you need to set up a geometry object with
+this mesh</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">geo</span> <span class="o">=</span> <span class="n">Geometry</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="setting-up-the-parameters-and-specifying-the-problems">
 <h2>Setting up the parameters and specifying the problems<a class="headerlink" href="#setting-up-the-parameters-and-specifying-the-problems" title="Permalink to this headline">¶</a></h2>
@@ -255,7 +260,7 @@ can be updated.</p>
 stimulus and applied current later in the guide.</p>
 <p>When setting the electro parameters, we can also change the solver parameters. Those
 have their own parameter set within the main parameter object that can be accessed:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">electro_solver_parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;ElectroSolver&quot;</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">electrosolver_parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;ElectroSolver&quot;</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>and again, printing out the keys gives</p>
@@ -284,14 +289,22 @@ as one would do in a dictionary.</p>
 </div>
 <p>Note how the stimulus can be added to parameter set. We will look closer at how
 to set up the stimulus in a later section.</p>
-<p>Alternatively, they can be set manually as a function argument:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dfvdn</span>
-</pre></div>
-</div>
 <p>For the electrical simulations a stimulus, applied current, and initial conditions
 can be given.</p>
 <p>Now we can also change the parameters for the electro solver.
-This is done in a similar way by</p>
+This is done in a similar way as for the electro parameters</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">electrosolver_parameters</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;ElectroSolver&quot;</span><span class="p">]</span>
+
+<span class="n">electrosolver_parameters</span><span class="p">[</span><span class="s2">&quot;theta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span>                        <span class="c1"># Second order splitting scheme</span>
+<span class="n">electrosolver_parameters</span><span class="p">[</span><span class="s2">&quot;pde_solver&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;monodomain&quot;</span>          <span class="c1"># Use Monodomain model for the PDEs</span>
+<span class="n">electrosolver_parameters</span><span class="p">[</span><span class="s2">&quot;CardiacODESolver&quot;</span><span class="p">][</span><span class="s2">&quot;scheme&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;RL1&quot;</span> <span class="c1"># 1st order Rush-Larsen for the ODEs</span>
+<span class="n">electrosolver_parameters</span><span class="p">[</span><span class="s2">&quot;MonodomainSolver&quot;</span><span class="p">][</span><span class="s2">&quot;linear_solver_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;iterative&quot;</span>
+<span class="n">electrosolver_parameters</span><span class="p">[</span><span class="s2">&quot;MonodomainSolver&quot;</span><span class="p">][</span><span class="s2">&quot;algorithm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;cg&quot;</span>
+<span class="n">electrosolver_parameters</span><span class="p">[</span><span class="s2">&quot;MonodomainSolver&quot;</span><span class="p">][</span><span class="s2">&quot;preconditioner&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;sor&quot;</span><span class="c1">#&quot;petsc_amg&quot;</span>
+<span class="n">electrosolver_parameters</span><span class="p">[</span><span class="s2">&quot;apply_stimulus_current_to_pde&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+</pre></div>
+</div>
+<p>Here we see that we can choose between the monodomain and the bidomain equations.</p>
 </div>
 <div class="section" id="stimulus">
 <h3>Stimulus<a class="headerlink" href="#stimulus" title="Permalink to this headline">¶</a></h3>

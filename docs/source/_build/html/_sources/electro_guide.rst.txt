@@ -41,6 +41,12 @@ Mesh function.
 
     mesh = Mesh("data/mesh115_refined.xml.gz")
 
+When the mesh it created, you need to set up a geometry object with 
+this mesh
+
+.. code-block:: python 
+
+    geo = Geometry(mesh)
 
 Setting up the parameters and specifying the problems 
 =======================================================
@@ -96,7 +102,7 @@ have their own parameter set within the main parameter object that can be access
 
 .. code-block:: python 
 
-    electro_solver_parameters = parameters["ElectroSolver"]
+    electrosolver_parameters = parameters["ElectroSolver"]
 
 
 and again, printing out the keys gives
@@ -134,19 +140,26 @@ as one would do in a dictionary.
 Note how the stimulus can be added to parameter set. We will look closer at how 
 to set up the stimulus in a later section. 
 
-Alternatively, they can be set manually as a function argument: 
-
-.. code-block:: python 
-
-    dfvdn
-
 
 For the electrical simulations a stimulus, applied current, and initial conditions
 can be given. 
 
 Now we can also change the parameters for the electro solver. 
-This is done in a similar way by 
+This is done in a similar way as for the electro parameters 
 
+.. code-block:: python 
+
+    electrosolver_parameters = params["ElectroSolver"]
+
+    electrosolver_parameters["theta"] = 0.5                        # Second order splitting scheme
+    electrosolver_parameters["pde_solver"] = "monodomain"          # Use Monodomain model for the PDEs
+    electrosolver_parameters["CardiacODESolver"]["scheme"] = "RL1" # 1st order Rush-Larsen for the ODEs
+    electrosolver_parameters["MonodomainSolver"]["linear_solver_type"] = "iterative"
+    electrosolver_parameters["MonodomainSolver"]["algorithm"] = "cg"
+    electrosolver_parameters["MonodomainSolver"]["preconditioner"] = "sor"#"petsc_amg"
+    electrosolver_parameters["apply_stimulus_current_to_pde"] = True
+
+Here we see that we can choose between the monodomain and the bidomain equations. 
 
 
 Stimulus 
