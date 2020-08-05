@@ -2,22 +2,22 @@ Demo for running the electro solver with a mesh from file
 ===========================================================
 This example shows how to set up m3h3 to read the mesh from file. 
 
-""" 
-An example on how to use m3h3 to do simulations of the electrical 
-activity of the heart for a more complex stimulus applied to the domain.
-The mesh is read from file.  
-
-This example shows how to:
-- Read the geometry from file. 
-- Update the parameters of the electro problem.
-- Update the solver parameters for the electro solver.
-- Add a more complex stimulususing Meshfunctions and Compiled subdomains. 
-- Run the electro simulation.
-- Plot the results.
-
-"""
 .. code-block:: python 
 
+    """ 
+    An example on how to use m3h3 to do simulations of the electrical 
+    activity of the heart for a more complex stimulus applied to the domain.
+    The mesh is read from file.  
+
+    This example shows how to:
+    - Read the geometry from file. 
+    - Update the parameters of the electro problem.
+    - Update the solver parameters for the electro solver.
+    - Add a more complex stimulususing Meshfunctions and Compiled subdomains. 
+    - Run the electro simulation.
+    - Plot the results.
+
+    """
     from cbcbeat import *
     from m3h3 import *
 
