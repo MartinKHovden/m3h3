@@ -297,7 +297,8 @@ This is done in a similar way by</p>
 <h3>Stimulus<a class="headerlink" href="#stimulus" title="Permalink to this headline">¶</a></h3>
 <p>The stimulus can be added as either a Constant, Expression, Markerwise function or a CompiledExpression.
 By using a Markerwise function or CompiledExpression, the position of the stimulus can be given. For more
-info on how to use subdomains and set up stimuluses, see the FEniCS tutorial.</p>
+info on how to use subdomains and set up stimuluses, see the FEniCS tutorial. In general,
+all stimuluses that works in cbcbeat works in m3h3.</p>
 <p>Two examples of stimulus is shown below. The first is a simple stimulus using the
 Expression class.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stimulus</span> <span class="o">=</span> <span class="n">Expression</span><span class="p">(</span><span class="s2">&quot;x[0]*t&quot;</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">Constant</span><span class="p">(</span><span class="mf">0.0</span><span class="p">),</span> <span class="n">degree</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
@@ -338,6 +339,8 @@ be applied.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stimulus</span> <span class="o">=</span> <span class="n">Markerwise</span><span class="p">((</span><span class="n">I_s_1</span><span class="p">,</span> <span class="n">I_s_2</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">stimulus_domain</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>Alternativelly, it is possible to use the CompiledExpression function from fenics.
+To see an example on how this is done, see the demo folder.</p>
 </div>
 </div>
 <div class="section" id="setting-up-m3h3">

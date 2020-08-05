@@ -153,7 +153,8 @@ Stimulus
 ++++++++++
 The stimulus can be added as either a Constant, Expression, Markerwise function or a CompiledExpression. 
 By using a Markerwise function or CompiledExpression, the position of the stimulus can be given. For more 
-info on how to use subdomains and set up stimuluses, see the FEniCS tutorial.  
+info on how to use subdomains and set up stimuluses, see the FEniCS tutorial. In general,
+all stimuluses that works in cbcbeat works in m3h3.   
 
 Two examples of stimulus is shown below. The first is a simple stimulus using the 
 Expression class. 
@@ -204,7 +205,8 @@ Note that the string in expression can be any expression allowed in c++. The sti
 
     stimulus = Markerwise((I_s_1, I_s_2), (1,2), stimulus_domain)
 
-
+Alternativelly, it is possible to use the CompiledExpression function from fenics. 
+To see an example on how this is done, see the demo folder. 
 
 Setting up m3h3 
 ==================
