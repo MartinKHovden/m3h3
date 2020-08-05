@@ -111,6 +111,7 @@ vs_, vs = system.get_solution_fields()[str(Physics.ELECTRO)]
 
 File("test.pvd") << vs.split()[0]
 
+# The results can be visualized using vedo or ParaView. 
 # If you are running on wsl, you migh have to install vedo in a 
 # windows terminal and then show the file from there. 
 

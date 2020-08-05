@@ -116,7 +116,7 @@ This example shows how to set up m3h3 to read the mesh from file.
 
     File("test.pvd") << vs.split()[0]
 
-    # If you are running on wsl, you migh have to install vedo in a 
-    # windows terminal and then show the file from there. 
+    # To visualize the results, use vedo or ParaView. If you are running on wsl, 
+    # you migh have to install vedo in a windows terminal and then show the file from there. 
 
     print("Done!!")
