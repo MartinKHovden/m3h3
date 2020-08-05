@@ -182,9 +182,14 @@ class Parameters(df.Parameters):
 
             params = Parameters("M3H3")
 
-        To see the keys in the parameter set, use the key() function. 
+        To see the keys in the parameter set, use the key() function:
 
-        Paramaters can be added as follows:
+        .. code-block:: python 
+
+            keys = params.keys()
+
+
+        Parameters can be added as follows:
 
         .. code-block:: python 
 
