@@ -2,11 +2,15 @@
 
 # M3H3
 
-M3H3 is an Python-based open source framework for doing cardiac simulations. It build on the finite element solver FEniCS and combines functionality from various frameworks for simulating different processes in the heart. 
+M3H3 is an Python-based open source framework for doing cardiac simulations. It build on the finite element solver FEniCS and combines functionality from various frameworks for simulating interactions between different processes in the heart. 
 
 ## Documentation 
 
-The documentation and design doc for M3H3 can be found at Read the Docs https://m3h3.readthedocs.io/en/latest/
+The documentation and design doc for M3H3 can be found at Read the Docs https://m3h3-docs.readthedocs.io/en/latest/
+
+## Installation
+
+See the documentation for an overview on how to obtain the software: https://m3h3-docs.readthedocs.io/en/latest/installation.html
 
 ## User guide
 

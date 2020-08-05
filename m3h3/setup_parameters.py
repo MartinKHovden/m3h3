@@ -284,6 +284,10 @@ class Parameters(df.Parameters):
 
     def has_parameter_set(self, parameter_set):
         """ Checks if parameter set is in Parameters object. 
+
+        *Arguments*
+            :py:class:`string`
+                Name of parameter set to check if in object. 
         """ 
         if (parameter_set == Physics.ELECTRO.value and
                             self.electro_parameters != None):
@@ -297,6 +301,7 @@ class Parameters(df.Parameters):
     def set_electro_parameters(self, parameters=None):
         """Sets parameters for electrophysiology problems and solver. If
         argument is None, default parameters are applied.
+
         """
         if not self.has_parameter_set(Physics.ELECTRO.value):
             self._set_electro_default_parameters()
