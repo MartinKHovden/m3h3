@@ -204,7 +204,9 @@
     <span class="n">df</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;form_compiler&quot;</span><span class="p">][</span><span class="s2">&quot;cpp_optimize_flags&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">flags</span><span class="p">)</span></div>
 
 <span class="k">class</span> <span class="nc">ElectroParameters</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Parameters</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class for handling the electro parameters </span>
+    <span class="sd">&quot;&quot;&quot;Class for handling the electro parameters</span>
+
+<span class="sd">    This class hadles the electro parameters.  </span>
 
 <span class="sd">    This class handles some of the problem specifications that can&#39;t </span>
 <span class="sd">    be held by the Parameters class. The class are used as storage for </span>
@@ -223,6 +225,12 @@
 <span class="sd">        When creating an instance of ElectroParameters, the stimulus, applied </span>
 <span class="sd">        current, and initial conditions are already in the set with default</span>
 <span class="sd">        values of None. Those can updated as usual.  </span>
+
+<span class="sd">    *Usage*</span>
+<span class="sd">        .. code-block::python</span>
+
+<span class="sd">            params = ElectroParameters(&quot;ElectroParams&quot;)</span>
+<span class="sd">            </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -378,17 +386,9 @@
             <span class="n">keys</span> <span class="o">=</span> <span class="n">keys</span> <span class="o">+</span> <span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">keys</span>
 
-    <span class="c1"># def remove(self, key):</span>
-    <span class="c1">#     &quot;&quot;&quot; Function for removing parameters or parameter sets</span>
-
-    <span class="c1">#     # FIXME: Don&#39;t know why remove does not work from super class.</span>
-    <span class="c1">#     &quot;&quot;&quot; </span>
-    <span class="c1">#     if key == &quot;electro_parameter&quot;:</span>
-    <span class="c1">#         self.electro_parameters = None </span>
-    <span class="c1">#     # else:</span>
-    <span class="c1">#     #     super().remove(key)</span>
-
     <span class="k">def</span> <span class="nf">has_parameter_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_set</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Checks if parameter set is in Parameters object. </span>
+<span class="sd">        &quot;&quot;&quot;</span> 
         <span class="k">if</span> <span class="p">(</span><span class="n">parameter_set</span> <span class="o">==</span> <span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="o">.</span><span class="n">value</span> <span class="ow">and</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">):</span>
             <span class="k">return</span> <span class="kc">True</span>

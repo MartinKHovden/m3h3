@@ -18,10 +18,11 @@ Fix init files.
 Update initial conditions.
 Explain how to add more cell models (lower/upper case)
 Should everything be imported from cbcbeat?
-Describe the parameters in detail, and where they are sent. 
+Describe the parameters in detail, and where t hey are sent. 
 Make it work with 3D? 
 What is vs_? Since it can be assigned initial conditions? Is it a bunch of state variables? 
 dt should be in solver parameters? 
+Maybe change name of parameter class to avoid confusion with dolfin imports?
 
 M3H3 is a framework used for modelling and simulating the heart. It inherits
 much of the functionality from other libaries and combines it into a full

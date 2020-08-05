@@ -51,7 +51,9 @@ def set_dolfin_compiler_parameters():
     df.parameters["form_compiler"]["cpp_optimize_flags"] = " ".join(flags)
 
 class ElectroParameters(df.Parameters):
-    """Class for handling the electro parameters 
+    """Class for handling the electro parameters
+
+    This class hadles the electro parameters.  
 
     This class handles some of the problem specifications that can't 
     be held by the Parameters class. The class are used as storage for 
@@ -70,6 +72,11 @@ class ElectroParameters(df.Parameters):
         When creating an instance of ElectroParameters, the stimulus, applied 
         current, and initial conditions are already in the set with default
         values of None. Those can updated as usual.  
+
+    *Usage*
+        .. code-block::python
+
+            params = ElectroParameters("ElectroParams")      
     """
     def __init__(self, label, **kwargs):
         super().__init__(label, **kwargs)
@@ -156,7 +163,7 @@ class ElectroParameters(df.Parameters):
 class Parameters(df.Parameters):
     """Class for handling the parameters for the cardiac simulations. 
     
-    This class is for handling the parameters for the cardiac simulations. It 
+    This class handles the parameters for the cardiac simulations. It 
     inherits most of the functionality from  `dolfin`'s Parameters class. 
     The main difference is that this class have an alternative way 
     of handling the electro parameters, since we should be able to add stimulus
@@ -167,26 +174,33 @@ class Parameters(df.Parameters):
     The parameter set can be nested. Each problem have their own nested
     Parameter set that contains the parameters. 
 
-    Paramaters can be added as follows:
+    *Usage*
 
-    .. code-block:: python 
+        The Parameters object can be initialized with a given name 
 
-        params = Parameters("M3H3")
-        params.add("param1", 1.0)
+        .. code-block:: python 
 
-    They can be changed as follows:
+            params = Parameters("M3H3")
 
-    .. code-block:: python 
+        To see the keys in the parameter set, use the key() function. 
 
-        params["param1"] = 2.0
+        Paramaters can be added as follows:
 
-    They can be extracted as follows:
+        .. code-block:: python 
 
-    .. code-block:: python 
+            params.add("param1", 1.0)
 
-        p1 = params["param1"]
+        They can be changed as follows:
 
+        .. code-block:: python 
 
+            params["param1"] = 2.0
+
+        They can be extracted as follows:
+
+        .. code-block:: python 
+
+            p1 = params["param1"]
     """
     def __init__(self, label, **kwargs):
         super().__init__(label, **kwargs) 
@@ -225,17 +239,9 @@ class Parameters(df.Parameters):
             keys = keys + [Physics.ELECTRO.value]
         return keys
 
-    # def remove(self, key):
-    #     """ Function for removing parameters or parameter sets
-
-    #     # FIXME: Don't know why remove does not work from super class.
-    #     """ 
-    #     if key == "electro_parameter":
-    #         self.electro_parameters = None 
-    #     # else:
-    #     #     super().remove(key)
-
     def has_parameter_set(self, parameter_set):
+        """ Checks if parameter set is in Parameters object. 
+        """ 
         if (parameter_set == Physics.ELECTRO.value and
                             self.electro_parameters != None):
             return True
