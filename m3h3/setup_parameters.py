@@ -245,6 +245,10 @@ class Parameters(df.Parameters):
         Function for setting the default parameters. Default parameters are 
         "start_time", "end_time" and "log_level". This is automatically 
         called when initializing an object of m3h3. 
+
+        *Note*
+            This is automatically called when initializing a new instance, so 
+            does not need to be used. 
         """
         self.add("log_level", df.get_log_level())
         m3h3.log(self["log_level"], "Log level is set to {}".format(
@@ -266,8 +270,13 @@ class Parameters(df.Parameters):
             super().__setitem__(key, value)
 
     def keys(self):
+        """Returns the keys in the parameter set.
+
+        *Returns*
+            :py:class:`dict`
+                Dictionary containing all the keys in the parameter set. 
+        """
         keys = super().keys()
-        # print(self.electro_parameters)
         if self.electro_parameters != None:
             print("Here")
             keys = keys + [Physics.ELECTRO.value]
