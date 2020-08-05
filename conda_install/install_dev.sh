@@ -30,4 +30,5 @@ echo
 # h5py
 echo installing h5py...
 pip uninstall h5py
-pip install h5py --no-binary=h5py
+conda install h5py
+

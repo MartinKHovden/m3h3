@@ -25,7 +25,9 @@ dt should be in solver parameters?
 Maybe change name of parameter class to avoid confusion with dolfin imports?
 Credit where the cell models come from, or add them straight from cbcbeat instead
 of imports? 
+Credit cbcbeat for the demos. 
 Install vedo for plotting? 
+Might also need to have a c++ compiler installed to run meshes from file. 
 
 M3H3 is a framework used for modelling and simulating the heart. It inherits
 much of the functionality from other libaries and combines it into a full

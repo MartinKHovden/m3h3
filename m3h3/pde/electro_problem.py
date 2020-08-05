@@ -13,11 +13,9 @@ import os
 import importlib
 
 class ElectroProblem(Problem):
-    """This class implements the variational form for electrophysiology
-    problems.
+    """This class sets up the electro problem with cell model and 
+    cardiac model as well as storing the solution fields. 
 
-    It initiates the cardiac cell model and the cardiac model with the 
-    given stimulus and applied current. 
     """
 
     def __init__(self, geometry, time, parameters, **kwargs):
@@ -58,7 +56,6 @@ class ElectroProblem(Problem):
         cell-class in the file, but with a lower-case first letter. The 
         class name is the same but with an upper-case first letter.  
 
-
         """
 
         # Get the cell model name from the user parameters: 
@@ -91,6 +88,7 @@ class ElectroProblem(Problem):
     def get_cardiac_model(self):
         """Returns the cardiac model for the electro problem given the cell 
         model and the user-parameters.  
+
         """ 
         return CardiacModel(domain = self.geometry.mesh,
                                 time = self.time, 
@@ -115,12 +113,16 @@ class ElectroProblem(Problem):
 
     def _set_up_stimulus(self, **kwargs):
         """Add the given stimulus to the electro problem. Stimulus is 
-        suposed to be of type Expression or Markerwise. 
+        suposed to be of type CompiledExpression, Expression or Markerwise.
+
+        *Note*
+            When using CompiledExpression, time should be encoded as t in the 
+            expression. When using Expression or Markerwise, the time can be 
+            encoded as t or time in the user_parameters of the expression or 
+            markerwise. The time variable in the expression is then set to 
+            the internal time of the m3h3 object. 
+
         """ 
-
-        # self.problem_specifications = kwargs["problem_specifications"]
-        # self.stimulus = self.problem_specifications["stimulus"]
-
         self.stimulus = self.parameters["stimulus"]
 
         if self.stimulus != None:
@@ -137,14 +139,23 @@ class ElectroProblem(Problem):
                 elif "time" in self.stimulus.user_parameters:
                     self.stimulus.time = self.time
 
+            elif isinstance(self.stimulus, cbcbeat.CompiledExpression):
+                self.stimulus.t = self.time._cpp_object
+
             else:
-                msg = """Stimulus should be an Expression 
-                or Markerwise, not %r""" %type(kwargs["stimulus"])
+                msg = """Stimulus should be an Expression, CompiledExpression 
+                or Markerwise, not %r""" %type(self.stimulus)
                 raise TypeError(msg)
 
 
     def _set_up_current(self, **kwargs):
         """ Add the given applied current to the electro problem. 
+
+        *Note*
+            Time variable should be encoded as time or t. 
+            The time variable is then set to the internal time of the 
+            m3h3 solver. 
+
         """
         self.applied_current = self.parameters["applied_current"]
 

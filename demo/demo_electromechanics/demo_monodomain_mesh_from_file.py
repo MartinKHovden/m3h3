@@ -23,37 +23,20 @@ mesh.coordinates()[:] /= 1000.0 # Scale mesh from micrometer to millimeter
 mesh.coordinates()[:] /= 10.0   # Scale mesh from millimeter to centimeter
 mesh.coordinates()[:] /= 4.0    # Scale mesh as indicated by Johan/Molly
 
+geo = Geometry(mesh)
+
 # Set up the stimulus subdomains: 
-stimulus_domain = MeshFunction("size_t", mesh, mesh.topology().dim())
-stimulus_domain.set_all(0)
+stimulation_cells = MeshFunction("size_t", mesh, "data/stimulation_cells.xml.gz")
 
-stimulus_1 = CompiledSubDomain("pow(x[0],2) + pow(x[1],2) <= 0.5 + tol", tol = 1e-15 )
-stimulus_1.mark(stimulus_domain, 1)
+time = Constant(0.0)
 
-stimulus_2 = CompiledSubDomain("pow(x[0]-0.5,2) + pow(x[1]-1, 2) <= 0.1 + tol", tol = 1e-15)
-stimulus_2.mark(stimulus_domain, 2)
-
-# Set up the geometry given the computational domain: 
-geo = Geometry2D(mesh)
-
-# Set up various parameters for the stimulus:
-duration = 2. # ms
-chi = 140.0     # mm^{-1}
-# Membrane capacitance
-C_m = 0.01 # mu F / mm^2
-A = 50000. # mu A/cm^3
-cm2mm = 10.
-factor = 1.0/(chi*C_m) # NB: cbcbeat convention
-amplitude = factor*A*(1./cm2mm)**3 # mV/ms
-I_s = Expression("t >= start ? (t <= (duration + start) ? amplitude : 0.0) : 0.0",
-                t=Constant(0.0),
-                start=0.0,
-                duration=duration,
-                amplitude=amplitude,
-                degree=0)
-
-# Set up Markerwise object for stimulus: 
-stimulus = Markerwise((I_s, I_s), (1,2), stimulus_domain)
+V = FunctionSpace(mesh, "DG", 0)
+from stimulation import cpp_stimulus
+amp = 30 # stimulus amplitude
+pulse = CompiledExpression(compile_cpp_code(cpp_stimulus).Stimulus(),
+                            element=V.ufl_element(), t=time._cpp_object,
+                            amplitude=amp, duration=10.0,
+                            cell_data=stimulation_cells)
 
 # Set up dt, t_0, and t_max: 
 dt = 0.1
@@ -81,7 +64,7 @@ electro_params["dt"] = dt
 electro_params["M_i"] = M_i
 electro_params["M_e"] = M_e
 electro_params["cell_model"]  = "Beeler_reuter_1977"#"Tentusscher_panfilov_2006_M_cell"
-electro_params["stimulus"]= None
+electro_params["stimulus"]= pulse
 electro_params["applied_current"] = None
 
 # Set up the parameters for the splitting solver: 
@@ -95,7 +78,7 @@ electrosolver_parameters["MonodomainSolver"]["preconditioner"] = "sor"#"petsc_am
 electrosolver_parameters["apply_stimulus_current_to_pde"] = True
 
 # Initialize the system with parameters and geometry.
-system = M3H3(geo, params)
+system = M3H3(geo, params, time = time)
 
 # Run the simulation by using the step function:
 for i in range(num_steps):

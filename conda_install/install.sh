@@ -5,15 +5,17 @@
 # fenics
 echo installing fenics...
 conda install -c conda-forge fenics
-echo
+echo  
 
 # m3h3
 echo installing m3h3...
+#git clone https://github.com/ComputationalPhysiology/m3h3.git
 git clone https://github.com/MartinKHovden/m3h3.git
 cd m3h3
-python setup.py develop
-cd ..
-echo
+python setup.py install
+
+cd .. 
+echo 
 
 # pulse
 echo installing dependencies
@@ -33,9 +35,11 @@ hg clone https://bitbucket.org/meg/cbcbeat
 cd cbcbeat
 python setup.py install
 cd ..
-echo
+echo 
 
 # h5py
 echo installing h5py...
 pip uninstall h5py
-pip install h5py --no-binary=h5py
+conda install h5py
+
+
