@@ -208,6 +208,14 @@ class Parameters(df.Parameters):
             p1 = params["param1"]
     """
     def __init__(self, label, **kwargs):
+        """Initializes a new instance of m3h3.
+
+        Calls the super-class initializer, and automatically sets 
+        the dolfin compiler parameters as well as the default parameters.
+        See self.set_default_parameters for more info. Also creates a 
+        new variable to store the electro parameter set. 
+        
+        """
         super().__init__(label, **kwargs) 
         set_dolfin_compiler_parameters()
         self.set_default_parameters()
@@ -216,6 +224,10 @@ class Parameters(df.Parameters):
 
     def set_default_parameters(self):
         """Sets default simulation parameters.
+
+        Function for setting the default parameters. Default parameters are 
+        "start_time", "end_time" and "log_level". This is automatically 
+        called when initializing an object of m3h3. 
         """
         self.add("log_level", df.get_log_level())
         m3h3.log(self["log_level"], "Log level is set to {}".format(
