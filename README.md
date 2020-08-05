@@ -10,7 +10,7 @@ The documentation and design doc for M3H3 can be found at Read the Docs https://
 
 ## Installation
 
-See the documentation for an overview on how to obtain the software: https://m3h3-docs.readthedocs.io/en/latest/installation.html
+See the documentation for a guide on how to obtain the software: https://m3h3-docs.readthedocs.io/en/latest/installation.html
 
 ## User guide
 
