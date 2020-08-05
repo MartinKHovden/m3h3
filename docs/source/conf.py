@@ -35,16 +35,8 @@ release = '1.0.0'
 extensions = ["recommonmark", "sphinx.ext.mathjax", "sphinx.ext.autodoc"
 ,"sphinx.ext.napoleon", "sphinx.ext.coverage", "sphinx.ext.viewcode"]
 
-mathjax_config = {
-    'tex2jax': {
-        'inlineMath': [ ["\\(","\\)"] ],
-        'displayMath': [["\\[","\\]"] ],
-    },
-}
-
 autodoc_mock_imports = ["dolfin", "fenics", "mpi4py", "h5py", "pulse", "geometry",
                         "cbcbeat", "numpy", "ufl"]
-
 
 master_doc = 'index'
 

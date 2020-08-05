@@ -206,6 +206,21 @@ class Parameters(df.Parameters):
         .. code-block:: python 
 
             p1 = params["param1"]
+
+        To set the default parameters for the electro problem, do
+
+        .. code-block:: python 
+
+            params.set_electro_parameters()
+
+        This will add a new parameter set with electro parmeters to params. 
+        To change the parameters in the electro parameter set, do 
+
+        .. code-block:: python 
+
+            electro_params = params["Electro"]
+        
+        The electro parameters can then be viewed, added, changed, and extracted as before. 
     """
     def __init__(self, label, **kwargs):
         """Initializes a new instance of m3h3.
