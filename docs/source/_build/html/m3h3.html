@@ -386,10 +386,48 @@ ElectroParameter class, this is now possible.</p>
 <dt id="m3h3.pde.ElectroProblem">
 <em class="property">class </em><code class="sig-prename descclassname">m3h3.pde.</code><code class="sig-name descname">ElectroProblem</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">geometry</span></em>, <em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/electro_problem.html#ElectroProblem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.ElectroProblem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">m3h3.pde.problem.Problem</span></code></p>
-<p>This class implements the variational form for electrophysiology
-problems.</p>
-<p>It initiates the cardiac cell model and the cardiac model with the
-given stimulus and applied current.</p>
+<p>This class sets up the electro problem with cell model and
+cardiac model as well as storing the solution fields.</p>
+<dl class="py method">
+<dt id="m3h3.pde.ElectroProblem._get_solution_fields">
+<code class="sig-name descname">_get_solution_fields</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/electro_problem.html#ElectroProblem._get_solution_fields"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.ElectroProblem._get_solution_fields" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the solution field for the electro problem.</p>
+<p>Function for returning the solution fields for</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.pde.ElectroProblem._set_up_current">
+<code class="sig-name descname">_set_up_current</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/electro_problem.html#ElectroProblem._set_up_current"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.ElectroProblem._set_up_current" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the given applied current to the electro problem.</p>
+<dl class="simple">
+<dt><em>Note</em></dt><dd><p>Time variable should be encoded as time or t.
+The time variable is then set to the internal time of the
+m3h3 solver.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.pde.ElectroProblem._set_up_initial_conditions">
+<code class="sig-name descname">_set_up_initial_conditions</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/electro_problem.html#ElectroProblem._set_up_initial_conditions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.ElectroProblem._set_up_initial_conditions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the initial conditions for the problem.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="m3h3.pde.ElectroProblem._set_up_stimulus">
+<code class="sig-name descname">_set_up_stimulus</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/electro_problem.html#ElectroProblem._set_up_stimulus"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.ElectroProblem._set_up_stimulus" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add the given stimulus to the electro problem. Stimulus is
+suposed to be of type CompiledExpression, Expression or Markerwise.</p>
+<dl class="simple">
+<dt><em>Note</em></dt><dd><p>When using CompiledExpression, time should be encoded as t in the
+expression. When using Expression or Markerwise, the time can be
+encoded as t or time in the user_parameters of the expression or
+markerwise. The time variable in the expression is then set to
+the internal time of the m3h3 object.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt id="m3h3.pde.ElectroProblem.get_cardiac_model">
 <code class="sig-name descname">get_cardiac_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/electro_problem.html#ElectroProblem.get_cardiac_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.ElectroProblem.get_cardiac_model" title="Permalink to this definition">¶</a></dt>
@@ -425,12 +463,22 @@ function of m3h3.</p>
 <dt id="m3h3.pde.FluidProblem">
 <em class="property">class </em><code class="sig-prename descclassname">m3h3.pde.</code><code class="sig-name descname">FluidProblem</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">geometry</span></em>, <em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/fluid_problem.html#FluidProblem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.FluidProblem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">m3h3.pde.problem.Problem</span></code></p>
+<dl class="py method">
+<dt id="m3h3.pde.FluidProblem._init_form">
+<code class="sig-name descname">_init_form</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/fluid_problem.html#FluidProblem._init_form"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.FluidProblem._init_form" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
 <dt id="m3h3.pde.PorousProblem">
 <em class="property">class </em><code class="sig-prename descclassname">m3h3.pde.</code><code class="sig-name descname">PorousProblem</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">geometry</span></em>, <em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/porous_problem.html#PorousProblem"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.PorousProblem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">m3h3.pde.problem.Problem</span></code></p>
+<dl class="py method">
+<dt id="m3h3.pde.PorousProblem._init_form">
+<code class="sig-name descname">_init_form</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/m3h3/pde/porous_problem.html#PorousProblem._init_form"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#m3h3.pde.PorousProblem._init_form" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="py class">

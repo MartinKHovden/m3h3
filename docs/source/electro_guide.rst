@@ -151,8 +151,8 @@ This is done in a similar way by
 
 Stimulus 
 ++++++++++
-The stimulus can be added as either a Constant, Expression, or a Markerwise function. 
-By using a Markerwise function, the position of the stimulus can be given. For more 
+The stimulus can be added as either a Constant, Expression, Markerwise function or a CompiledExpression. 
+By using a Markerwise function or CompiledExpression, the position of the stimulus can be given. For more 
 info on how to use subdomains and set up stimuluses, see the FEniCS tutorial.  
 
 Two examples of stimulus is shown below. The first is a simple stimulus using the 
@@ -206,18 +206,112 @@ Note that the string in expression can be any expression allowed in c++. The sti
 
 
 
-Setting up the fluid simulations 
-+++++++++++++++++++++++++++++++++++
+Setting up m3h3 
+==================
+Now that all the parameters are set, we can create an instance of the 
+m3h3 class. 
 
-Setting up the porous simulations 
-+++++++++++++++++++++++++++++++++++++
+.. code-block:: python 
 
-Setting up the interactions
-++++++++++++++++++++++++++++++
+    system = m3h3(geo, params)
 
 Running the simulation 
 =======================
+The m3h3 object can now be used to run the simulations. There are two different 
+ways of doing this. The first method is to use the step function. The second 
+one is to use the solve function. 
+
+Running simulations with the step function 
+++++++++++++++++++++++++++++++++++++++++++++
+To run the simulations using the step function, we have to know the number of 
+steps to do. In the parameter object, the start and end time is stored, as 
+well as the step length. The number of steps can then be calculated
+
+.. code-block:: python 
+
+    num_steps = int((end_time - start_time)/dt)
+
+To run the simulations, we can set up a for loop that runs the step function 
+for each iteration
+
+.. code-block:: python 
+
+    for _ in range(num_steps):
+        print("Time interval: ", (float(system.time), float(system.time) + dt) )
+        system.step()
+
+This will also print out the time interval it solves for for each iteration. 
+Each call to the step function updates the solution fields of system. Those can 
+be extracted using the get_solution_field() function
+
+.. code-block:: python 
+
+    vs_, vs = system.get_solution_field()["Electro"]
+
+where we are only interested in the solution fields for the electro problem. 
+
+
+Running simulations with the solve function 
++++++++++++++++++++++++++++++++++++++++++++++
+Alternatively, it is possible to use the solve function for doing the same 
+simulation. The solve function calls the step function multiple times. It returns 
+a generator that can be iterated over to obtain the solution fields and 
+the time intervals. 
+
+.. code-block:: python 
+    
+    for (t0, t1), solution_field in system.solve():
+        print((t0, t1))
+
+Again, the solution fields can be extracted using the get_solution_field() function
+as we did for the step function. 
 
 Post-processing 
 ================
-The last part is to 
+The last part is to visualize the results. There are different ways of doing this, 
+and it depends on the dimensions of the problem. 
+
+Plotting in 2D
++++++++++++++++++
+The easiest way to plot when looking at a 2D problem is to use the plot function
+from fenics. The plot function depends on matplotlib. If you dont have 
+matplotlib installed on your system, it can easily be obtained by using pip 
+
+.. code-block:: python 
+
+    pip install matplotlib 
+
+To plot the results, you can run the plot function with the desired field to 
+plot 
+
+.. code-block:: python 
+
+    plot(vs[0], title="Plot of transmembrane potential")
+
+This will plot the transmenbrane potential over the domain. 
+
+Plotting in 3D
++++++++++++++++++
+In the previous example where the mesh was taken from a file, the domain 
+is in 3 dimensions. The plot function have some problems visualizing the solution
+fields in this case. Instead of directly plotting it using the plot function 
+from fenics, we can instead write the results to file, and then use 
+external software for visualizing it. Two of the possibilities is to 
+use ParaView or vedo. vedo is a python package that can be installed using pip 
+
+.. code-block:: python 
+
+    pip install -U vedo 
+
+To download ParaView, follow the instructions on: https://www.paraview.org/download/
+When the plotting software is installed on the system, we need a file to 
+visualize. FEniCS have a function called File() that can convert the solution fields 
+into various formats. For visualization in ParaView and vedo, .pvd(tvk) files are 
+a possible format that can be used. To write the output to file, use the 
+File() function from FEniCS
+
+.. code-block:: python 
+
+    File("filename.pvd") << vs.split()[0]
+
+filename.pvd can now be found in the present folder. 

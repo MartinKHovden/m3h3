@@ -11,6 +11,9 @@ This example shows how to:
 - Run the electro simulation.
 - Plot the results.
 
+This set up for this problem is taken from the demo in cbcbeat, written by: Marie ...
+
+
 """
 
 from cbcbeat import *
@@ -18,6 +21,7 @@ from m3h3 import *
 
 import matplotlib.pyplot as plt 
 
+# Read the mesh from file
 mesh = Mesh("data/mesh115_refined.xml.gz")
 mesh.coordinates()[:] /= 1000.0 # Scale mesh from micrometer to millimeter
 mesh.coordinates()[:] /= 10.0   # Scale mesh from millimeter to centimeter
@@ -25,17 +29,16 @@ mesh.coordinates()[:] /= 4.0    # Scale mesh as indicated by Johan/Molly
 
 geo = Geometry(mesh)
 
-# Set up the stimulus subdomains: 
+# Set up the stimulus subdomains from file: 
 stimulation_cells = MeshFunction("size_t", mesh, "data/stimulation_cells.xml.gz")
 
 time = Constant(0.0)
 
 V = FunctionSpace(mesh, "DG", 0)
 from stimulation import cpp_stimulus
-amp = 30 # stimulus amplitude
 pulse = CompiledExpression(compile_cpp_code(cpp_stimulus).Stimulus(),
                             element=V.ufl_element(), t=time._cpp_object,
-                            amplitude=amp, duration=10.0,
+                            amplitude=30.0, duration=10.0,
                             cell_data=stimulation_cells)
 
 # Set up dt, t_0, and t_max: 
@@ -84,10 +87,6 @@ system = M3H3(geo, params, time = time)
 for i in range(num_steps):
     print("Time interval: ", (float(system.time), float(system.time) + dt) )
     system.step()
-
-# Or run the simulations by using the solve function: 
-# for (t0, t1), solution_field in system.solve():
-#     print((t0, t1))
 
 # Extract the solution:
 vs_, vs = system.get_solution_fields()[str(Physics.ELECTRO)]

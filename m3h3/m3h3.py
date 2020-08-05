@@ -28,6 +28,7 @@ of imports?
 Credit cbcbeat for the demos. 
 Install vedo for plotting? 
 Might also need to have a c++ compiler installed to run meshes from file. 
+The read mesh demo should probably be changed a bit? 
 
 M3H3 is a framework used for modelling and simulating the heart. It inherits
 much of the functionality from other libaries and combines it into a full

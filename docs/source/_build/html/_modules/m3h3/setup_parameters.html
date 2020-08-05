@@ -229,8 +229,7 @@
 <span class="sd">    *Usage*</span>
 <span class="sd">        .. code-block::python</span>
 
-<span class="sd">            params = ElectroParameters(&quot;ElectroParams&quot;)</span>
-<span class="sd">            </span>
+<span class="sd">            params = ElectroParameters(&quot;ElectroParams&quot;)      </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -317,7 +316,7 @@
 <span class="k">class</span> <span class="nc">Parameters</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">Parameters</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class for handling the parameters for the cardiac simulations. </span>
 <span class="sd">    </span>
-<span class="sd">    This class is for handling the parameters for the cardiac simulations. It </span>
+<span class="sd">    This class handles the parameters for the cardiac simulations. It </span>
 <span class="sd">    inherits most of the functionality from  `dolfin`&#39;s Parameters class. </span>
 <span class="sd">    The main difference is that this class have an alternative way </span>
 <span class="sd">    of handling the electro parameters, since we should be able to add stimulus</span>
@@ -328,28 +327,65 @@
 <span class="sd">    The parameter set can be nested. Each problem have their own nested</span>
 <span class="sd">    Parameter set that contains the parameters. </span>
 
-<span class="sd">    Paramaters can be added as follows:</span>
+<span class="sd">    *Usage*</span>
 
-<span class="sd">    .. code-block:: python </span>
+<span class="sd">        The Parameters object can be initialized with a given name </span>
 
-<span class="sd">        params = Parameters(&quot;M3H3&quot;)</span>
-<span class="sd">        params.add(&quot;param1&quot;, 1.0)</span>
+<span class="sd">        .. code-block:: python </span>
 
-<span class="sd">    They can be changed as follows:</span>
+<span class="sd">            params = Parameters(&quot;M3H3&quot;)</span>
 
-<span class="sd">    .. code-block:: python </span>
+<span class="sd">        To see the keys in the parameter set, use the key() function:</span>
 
-<span class="sd">        params[&quot;param1&quot;] = 2.0</span>
+<span class="sd">        .. code-block:: python </span>
 
-<span class="sd">    They can be extracted as follows:</span>
-
-<span class="sd">    .. code-block:: python </span>
-
-<span class="sd">        p1 = params[&quot;param1&quot;]</span>
+<span class="sd">            keys = params.keys()</span>
 
 
+<span class="sd">        Parameters can be added as follows:</span>
+
+<span class="sd">        .. code-block:: python </span>
+
+<span class="sd">            params.add(&quot;param1&quot;, 1.0)</span>
+
+<span class="sd">        They can be changed as follows:</span>
+
+<span class="sd">        .. code-block:: python </span>
+
+<span class="sd">            params[&quot;param1&quot;] = 2.0</span>
+
+<span class="sd">        They can be extracted as follows:</span>
+
+<span class="sd">        .. code-block:: python </span>
+
+<span class="sd">            p1 = params[&quot;param1&quot;]</span>
+
+<span class="sd">        To set the default parameters for the electro problem, do</span>
+
+<span class="sd">        .. code-block:: python </span>
+
+<span class="sd">            params.set_electro_parameters()</span>
+
+<span class="sd">        This will add a new parameter set with electro parmeters to params. </span>
+<span class="sd">        To change the parameters in the electro parameter set, do </span>
+
+<span class="sd">        .. code-block:: python </span>
+
+<span class="sd">            electro_params = params[&quot;Electro&quot;]</span>
+<span class="sd">        </span>
+<span class="sd">        The electro parameters can then be viewed, added, changed, and extracted as before. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initializes a new instance of m3h3.</span>
+
+<span class="sd">        Calls the super-class initializer, and automatically sets </span>
+<span class="sd">        the dolfin compiler parameters as well as the default parameters.</span>
+<span class="sd">        See self.set_default_parameters for more info. Also creates a </span>
+<span class="sd">        new variable to store the electro parameter set. This is necessary since</span>
+<span class="sd">        the electro paramters needs its own class. See :py:class:`ElectroParamters`</span>
+<span class="sd">        for more info. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> 
         <span class="n">set_dolfin_compiler_parameters</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_default_parameters</span><span class="p">()</span>
@@ -358,6 +394,14 @@
 
     <span class="k">def</span> <span class="nf">set_default_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets default simulation parameters.</span>
+
+<span class="sd">        Function for setting the default parameters. Default parameters are </span>
+<span class="sd">        &quot;start_time&quot;, &quot;end_time&quot; and &quot;log_level&quot;. This is automatically </span>
+<span class="sd">        called when initializing an object of m3h3. </span>
+
+<span class="sd">        *Note*</span>
+<span class="sd">            This is automatically called when initializing a new instance, so </span>
+<span class="sd">            does not need to be used. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s2">&quot;log_level&quot;</span><span class="p">,</span> <span class="n">df</span><span class="o">.</span><span class="n">get_log_level</span><span class="p">())</span>
         <span class="n">m3h3</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;log_level&quot;</span><span class="p">],</span> <span class="s2">&quot;Log level is set to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -379,8 +423,13 @@
             <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the keys in the parameter set.</span>
+
+<span class="sd">        *Returns*</span>
+<span class="sd">            :py:class:`dict`</span>
+<span class="sd">                Dictionary containing all the keys in the parameter set. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">keys</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-        <span class="c1"># print(self.electro_parameters)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Here&quot;</span><span class="p">)</span>
             <span class="n">keys</span> <span class="o">=</span> <span class="n">keys</span> <span class="o">+</span> <span class="p">[</span><span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="o">.</span><span class="n">value</span><span class="p">]</span>
@@ -388,6 +437,10 @@
 
     <span class="k">def</span> <span class="nf">has_parameter_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter_set</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Checks if parameter set is in Parameters object. </span>
+
+<span class="sd">        *Arguments*</span>
+<span class="sd">            :py:class:`string`</span>
+<span class="sd">                Name of parameter set to check if in object. </span>
 <span class="sd">        &quot;&quot;&quot;</span> 
         <span class="k">if</span> <span class="p">(</span><span class="n">parameter_set</span> <span class="o">==</span> <span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="o">.</span><span class="n">value</span> <span class="ow">and</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">electro_parameters</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">):</span>
@@ -401,6 +454,7 @@
     <span class="k">def</span> <span class="nf">set_electro_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets parameters for electrophysiology problems and solver. If</span>
 <span class="sd">        argument is None, default parameters are applied.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_parameter_set</span><span class="p">(</span><span class="n">Physics</span><span class="o">.</span><span class="n">ELECTRO</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_electro_default_parameters</span><span class="p">()</span>

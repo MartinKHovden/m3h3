@@ -17,6 +17,7 @@ setup_parameters
    :private-members:
 
 
+
 pde 
 ----
 
@@ -24,6 +25,7 @@ pde
    :members:
    :undoc-members:
    :show-inheritance:
+   :private-members:
 
 pde solver 
 -----------

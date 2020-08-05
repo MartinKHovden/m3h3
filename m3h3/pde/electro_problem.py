@@ -89,7 +89,7 @@ class ElectroProblem(Problem):
         """Returns the cardiac model for the electro problem given the cell 
         model and the user-parameters.  
 
-        """ 
+        """  
         return CardiacModel(domain = self.geometry.mesh,
                                 time = self.time, 
                                 M_i = self.parameters["M_i"], 
@@ -108,6 +108,11 @@ class ElectroProblem(Problem):
 
 
     def _get_solution_fields(self):
+        """ Return the solution field for the electro problem.
+
+        Function for returning the solution fields for 
+        
+        """
         return (self.prev_current, self.solution)
 
 

@@ -166,11 +166,9 @@
 <span class="kn">import</span> <span class="nn">importlib</span>
 
 <div class="viewcode-block" id="ElectroProblem"><a class="viewcode-back" href="../../../m3h3.html#m3h3.pde.ElectroProblem">[docs]</a><span class="k">class</span> <span class="nc">ElectroProblem</span><span class="p">(</span><span class="n">Problem</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;This class implements the variational form for electrophysiology</span>
-<span class="sd">    problems.</span>
+    <span class="sd">&quot;&quot;&quot;This class sets up the electro problem with cell model and </span>
+<span class="sd">    cardiac model as well as storing the solution fields. </span>
 
-<span class="sd">    It initiates the cardiac cell model and the cardiac model with the </span>
-<span class="sd">    given stimulus and applied current. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -211,7 +209,6 @@
 <span class="sd">        cell-class in the file, but with a lower-case first letter. The </span>
 <span class="sd">        class name is the same but with an upper-case first letter.  </span>
 
-
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Get the cell model name from the user parameters: </span>
@@ -244,7 +241,8 @@
 <div class="viewcode-block" id="ElectroProblem.get_cardiac_model"><a class="viewcode-back" href="../../../m3h3.html#m3h3.pde.ElectroProblem.get_cardiac_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_cardiac_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the cardiac model for the electro problem given the cell </span>
 <span class="sd">        model and the user-parameters.  </span>
-<span class="sd">        &quot;&quot;&quot;</span> 
+
+<span class="sd">        &quot;&quot;&quot;</span>  
         <span class="k">return</span> <span class="n">CardiacModel</span><span class="p">(</span><span class="n">domain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">mesh</span><span class="p">,</span>
                                 <span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> 
                                 <span class="n">M_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;M_i&quot;</span><span class="p">],</span> 
@@ -262,18 +260,27 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">prev_current</span> <span class="o">=</span> <span class="n">prev_current</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_get_solution_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prev_current</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="p">)</span>
+<div class="viewcode-block" id="ElectroProblem._get_solution_fields"><a class="viewcode-back" href="../../../m3h3.html#m3h3.pde.ElectroProblem._get_solution_fields">[docs]</a>    <span class="k">def</span> <span class="nf">_get_solution_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return the solution field for the electro problem.</span>
+
+<span class="sd">        Function for returning the solution fields for </span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prev_current</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">solution</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_set_up_stimulus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ElectroProblem._set_up_stimulus"><a class="viewcode-back" href="../../../m3h3.html#m3h3.pde.ElectroProblem._set_up_stimulus">[docs]</a>    <span class="k">def</span> <span class="nf">_set_up_stimulus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add the given stimulus to the electro problem. Stimulus is </span>
-<span class="sd">        suposed to be of type Expression or Markerwise. </span>
+<span class="sd">        suposed to be of type CompiledExpression, Expression or Markerwise.</span>
+
+<span class="sd">        *Note*</span>
+<span class="sd">            When using CompiledExpression, time should be encoded as t in the </span>
+<span class="sd">            expression. When using Expression or Markerwise, the time can be </span>
+<span class="sd">            encoded as t or time in the user_parameters of the expression or </span>
+<span class="sd">            markerwise. The time variable in the expression is then set to </span>
+<span class="sd">            the internal time of the m3h3 object. </span>
+
 <span class="sd">        &quot;&quot;&quot;</span> 
-
-        <span class="c1"># self.problem_specifications = kwargs[&quot;problem_specifications&quot;]</span>
-        <span class="c1"># self.stimulus = self.problem_specifications[&quot;stimulus&quot;]</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;stimulus&quot;</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
@@ -290,14 +297,23 @@
                 <span class="k">elif</span> <span class="s2">&quot;time&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span><span class="o">.</span><span class="n">user_parameters</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span>
 
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span><span class="p">,</span> <span class="n">cbcbeat</span><span class="o">.</span><span class="n">CompiledExpression</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">_cpp_object</span>
+
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Stimulus should be an Expression </span>
-<span class="s2">                or Markerwise, not </span><span class="si">%r</span><span class="s2">&quot;&quot;&quot;</span> <span class="o">%</span><span class="nb">type</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;stimulus&quot;</span><span class="p">])</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Stimulus should be an Expression, CompiledExpression </span>
+<span class="s2">                or Markerwise, not </span><span class="si">%r</span><span class="s2">&quot;&quot;&quot;</span> <span class="o">%</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stimulus</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
 
 
-    <span class="k">def</span> <span class="nf">_set_up_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ElectroProblem._set_up_current"><a class="viewcode-back" href="../../../m3h3.html#m3h3.pde.ElectroProblem._set_up_current">[docs]</a>    <span class="k">def</span> <span class="nf">_set_up_current</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Add the given applied current to the electro problem. </span>
+
+<span class="sd">        *Note*</span>
+<span class="sd">            Time variable should be encoded as time or t. </span>
+<span class="sd">            The time variable is then set to the internal time of the </span>
+<span class="sd">            m3h3 solver. </span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">applied_current</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;applied_current&quot;</span><span class="p">]</span>
 
@@ -306,13 +322,13 @@
             <span class="k">if</span> <span class="s2">&quot;t&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">applied_current</span><span class="o">.</span><span class="n">user_parameters</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">applied_current</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span>
             <span class="k">elif</span> <span class="s2">&quot;time&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">applied_current</span><span class="o">.</span><span class="n">user_parameters</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">applied_current</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">applied_current</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span></div>
 
-    <span class="k">def</span> <span class="nf">_set_up_initial_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="ElectroProblem._set_up_initial_conditions"><a class="viewcode-back" href="../../../m3h3.html#m3h3.pde.ElectroProblem._set_up_initial_conditions">[docs]</a>    <span class="k">def</span> <span class="nf">_set_up_initial_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the initial conditions for the problem. </span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">cell_model_initial_conditions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;initial_conditions&quot;</span><span class="p">]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cell_model_initial_conditions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;initial_conditions&quot;</span><span class="p">]</span></div></div>
 
 
 </pre></div>

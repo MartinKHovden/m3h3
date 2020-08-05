@@ -93,13 +93,19 @@
 <li class="toctree-l3"><a class="reference internal" href="#setting-up-the-parameters-and-specifying-the-problems">Setting up the parameters and specifying the problems</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#setting-up-the-electro-simulations">Setting up the electro simulations</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#stimulus">Stimulus</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#setting-up-the-fluid-simulations">Setting up the fluid simulations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#setting-up-the-porous-simulations">Setting up the porous simulations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#setting-up-the-interactions">Setting up the interactions</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#running-the-simulation">Running the simulation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#post-processing">Post-processing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-up-m3h3">Setting up m3h3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-the-simulation">Running the simulation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#running-simulations-with-the-step-function">Running simulations with the step function</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-simulations-with-the-solve-function">Running simulations with the solve function</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#post-processing">Post-processing</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#plotting-in-2d">Plotting in 2D</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#plotting-in-3d">Plotting in 3D</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="solid_guide.html">An introduction to doing cardiac simulations of the solid mechanics in M3H3</a></li>
@@ -289,8 +295,8 @@ This is done in a similar way by</p>
 </div>
 <div class="section" id="stimulus">
 <h3>Stimulus<a class="headerlink" href="#stimulus" title="Permalink to this headline">¶</a></h3>
-<p>The stimulus can be added as either a Constant, Expression, or a Markerwise function.
-By using a Markerwise function, the position of the stimulus can be given. For more
+<p>The stimulus can be added as either a Constant, Expression, Markerwise function or a CompiledExpression.
+By using a Markerwise function or CompiledExpression, the position of the stimulus can be given. For more
 info on how to use subdomains and set up stimuluses, see the FEniCS tutorial.</p>
 <p>Two examples of stimulus is shown below. The first is a simple stimulus using the
 Expression class.</p>
@@ -333,22 +339,98 @@ be applied.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="setting-up-the-fluid-simulations">
-<h3>Setting up the fluid simulations<a class="headerlink" href="#setting-up-the-fluid-simulations" title="Permalink to this headline">¶</a></h3>
 </div>
-<div class="section" id="setting-up-the-porous-simulations">
-<h3>Setting up the porous simulations<a class="headerlink" href="#setting-up-the-porous-simulations" title="Permalink to this headline">¶</a></h3>
-</div>
-<div class="section" id="setting-up-the-interactions">
-<h3>Setting up the interactions<a class="headerlink" href="#setting-up-the-interactions" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="setting-up-m3h3">
+<h2>Setting up m3h3<a class="headerlink" href="#setting-up-m3h3" title="Permalink to this headline">¶</a></h2>
+<p>Now that all the parameters are set, we can create an instance of the
+m3h3 class.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">system</span> <span class="o">=</span> <span class="n">m3h3</span><span class="p">(</span><span class="n">geo</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+</pre></div>
 </div>
 </div>
 <div class="section" id="running-the-simulation">
 <h2>Running the simulation<a class="headerlink" href="#running-the-simulation" title="Permalink to this headline">¶</a></h2>
+<p>The m3h3 object can now be used to run the simulations. There are two different
+ways of doing this. The first method is to use the step function. The second
+one is to use the solve function.</p>
+<div class="section" id="running-simulations-with-the-step-function">
+<h3>Running simulations with the step function<a class="headerlink" href="#running-simulations-with-the-step-function" title="Permalink to this headline">¶</a></h3>
+<p>To run the simulations using the step function, we have to know the number of
+steps to do. In the parameter object, the start and end time is stored, as
+well as the step length. The number of steps can then be calculated</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">num_steps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span><span class="o">/</span><span class="n">dt</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To run the simulations, we can set up a for loop that runs the step function
+for each iteration</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_steps</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Time interval: &quot;</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">time</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">system</span><span class="o">.</span><span class="n">time</span><span class="p">)</span> <span class="o">+</span> <span class="n">dt</span><span class="p">)</span> <span class="p">)</span>
+    <span class="n">system</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This will also print out the time interval it solves for for each iteration.
+Each call to the step function updates the solution fields of system. Those can
+be extracted using the get_solution_field() function</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">vs_</span><span class="p">,</span> <span class="n">vs</span> <span class="o">=</span> <span class="n">system</span><span class="o">.</span><span class="n">get_solution_field</span><span class="p">()[</span><span class="s2">&quot;Electro&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>where we are only interested in the solution fields for the electro problem.</p>
+</div>
+<div class="section" id="running-simulations-with-the-solve-function">
+<h3>Running simulations with the solve function<a class="headerlink" href="#running-simulations-with-the-solve-function" title="Permalink to this headline">¶</a></h3>
+<p>Alternatively, it is possible to use the solve function for doing the same
+simulation. The solve function calls the step function multiple times. It returns
+a generator that can be iterated over to obtain the solution fields and
+the time intervals.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="p">(</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">),</span> <span class="n">solution_field</span> <span class="ow">in</span> <span class="n">system</span><span class="o">.</span><span class="n">solve</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">((</span><span class="n">t0</span><span class="p">,</span> <span class="n">t1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Again, the solution fields can be extracted using the get_solution_field() function
+as we did for the step function.</p>
+</div>
 </div>
 <div class="section" id="post-processing">
 <h2>Post-processing<a class="headerlink" href="#post-processing" title="Permalink to this headline">¶</a></h2>
-<p>The last part is to</p>
+<p>The last part is to visualize the results. There are different ways of doing this,
+and it depends on the dimensions of the problem.</p>
+<div class="section" id="plotting-in-2d">
+<h3>Plotting in 2D<a class="headerlink" href="#plotting-in-2d" title="Permalink to this headline">¶</a></h3>
+<p>The easiest way to plot when looking at a 2D problem is to use the plot function
+from fenics. The plot function depends on matplotlib. If you dont have
+matplotlib installed on your system, it can easily be obtained by using pip</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">matplotlib</span>
+</pre></div>
+</div>
+<p>To plot the results, you can run the plot function with the desired field to
+plot</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">plot</span><span class="p">(</span><span class="n">vs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Plot of transmembrane potential&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will plot the transmenbrane potential over the domain.</p>
+</div>
+<div class="section" id="plotting-in-3d">
+<h3>Plotting in 3D<a class="headerlink" href="#plotting-in-3d" title="Permalink to this headline">¶</a></h3>
+<p>In the previous example where the mesh was taken from a file, the domain
+is in 3 dimensions. The plot function have some problems visualizing the solution
+fields in this case. Instead of directly plotting it using the plot function
+from fenics, we can instead write the results to file, and then use
+external software for visualizing it. Two of the possibilities is to
+use ParaView or vedo. vedo is a python package that can be installed using pip</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">U</span> <span class="n">vedo</span>
+</pre></div>
+</div>
+<p>To download ParaView, follow the instructions on: <a class="reference external" href="https://www.paraview.org/download/">https://www.paraview.org/download/</a>
+When the plotting software is installed on the system, we need a file to
+visualize. FEniCS have a function called File() that can convert the solution fields
+into various formats. For visualization in ParaView and vedo, .pvd(tvk) files are
+a possible format that can be used. To write the output to file, use the
+File() function from FEniCS</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">File</span><span class="p">(</span><span class="s2">&quot;filename.pvd&quot;</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">vs</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>filename.pvd can now be found in the present folder.</p>
+</div>
 </div>
 </div>
 
