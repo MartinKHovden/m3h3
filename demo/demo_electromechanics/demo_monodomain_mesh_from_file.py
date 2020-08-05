@@ -81,7 +81,7 @@ electro_params["dt"] = dt
 electro_params["M_i"] = M_i
 electro_params["M_e"] = M_e
 electro_params["cell_model"]  = "Beeler_reuter_1977"#"Tentusscher_panfilov_2006_M_cell"
-electro_params["stimulus"]= stimulus
+electro_params["stimulus"]= None
 electro_params["applied_current"] = None
 
 # Set up the parameters for the splitting solver: 
@@ -111,14 +111,7 @@ vs_, vs = system.get_solution_fields()[str(Physics.ELECTRO)]
 
 File("test.pvd") << vs.split()[0]
 
-
-
-# Plot the resulting solution fields:
-# plt.figure()
-plot(vs[0], title="Transmembrane potential (v) at end time")
-plt.savefig("TransmembranePot.png")
-# plt.figure()
-plot(vs[-1], title="1st state variable (s_0) at end time")
-plt.savefig("s_0(T).png")
+# If you are running on wsl, you migh have to install vedo in a 
+# windows terminal and then show the file from there. 
 
 print("Done!!")

@@ -1,6 +1,9 @@
 pytest
 sphinx
 fenics
+dolfin
 --no-binary=h5py
 h5py
 cbcbeat
+pulse
+geometry
