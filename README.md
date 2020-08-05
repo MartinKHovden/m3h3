@@ -14,8 +14,9 @@ See the documentation for a guide on how to obtain the software: https://m3h3-do
 
 ## User guide
 
-For a full user guide, see the documentation. 
+A user guide can be found in the documentation: https://m3h3-docs.readthedocs.io/en/latest/user_guide.html. 
+The main steps for doing simulations in m3h3 are explained in detail in the guide. 
 
 ## Demos 
 
-Demos are found in the demos folder.
+Demos are found in the demos folder or in the documentation: https://m3h3-docs.readthedocs.io/en/latest/demos.html.
