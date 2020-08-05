@@ -213,8 +213,10 @@ class Parameters(df.Parameters):
         Calls the super-class initializer, and automatically sets 
         the dolfin compiler parameters as well as the default parameters.
         See self.set_default_parameters for more info. Also creates a 
-        new variable to store the electro parameter set. 
-        
+        new variable to store the electro parameter set. This is necessary since
+        the electro paramters needs its own class. See :py:class:`ElectroParamters`
+        for more info. 
+
         """
         super().__init__(label, **kwargs) 
         set_dolfin_compiler_parameters()
