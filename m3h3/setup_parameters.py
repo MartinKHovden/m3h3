@@ -7,6 +7,9 @@ is because df.Parameters dont take Markerwise functiosn as elements. Since we
 might want to add complex stimuluses, this should be possible. By using the 
 ElectroParameter class, this is now possible. 
 
+For more information on how to use the parameter class, see the user guide in 
+the documentaion at m3h3-docs.readthedocs.com. 
+
 """
 
 from enum import Enum
@@ -85,6 +88,8 @@ class ElectroParameters(df.Parameters):
         self.stimulus = None 
         self.applied_current = None
         self.initial_conditions = None
+        self.M_i = None
+        self.M_e = None
     
     def add(self, *args):
         """ Function for adding new specifications. Should only be used 
@@ -105,6 +110,12 @@ class ElectroParameters(df.Parameters):
         elif args[0] == "initial_conditions":
             print("Initial conditions is already in the parameter set")
             raise ValueError("Initial condition is already in the parameter set")
+        elif args[0] == "M_i":
+            print("M_i is already in the parameter set")
+            raise ValueError("M_i is already in the parameter set")
+        elif args[0] == "M_e":
+            print("M_e is already in the parameter set")
+            raise ValueError("M_e is already in the parameter set")
         else :
             super().add(*args)
 
@@ -115,6 +126,10 @@ class ElectroParameters(df.Parameters):
             return self.applied_current
         elif key == "initial_conditions":
             return self.initial_conditions
+        elif key == "M_i":
+            return self.M_i 
+        elif key == "M_e":
+            return self.M_e
         else:
             return super().__getitem__(key)
     
@@ -125,6 +140,10 @@ class ElectroParameters(df.Parameters):
             self.applied_current = value
         elif key == "initial_conditions":
             self.initial_conditions = value
+        elif key == "M_i":
+            self.M_i = value
+        elif key == "M_e":
+            self.M_e = value
         else:
             super().__setitem__(key, value)
 
@@ -135,11 +154,15 @@ class ElectroParameters(df.Parameters):
             return self.applied_current
         elif key == "initial_conditions":
             return self.initial_conditions
+        elif key == "M_i":
+            return self.M_i 
+        elif key == "M_e":
+            return self.M_e
         else :
             return super().get(key)    
 
     def keys(self):
-        return_list = ["stimulus", "applied_current", "initial_conditions"]
+        return_list = ["stimulus", "applied_current", "initial_conditions", "M_i", "M_e"]
         return_list += super().keys()
         
         return return_list
@@ -151,6 +174,10 @@ class ElectroParameters(df.Parameters):
             return True
         elif key == "initial_conditions":
             return True
+        elif key == "M_i":
+            return True
+        elif key == "M_e":
+            return True
         else :
             return super().has_key(key)
 
@@ -158,6 +185,8 @@ class ElectroParameters(df.Parameters):
         self.stimulus = None 
         self.applied_current = None 
         self.initial_conditions = None
+        self.M_i = None
+        self.M_e = None
         super().clear()
 
 class Parameters(df.Parameters):
@@ -238,6 +267,8 @@ class Parameters(df.Parameters):
         self.set_default_parameters()
 
         self.electro_parameters = None
+        self.start_time = None
+        self.end_time = None
 
     def set_default_parameters(self):
         """Sets default simulation parameters.
@@ -260,12 +291,20 @@ class Parameters(df.Parameters):
     def __getitem__(self, key):
         if key == Physics.ELECTRO.value:
             return self.electro_parameters
+        elif key == "start_time":
+            return self.start_time 
+        elif key == "end_time":
+            return self.end_time
         else:
             return super().__getitem__(key)
 
     def __setitem__(self, key, value):
         if key == Physics.ELECTRO.value:
             self.electro_parameters = value
+        elif key == "start_time":
+            self.start_time = value 
+        elif key == "end_time":
+            self.end_time = value
         else:
             super().__setitem__(key, value)
 
@@ -280,6 +319,10 @@ class Parameters(df.Parameters):
         if self.electro_parameters != None:
             print("Here")
             keys = keys + [Physics.ELECTRO.value]
+        if self.start_time != None:
+            keys = keys + ["start_time"]
+        if self.end_time != None:
+            keys = keys + ["end_time"]
         return keys
 
     def has_parameter_set(self, parameter_set):
@@ -346,11 +389,14 @@ class Parameters(df.Parameters):
         self.electro_parameters.add("theta", 0.5)
         self.electro_parameters.add("polynomial_degree", 1)
         self.electro_parameters.add("use_average_u_constraint", False)
-        self.electro_parameters.add("M_i", 1.0)
-        self.electro_parameters.add("M_e", 2.0)
+        # self.electro_parameters.add("M_i", 1.0)
+        # self.electro_parameters.add("M_e", 2.0)
         self.electro_parameters.add("I_a", 0.0)
         self.electro_parameters.add("cell_model", "Tentusscher_panfilov_2006_M_cell")
         self.electro_parameters.add("pde_model", "bidomain")
+
+        self.electro_parameters["M_i"] = 1.0
+        self.electro_parameters["M_e"] = 2.0
 
         self.electro_parameters.add(df.LinearVariationalSolver.default_parameters())
 

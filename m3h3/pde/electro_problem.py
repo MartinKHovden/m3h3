@@ -90,6 +90,9 @@ class ElectroProblem(Problem):
         model and the user-parameters.  
 
         """  
+        print(self.parameters["M_i"], self.parameters["M_e"])
+        print(self.stimulus)
+        print(self.time)
         return CardiacModel(domain = self.geometry.mesh,
                                 time = self.time, 
                                 M_i = self.parameters["M_i"], 
@@ -98,13 +101,14 @@ class ElectroProblem(Problem):
                                 stimulus = self.stimulus,
                                 applied_current = self.applied_current)
 
-
-    def update_solution_fields(self, solution, prev_current):
+    # def update_solution_fields(self, solution, prev_current):
+    def update_solution_fields(self, vs_, vs, vur):
         """Function for updating the solution field. Used in step 
         function of m3h3. 
         """
-        self.solution = solution 
-        self.prev_current = prev_current
+        self.vs_ = vs_ 
+        self.vs = vs
+        self.vur = vur
 
 
     def _get_solution_fields(self):
@@ -113,7 +117,7 @@ class ElectroProblem(Problem):
         Function for returning the solution fields for 
         
         """
-        return (self.prev_current, self.solution)
+        return (self.vs_, self.vs, self.vur)
 
 
     def _set_up_stimulus(self, **kwargs):
@@ -130,27 +134,30 @@ class ElectroProblem(Problem):
         """ 
         self.stimulus = self.parameters["stimulus"]
 
-        if self.stimulus != None:
-            if isinstance(self.stimulus, cbcbeat.Markerwise):
-                for stim in self.stimulus.values():
-                    if "t" in stim.user_parameters:
-                        stim.t = self.time
-                    elif "time" in stim.user_parameters:
-                        stim.time = self.time
+        # if self.stimulus != None:
+        #     if isinstance(self.stimulus, cbcbeat.Markerwise):
+        #         for stim in self.stimulus.values():
+        #             if "t" in stim.user_parameters:
+        #                 stim.t = self.time
+        #             elif "time" in stim.user_parameters:
+        #                 stim.time = self.time
 
-            elif isinstance(self.stimulus, cbcbeat.Expression):
-                if "t" in self.stimulus.user_parameters:
-                    self.stimulus.t = self.time
-                elif "time" in self.stimulus.user_parameters:
-                    self.stimulus.time = self.time
+        #     elif isinstance(self.stimulus, cbcbeat.Constant):
+        #         pass
 
-            elif isinstance(self.stimulus, cbcbeat.CompiledExpression):
-                self.stimulus.t = self.time._cpp_object
+        #     elif isinstance(self.stimulus, cbcbeat.Expression):
+        #         if "t" in self.stimulus.user_parameters:
+        #             self.stimulus.t = self.time
+        #         elif "time" in self.stimulus.user_parameters:
+        #             self.stimulus.time = self.time
 
-            else:
-                msg = """Stimulus should be an Expression, CompiledExpression 
-                or Markerwise, not %r""" %type(self.stimulus)
-                raise TypeError(msg)
+        #     elif isinstance(self.stimulus, cbcbeat.CompiledExpression):
+        #         self.stimulus.t = self.time._cpp_object
+
+        #     else:
+        #         msg = """Stimulus should be an Expression, CompiledExpression 
+        #         or Markerwise, not %r""" %type(self.stimulus)
+        #         raise TypeError(msg)
 
 
     def _set_up_current(self, **kwargs):

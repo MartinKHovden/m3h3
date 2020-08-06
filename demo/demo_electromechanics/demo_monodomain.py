@@ -23,30 +23,31 @@ geo = Geometry2D(mesh)
 
 # Set up dt, t_0, and t_max: 
 dt = 0.1
-t_0 = 0.0
-t_max = 1.0
-num_steps = int((t_max - t_0)/dt)
-interval = (t_0, t_max)
+start_time = Constant(0.0)
+end_time = Constant(1.0)
+num_steps = int((float(end_time) - float(start_time))/dt)
+print(num_steps)
 
 # Define the conductivity (tensors):
-M_i = 1.0
+M_i = 3.0
 M_e = 1.0
 
 # Set up the parameteres for the heart-model: 
 params = Parameters("M3H3")
 
 # Set the end and start time of the simulation: 
-params["end_time"] = t_max
-params["start_time"] = t_0 
+params["end_time"] = end_time 
+params["start_time"] = start_time
 
 # Set the parameters for the electro problem: 
 params.set_electro_parameters()
 electro_params = params["Electro"]
 electro_params["M_i"] = M_i
 electro_params["M_e"] = M_e
-electro_params["cell_model"] = "Beeler_reuter_1977"#"Tentusscher_panfilov_2006_M_cell"
+electro_params["cell_model"] = "Tentusscher_panfilov_2006_epi_cell"
 electro_params["dt"] = dt
-electro_params["stimulus"] = Expression("10*x[1]*t", t = Constant(0.0), degree = 1)
+stim = Expression("10*t*x[0]", t = start_time, degree = 1)
+electro_params["stimulus"] = stim
 
 # Set the electro solver parameters: 
 electrosolver_params = params["ElectroSolver"]
@@ -62,14 +63,11 @@ system = M3H3(geo, params)
 
 # Run the simulation by using the step function:
 for i in range(num_steps):
-    print("Time interval: ", (float(system.time), float(system.time) + dt) )
+    print("Time interval: (%.2f, %.2f)" % (float(system.time), float(system.time) + dt) )
     system.step()
 
 # Extract the solution:
-vs_, vs = system.get_solution_fields()[str(Physics.ELECTRO)]
-
-File("test.pvd") << vs.split()[0]
-
+vs_, vs, vur = system.get_solution_fields()[str(Physics.ELECTRO)]
 
 # print(vs_.vector().get_local().shape)
 

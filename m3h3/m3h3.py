@@ -8,10 +8,9 @@ from m3h3.setup_parameters import Physics
 from m3h3.pde import ElectroProblem, SolidProblem, PorousProblem, FluidProblem
 from m3h3.pde.solver import *
 
-# from cbcbeat.cardiacmodels import CardiacModel
-from cbcbeat import Expression
+from cbcbeat import Expression, Constant
 
-"""
+""" 
 TODO:
 Fix readthedocs, make the code look better.
 Fix init files. 
@@ -29,6 +28,9 @@ Credit cbcbeat for the demos.
 Install vedo for plotting? 
 Might also need to have a c++ compiler installed to run meshes from file. 
 The read mesh demo should probably be changed a bit? 
+Say something about what problem are actually solved. 
+Which github link to use?
+Make electro parameters class work for M_i and M_e
 
 M3H3 is a framework used for modelling and simulating the heart. It inherits
 much of the functionality from other libaries and combines it into a full
@@ -59,7 +61,7 @@ class M3H3(object):
     To add stimulus, add it as a keyword argument with the keyword "stimulus".
     If stimulus is dependent on time, use keyword "t" or "time" to connect it
     to the internal timer in the m3h3-object. The stimulus should either be of
-    type Expression or Markewise. Use Markerwise if the position of the
+    type Expression or Markewise. Use Markerwise if the position of thes
     stimulus should be used as well as if multiple stimuluses should be
     applied.
 
@@ -91,11 +93,12 @@ class M3H3(object):
         if len(self.interactions) > 0:
             self._check_physics_interactions()
 
-        if 'time' in kwargs.keys():
-            self.time = kwargs['time']
-            kwargs.pop('time', None)
+        if isinstance(self.parameters["start_time"], Constant) and isinstance(self.parameters["end_time"], Constant):
+            self.time = self.parameters['start_time']
+            self.parameters["start_time"] = float(self.parameters["start_time"])
+            self.parameters["end_time"] = float(self.parameters["end_time"])
         else:
-            self.time = Constant(self.parameters['start_time'])
+            raise TypeError("start_time and end_time are not df.Constant's")
 
         self._setup_geometries(geometry, self.physics)
         self._setup_problems(**kwargs)
@@ -129,14 +132,17 @@ class M3H3(object):
             for _ in range(self.num_step[str(Physics.ELECTRO)]):
                 # Interval to solve for:
                 interval = (time, time+dt[str(Physics.ELECTRO)])
+                print(interval)
 
-                # Does one step and extracts the solution fields.
+                # Does one step and extracts the solution fields from solver.
                 self.electro_solver.step(interval)
                 solution_fields = self.electro_solver.solution_fields()
+                solution_fields[0].assign(solution_fields[1])
 
                 # Updates m3h3's internal solution fields.
                 self.electro_problem.update_solution_fields(solution_fields[0],
-                                                            solution_fields[1])
+                                                            solution_fields[1],
+                                                            solution_fields[2])
 
         if Physics.SOLID in self.physics:
             pass
@@ -273,7 +279,6 @@ class M3H3(object):
         """
         dt = {}
         if Physics.ELECTRO in self.physics:
-            print("TEst", self.parameters["Electro"]["dt"])
             dt[Physics.ELECTRO] = self.parameters[str(Physics.ELECTRO)]['dt']
         if Physics.SOLID in self.physics:
             dt[Physics.SOLID] = self.parameters[str(Physics.SOLID)]['dt']

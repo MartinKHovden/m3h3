@@ -85,7 +85,7 @@
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="designspecifications.html">Design specification</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"><strong>Installation</strong></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#installation-using-docker-containers">Installation using Docker containers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installation-using-anaconda">Installation using Anaconda</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installation-for-developers">Installation for developers</a><ul>
@@ -144,7 +144,7 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Installation</li>
+      <li><strong>Installation</strong></li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -164,17 +164,19 @@
            <div itemprop="articleBody">
             
   <div class="section" id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
-<p>In this section different methods for obtaining m3h3 is presented.</p>
+<h1><strong>Installation</strong><a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>There are different ways to install m3h3 depending on if you want to use the
+framework as a user or a developer. The first part consentrates on how to install
+m3h3 as a user. The second part is about how to install as a developer.</p>
 <div class="section" id="installation-using-docker-containers">
 <h2>Installation using Docker containers<a class="headerlink" href="#installation-using-docker-containers" title="Permalink to this headline">¶</a></h2>
 <p>The M3H3 package can be installed using Docker. This will set up a container
 with dolfin, cbcbeat, fenics, pulse, geometry and m3h3. Run all commands in the
 terminal.</p>
-<p>Should change docker file for development.</p>
 <ol class="arabic">
-<li><p>Download docker from docker.com for your platform.</p></li>
-<li><p>Clone</p></li>
+<li><p>Download docker by following the instructions on <a class="reference external" href="https://www.docker.com/get-started">https://www.docker.com/get-started</a>.</p></li>
+<li><p>Clone the <a class="reference external" href="https://github.com/MartinKHovden/m3h3">m3h3 repository</a> to your system
+and move into the m3h3 main folder.</p></li>
 <li><p>Build the docker image using the Dockerfile by running</p>
 <blockquote>
 <div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">build</span> <span class="o">-</span><span class="n">t</span> <span class="n">m3h3</span> <span class="n">docker</span><span class="o">/</span>
@@ -182,7 +184,7 @@ terminal.</p>
 </div>
 </div></blockquote>
 </li>
-<li><p>The next steps are similar to before. Run the docker container from the m3h3 folder to share this with the container.</p>
+<li><p>Run the docker container from the m3h3 folder to share folder with the container.</p>
 <blockquote>
 <div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span>docker run -ti -v $(pwd):/home/fenics/shared --name m3h3_container m3h3
 </pre></div>
@@ -197,7 +199,7 @@ terminal.</p>
 </div></blockquote>
 </li>
 <li><p>Now you have m3h3 installed as well as dolfin, fenics, cbcbeat, pulse and geometry. Enjoy!</p></li>
-<li><p>Now you can exit the container using</p>
+<li><p>Now you can exit the container using the exit command</p>
 <blockquote>
 <div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">exit</span>
 </pre></div>
@@ -205,22 +207,22 @@ terminal.</p>
 </div></blockquote>
 <p>This will send you back to your original system.</p>
 </li>
-<li><p>To restart the container, use</p>
+<li><p>To restart the container, use the start and exec commands</p>
 <blockquote>
 <div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">start</span> <span class="n">m3h3</span>
 <span class="n">docker</span> <span class="n">exec</span> <span class="o">-</span><span class="n">ti</span> <span class="o">-</span><span class="n">u</span> <span class="n">fenics</span> <span class="n">m3h3</span> <span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">bash</span> <span class="o">-</span><span class="n">l</span>
 </pre></div>
 </div>
 </div></blockquote>
-<p>which will send you back into the docker shell.</p>
+<p>This will send you back into the docker shell.</p>
 </li>
 </ol>
 </div>
 <div class="section" id="installation-using-anaconda">
 <h2>Installation using Anaconda<a class="headerlink" href="#installation-using-anaconda" title="Permalink to this headline">¶</a></h2>
 <p>The M3H3 package can also be installed using Anaconda. This requires
-a linux system. If you are working on Windows, set up windows subsystem
-for linux, and run the same steps as below.</p>
+a linux system. If you are working on Windows, set up <a class="reference external" href="https://docs.microsoft.com/en-us/windows/wsl/wsl2-index">Windows Subsystem
+for Linux</a>, and run the same steps as below.</p>
 <ol class="arabic">
 <li><p>First, make sure that you have conda installed on your system.</p></li>
 <li><p>Next, set up a conda environment</p>
@@ -253,8 +255,13 @@ geometry, and m3h3. Enjoy!</p></li>
 <p>Both Docker and Anaconda can be used for developing.</p>
 <div class="section" id="docker">
 <h3>Docker<a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h3>
+<p>The first steps are similar to what was done for the regular users. The main
+difference is that you install m3h3 in developer mode instead of
+doing a regular install.</p>
 <ol class="arabic">
-<li><p>Download docker from docker.com for your platform.</p></li>
+<li><p>Download docker by following the instructions on <a class="reference external" href="https://www.docker.com/get-started">https://www.docker.com/get-started</a>.</p></li>
+<li><p>Clone the <a class="reference external" href="https://github.com/MartinKHovden/m3h3">m3h3 repository</a> to your system
+and move into the m3h3 main folder.</p></li>
 <li><p>Build the docker image using the Dockerfile by running</p>
 <blockquote>
 <div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">build</span> <span class="o">-</span><span class="n">t</span> <span class="n">m3h3</span> <span class="n">docker</span><span class="o">/</span><span class="n">DockerfileDevelop</span>
@@ -276,8 +283,10 @@ geometry, and m3h3. Enjoy!</p></li>
 </div>
 </div></blockquote>
 </li>
-<li><p>Now you have m3h3 installed as well as dolfin, fenics, cbcbeat, pulse and geometry. Enjoy!</p></li>
-<li><p>Now you can exit the container using</p>
+<li><p>Now you have m3h3 installed as well as dolfin, fenics, cbcbeat, pulse and geometry. Enjoy!
+You can then change the files in the m3h3 folder and the changes will immediately
+take action in the terminal within the docker container.</p></li>
+<li><p>The container can be exited by using the exit command</p>
 <blockquote>
 <div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">exit</span>
 </pre></div>
@@ -285,14 +294,14 @@ geometry, and m3h3. Enjoy!</p></li>
 </div></blockquote>
 <p>This will send you back to your original system.</p>
 </li>
-<li><p>To restart the container, use</p>
+<li><p>To restart the container, use the start and exec commands</p>
 <blockquote>
 <div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">start</span> <span class="n">m3h3</span>
 <span class="n">docker</span> <span class="n">exec</span> <span class="o">-</span><span class="n">ti</span> <span class="o">-</span><span class="n">u</span> <span class="n">fenics</span> <span class="n">m3h3</span> <span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">bash</span> <span class="o">-</span><span class="n">l</span>
 </pre></div>
 </div>
 </div></blockquote>
-<p>which will send you back into the docker shell.</p>
+<p>This will send you back into the docker shell and development mode.</p>
 </li>
 </ol>
 </div>

@@ -1,8 +1,9 @@
-#############
-Installation
-#############
-
-In this section different methods for obtaining m3h3 is presented. 
+*****************
+**Installation**
+*****************
+There are different ways to install m3h3 depending on if you want to use the 
+framework as a user or a developer. The first part consentrates on how to install 
+m3h3 as a user. The second part is about how to install as a developer. 
 
 =====================================
 Installation using Docker containers
@@ -11,11 +12,10 @@ The M3H3 package can be installed using Docker. This will set up a container
 with dolfin, cbcbeat, fenics, pulse, geometry and m3h3. Run all commands in the 
 terminal. 
 
-Should change docker file for development. 
+#. Download docker by following the instructions on https://www.docker.com/get-started.
 
-#. Download docker from docker.com for your platform.
-
-#. Clone
+#. Clone the `m3h3 repository <https://github.com/MartinKHovden/m3h3>`_ to your system 
+   and move into the m3h3 main folder. 
 
 #. Build the docker image using the Dockerfile by running
 
@@ -23,7 +23,7 @@ Should change docker file for development.
 
         docker build -t m3h3 docker/
 
-#. The next steps are similar to before. Run the docker container from the m3h3 folder to share this with the container.
+#. Run the docker container from the m3h3 folder to share folder with the container.
     
     .. code-block:: python 
 
@@ -37,7 +37,7 @@ Should change docker file for development.
 
 #. Now you have m3h3 installed as well as dolfin, fenics, cbcbeat, pulse and geometry. Enjoy!
 
-#. Now you can exit the container using 
+#. Now you can exit the container using the exit command 
 
     .. code-block:: python 
 
@@ -45,22 +45,22 @@ Should change docker file for development.
 
    This will send you back to your original system. 
 
-#. To restart the container, use
+#. To restart the container, use the start and exec commands
 
     .. code-block:: python 
 
         docker start m3h3 
         docker exec -ti -u fenics m3h3 /bin/bash -l
    
-   which will send you back into the docker shell. 
+   This will send you back into the docker shell. 
     
     
 ======================================
 Installation using Anaconda
 ======================================
 The M3H3 package can also be installed using Anaconda. This requires 
-a linux system. If you are working on Windows, set up windows subsystem 
-for linux, and run the same steps as below. 
+a linux system. If you are working on Windows, set up `Windows Subsystem 
+for Linux <https://docs.microsoft.com/en-us/windows/wsl/wsl2-index>`_, and run the same steps as below. 
 
 #. First, make sure that you have conda installed on your system. 
 
@@ -93,7 +93,14 @@ Both Docker and Anaconda can be used for developing.
 Docker 
 ++++++++++
 
-#. Download docker from docker.com for your platform. 
+The first steps are similar to what was done for the regular users. The main 
+difference is that you install m3h3 in developer mode instead of 
+doing a regular install. 
+
+#. Download docker by following the instructions on https://www.docker.com/get-started. 
+
+#. Clone the `m3h3 repository <https://github.com/MartinKHovden/m3h3>`_ to your system 
+   and move into the m3h3 main folder. 
 
 #. Build the docker image using the Dockerfile by running
 
@@ -114,8 +121,10 @@ Docker
         python3 setup.py develop
 
 #. Now you have m3h3 installed as well as dolfin, fenics, cbcbeat, pulse and geometry. Enjoy!
+   You can then change the files in the m3h3 folder and the changes will immediately 
+   take action in the terminal within the docker container. 
 
-#. Now you can exit the container using 
+#. The container can be exited by using the exit command  
 
     .. code-block:: python 
 
@@ -123,14 +132,14 @@ Docker
 
    This will send you back to your original system. 
 
-#. To restart the container, use
+#. To restart the container, use the start and exec commands 
 
     .. code-block:: python 
 
         docker start m3h3 
         docker exec -ti -u fenics m3h3 /bin/bash -l
    
-   which will send you back into the docker shell. 
+   This will send you back into the docker shell and development mode. 
 
 
 Anaconda 

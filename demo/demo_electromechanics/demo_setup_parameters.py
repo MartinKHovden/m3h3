@@ -20,7 +20,7 @@ print("end_time: ", params["end_time"])
 params["end_time"] = 10.0
 
 # To see the updated value:
-print("end_time after update: ", params["end_time"] )
+print("end_time after update: ", params["end_time"])
 # Results in: 10.0
 
 # To add more parameters, use
