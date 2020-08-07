@@ -1,9 +1,6 @@
 Bidomain Biventricular
 ===========================================================
 
-This example shows how to set up m3h3 to read mesh, stimulus and condictivities 
-from file.  
-
 .. code-block:: python 
 
     """ 
