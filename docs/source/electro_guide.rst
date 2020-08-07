@@ -268,6 +268,7 @@ the time intervals.
     
     for (t0, t1), solution_field in system.solve():
         print((t0, t1))
+        vs_, vs, vur = solution_field
 
 Again, the solution fields can be extracted using the get_solution_field() function
 as we did for the step function. 
@@ -318,14 +319,14 @@ File() function from FEniCS
 
 filename.pvd can now be found in the present folder and opened using ParaView. 
 
-If you want a lighter package to to similar plotting using the terminal, you can use the vedo 
+If you want a lighter package to do similar plotting using the terminal, you can use the vedo 
 python package. This can be installed using pip 
 
 .. code-block:: python
 
     pip install -U vedo 
 
-Then you can open a python script an run 
+Then you can open a python script and run 
 
 .. code-block:: python 
 
