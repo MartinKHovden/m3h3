@@ -124,7 +124,6 @@ as one would do in a dictionary.
 
 .. code-block:: python 
 
-    electro_params = params["Electro"]
     electro_params["M_i"] = M_i
     electro_params["M_e"] = M_e
     electro_params["cell_model"] = "Beeler_reuter_1977"
@@ -143,8 +142,6 @@ This is done in a similar way as for the electro parameters
 
 .. code-block:: python 
 
-    electrosolver_parameters = params["ElectroSolver"]
-
     electrosolver_parameters["theta"] = 0.5                        # Second order splitting scheme
     electrosolver_parameters["pde_solver"] = "monodomain"          # Use Monodomain model for the PDEs
     electrosolver_parameters["CardiacODESolver"]["scheme"] = "RL1" # 1st order Rush-Larsen for the ODEs
@@ -159,8 +156,8 @@ Stimulus
 ++++++++++
 The stimulus can be added as either a Constant, Expression, Markerwise function or a CompiledExpression. 
 By using a Markerwise function or CompiledExpression, the position of the stimulus can be given. For more 
-info on how to use subdomains and set up stimuluses, see the FEniCS tutorial. In general,
-all stimuluses that works in cbcbeat works in m3h3.   
+info on how to use subdomains and set up stimulus, see the FEniCS tutorial. In general,
+all methods that work for setting up stimulus in cbcbeat also work in m3h3.   
 
 Two examples of stimulus is shown below. The first is a simple stimulus using the 
 Expression class. 
@@ -172,8 +169,8 @@ Expression class.
 This is a simple stimulus that moves along the x-axis with time.  
 
 A more complex example uses the CompiledSubdomain functionality in combination 
-with the Markerwise class to set up two separate stimuluses in the domain.
-The first step is to mark the two areas of the domain where the stimuluses should 
+with the Markerwise class to set up two separate stimulus in the domain.
+The first step is to mark the two areas of the domain where the stimulus should 
 be applied. 
 
 .. code-block:: python
@@ -205,7 +202,8 @@ When the two subdomains are set up, the stimulus for each domain can be set the 
                 amplitude=5,
                 degree=0)
 
-Note that the string in expression can be any expression allowed in c++. The stimuluses can now be connected to the subdomains via the Markerwise class 
+Note that the string in expression can be any expression allowed in c++. The 
+stimuluses can now be applied to the subdomains via the Markerwise class 
 
 .. code-block:: python 
 
@@ -226,13 +224,12 @@ m3h3 class.
 Running the simulation 
 =======================
 The m3h3 object can now be used to run the simulations. There are two different 
-ways of doing this. The first method is to use the step function. The second 
-one is to use the solve function. 
+ways of doing this: Using the step method, or using the solve method in m3h3.  
 
 Running simulations with the step function 
 ++++++++++++++++++++++++++++++++++++++++++++
 To run the simulations using the step function, we have to know the number of 
-steps to do. In the parameter object, the start and end time is stored, as 
+steps to run. In the parameter object, the start and end time is stored, as 
 well as the step length. The number of steps can then be calculated
 
 .. code-block:: python 
@@ -248,13 +245,14 @@ for each iteration
         print("Time interval: ", (float(system.time), float(system.time) + dt) )
         system.step()
 
+
 This will also print out the time interval it solves for for each iteration. 
 Each call to the step function updates the solution fields of system. Those can 
 be extracted using the get_solution_field() function
 
 .. code-block:: python 
 
-    vs_, vs = system.get_solution_field()["Electro"]
+    vs_, vs, vur = system.get_solution_field()["Electro"]
 
 where we are only interested in the solution fields for the electro problem. 
 
@@ -277,7 +275,7 @@ as we did for the step function.
 Post-processing 
 ================
 The last part is to visualize the results. There are different ways of doing this, 
-and it depends on the dimensions of the problem. 
+and it depends on the problem dimension. 
 
 Plotting in 2D
 +++++++++++++++++
@@ -305,11 +303,7 @@ is in 3 dimensions. The plot function have some problems visualizing the solutio
 fields in this case. Instead of directly plotting it using the plot function 
 from fenics, we can instead write the results to file, and then use 
 external software for visualizing it. Two of the possibilities is to 
-use ParaView or vedo. vedo is a python package that can be installed using pip 
-
-.. code-block:: python 
-
-    pip install -U vedo 
+use ParaView or vedo. 
 
 To download ParaView, follow the instructions on: https://www.paraview.org/download/
 When the plotting software is installed on the system, we need a file to 
@@ -322,4 +316,20 @@ File() function from FEniCS
 
     File("filename.pvd") << vs.split()[0]
 
-filename.pvd can now be found in the present folder. 
+filename.pvd can now be found in the present folder and opened using ParaView. 
+
+If you want a lighter package to to similar plotting using the terminal, you can use the vedo 
+python package. This can be installed using pip 
+
+.. code-block:: python
+
+    pip install -U vedo 
+
+Then you can open a python script an run 
+
+.. code-block:: python 
+
+    from vedo import show 
+    show("./filename.pvd")
+
+This assumes that you are in the folder where the output data is stored. 
