@@ -29,12 +29,6 @@ terminal.
 
         docker run -ti -v $(pwd):/home/fenics/shared --name m3h3_container m3h3
 
-#. Next install m3h3 in the container 
-
-    .. code-block:: python 
-
-        python3  setup.py install 
-
 #. Now you have m3h3 installed as well as dolfin, fenics, cbcbeat, pulse and geometry. Enjoy!
 
 #. Now you can exit the container using the exit command 
@@ -121,8 +115,8 @@ doing a regular install.
         python3 setup.py develop
 
 #. Now you have m3h3 installed as well as dolfin, fenics, cbcbeat, pulse and geometry. Enjoy!
-   You can then change the files in the m3h3 folder and the changes will immediately 
-   take action in the terminal within the docker container. 
+   You can then make changes to the files in the m3h3 folder and the changes will immediately 
+   take effect in the terminal within the docker container. 
 
 #. The container can be exited by using the exit command  
 
