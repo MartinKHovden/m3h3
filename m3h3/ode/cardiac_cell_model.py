@@ -1,4 +1,7 @@
-"""This module contains a base class for cardiac cell models."""
+"""This module contains a base class for cardiac cell models.
+
+This module is taken from cbcbeat, and written by Marie E. Rognes. 
+"""
 from __future__ import division
 
 __author__ = "Marie E. Rognes (meg@simula.no), 2012--2013"

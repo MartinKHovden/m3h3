@@ -37,6 +37,8 @@ pde solver
 
 ode
 -------
+All the documentation for the ode class is taken directly from cbcbeat. 
+
 .. automodule:: m3h3.ode   
    :members:
    :undoc-members:

@@ -1,3 +1,5 @@
+# This module is taken from cbcbeat, and written by Marie E. Rognes. 
+#
 # Beeler-Reuter Mammalian Ventricular Model 1977
 # 
 # In contrast to the earlier Purkinje fibre ionic current models ofD. Noble
