@@ -4,14 +4,15 @@ Demo with a complex stimulus
 .. code-block:: python 
 
     """ 
-    An example on how to use m3h3 to do simulations of the electrical 
-    activity of the heart for a more complex stimulus applied to the domain. 
+    A simple example on how to use the m3h3 module for solving the 
+    bidomina/monodomain equations coupled to a cell model with a simple domain 
+    and a complex stimulus.  
 
     This example shows how to:
     - Set up a simple geometry using functionality from fenics. 
     - Update the parameters of the electro problem.
     - Update the solver parameters for the electro solver.
-    - Add a more complex stimulususing Meshfunctions and Compiled subdomains. 
+    - Add a more complex stimulus using Meshfunctions and Compiled subdomains. 
     - Run the electro simulation.
     - Plot the results.
 

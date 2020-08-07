@@ -1,20 +1,20 @@
 Bidomain Biventricular
 ===========================================================
+
 This example shows how to set up m3h3 to read mesh, stimulus and condictivities 
 from file.  
 
 .. code-block:: python 
 
     """ 
-    An example on how to use m3h3 to do simulations of the electrical 
-    activity of the heart for a more complex stimulus applied to the domain.
-    The mesh is read from file.  
+    An example on how to use m3h3 to do simulations of cardiac electrophysiology 
+    using a complex stimulus applied to the domain. 
 
     This example shows how to:
-    - Read the geometry from file. 
+    - Read the geometry, stimulus and conductivities from file. 
     - Update the parameters of the electro problem.
     - Update the solver parameters for the electro solver.
-    - Add a more complex stimulususing Meshfunctions and Compiled subdomains. 
+    - Add a more complex stimulus using CompiledExpression. 
     - Run the electro simulation.
     - Plot the results.
 

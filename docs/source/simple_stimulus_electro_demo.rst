@@ -1,13 +1,12 @@
 Demo with a simple stimulus
 ===========================================================
-This example shows how to set up m3h3 to run a simple simulation 
-of the electrical activity with a basic stimulus for the monodomain equations. 
 
 .. code-block:: python  
     
     """ 
-    A simple example on how to use the m3h3 module for solving for the electrical 
-    activity of the heart. 
+    A simple example on how to use the m3h3 module for solving the 
+    bidomina/monodomain equations coupled to a cell model with a simple domain 
+    and stimulus. 
 
     This example shows how to:
     - Set up a simple geometry. 
