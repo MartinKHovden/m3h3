@@ -10,6 +10,8 @@ simulation in M3H3. Currently, only the electrical activity can be simulated.
 This solver solves the monodomain or the bidomain equations presented in 
 Sundnes (2006) to find the transmembrane potential. 
 
+SAY SOMETHING MORE ABOUT THE PROBLEM WE ARE SOLVING!!!
+
 Importing M3H3 
 ===============
 To import all the functionality of M3H3, run 
@@ -24,11 +26,11 @@ do not have to be imported separately.
 Setting up the mesh
 ======================
 The first step is to set up the computational domain of interest. This 
-is done by creating a mesh using the functionality of fenics. All fenics 
+is done by creating a mesh using the functionality of FEniCS. All fenics 
 mesh functions are included in the initial import of m3h3. 
 
 Setting up a simple mesh can easily be done by using the functionality from 
-feincs: 
+FEniCS: 
 
 .. code-block:: python 
 
@@ -40,6 +42,9 @@ Mesh function.
 .. code-block:: python 
 
     mesh = Mesh("data/mesh115_refined.xml.gz")
+
+Other mesh-functions can be found in the mesh module of fenics: https://fenicsproject.org/docs/dolfin/2016.2.0/python/programmers-reference/cpp/mesh/index.html.
+All of them are imported when importing m3h3. 
 
 When the mesh it created, you need to set up a geometry object with 
 this mesh

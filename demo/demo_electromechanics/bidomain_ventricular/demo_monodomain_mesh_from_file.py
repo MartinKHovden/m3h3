@@ -11,8 +11,7 @@ This example shows how to:
 - Run the electro simulation.
 - Plot the results.
 
-This set up for this problem is taken from the demo in cbcbeat, written by: Marie ...
-
+The set up for this problem is taken from the demos in cbcbeat, written by: Marie E. Rognes. 
 
 """
 
