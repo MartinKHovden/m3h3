@@ -4,7 +4,7 @@ from dolfin import Constant
 
 from geometry import HeartGeometry, MultiGeometry
 
-from m3h3.setup_parameters import Physics
+from m3h3.setup_parameters import Physics 
 from m3h3.pde import ElectroProblem, SolidProblem, PorousProblem, FluidProblem
 from m3h3.pde.solver import *
 
@@ -16,21 +16,12 @@ Fix readthedocs, make the code look better.
 Fix init files. 
 Update initial conditions.
 Explain how to add more cell models (lower/upper case)
-Should everything be imported from cbcbeat?
 Describe the parameters in detail, and where t hey are sent. 
-Make it work with 3D? 
-What is vs_? Since it can be assigned initial conditions? Is it a bunch of state variables? 
-dt should be in solver parameters? 
-Rename parameter class to avoid confusion with dolfin imports?
 Credit where the cell models come from, or add them straight from cbcbeat instead
 of imports? 
 Credit cbcbeat for the demos. 
-Install vedo for plotting? 
-Might also need to have a c++ compiler installed to run meshes from file. 
-The read mesh demo should probably be changed a bit? 
 Say something about what problem are actually solved. 
 Which github link to use?
-Make electro parameters class work for M_i and M_e
 
 M3H3 is a framework used for modelling and simulating the heart. It inherits
 much of the functionality from other libaries and combines it into a full
@@ -38,32 +29,17 @@ framework that encompasses the different branches of physics relevant to
 caridac modelling. The goal is for the framework to be able to simulate
 the cardiac mechanics, cardiac electrophysiology, hemodynamic modelling, etc.
 
-For now, only methods for simluating the electrical activity is implemented.
-For modelling the electrical activity in the heart, the splittingsolver from
-cbcbeat is used. Most of the functionality is inherited from the cbcbeat
-package. It solves the coupled heart equations, presented in Sundnes et. al.:
-https://www.researchgate.net/publication/265487224_Computing_the_Electrical_Activity_in_the_Human_Heart#:~:text=The%20contraction%20of%20the%20heart,called%20the%20electrocardiogram%20(ECG).
-
 """
-
 
 class M3H3(object):
     """ A class for representing the full cardiac system.
 
     This is the class for representing the full cardiac system, and is used to
-    do the simulations of the system.
+    do the simulations of the system. 
 
     For the electro problem is solves the Bidomain equations using the
-    Splitting solver technique presented in Sundnes (2006). The bidomain
-    equations are given by:
-
-
-    To add stimulus, add it as a keyword argument with the keyword "stimulus".
-    If stimulus is dependent on time, use keyword "t" or "time" to connect it
-    to the internal timer in the m3h3-object. The stimulus should either be of
-    type Expression or Markewise. Use Markerwise if the position of thes
-    stimulus should be used as well as if multiple stimuluses should be
-    applied.
+    Splitting solver technique presented in Sundnes (2006). For more information
+    see the electro_solver module. 
 
     The idea is to set up a M3H3 object that can be used to run simulations.
     The basic usage is:
@@ -81,6 +57,11 @@ class M3H3(object):
         parameters (:py:class:`dolfin.Parameters`)
             A Parameters object that contains parameters for setting up the
             cardiac simulation.
+    
+    *Usage*
+        .. code-block:: python 
+
+            from m3h3 import *
 
     """
     def __init__(self, geometry, parameters, *args, **kwargs):
@@ -105,8 +86,10 @@ class M3H3(object):
         self._setup_solvers(**kwargs)
 
     def step(self):
-        """ Does one step for the solvers for a time step equal to the largest
-        time step for all the solvers. Finds the interval using the
+        """Does one step for each solver. 
+        
+        The step function does one step for all the solvers for a time step 
+        equal to the largest time step for all the solvers. Finds the interval using the
         internal time variable and the get_max_dt function. Each problem have their own 
         separate time steps. The time steps are assumed to be multiples of each other. 
         This means that if one solver have twice the time step of another solver, 
@@ -119,20 +102,36 @@ class M3H3(object):
 
         At the end, it updates m3h3's internal time-variable. 
 
+        *Usage*
+            To use the step-function, you first need a m3h3 object. 
+
+            ..code-block:: python 
+
+                system = m3h3(geo, params)
+            
+            Then you can set up a for loop for the number of steps and call the 
+            system object's step function for each iteration
+
+            .. code-block:: python 
+
+                for _ in range(num_steps):
+                    system.step()
+
         """
         # Setup the number of steps for each solver if first iteration.
         if self.time.values()[0] == self.parameters["start_time"]:
             self.num_step, self.max_dt = self._get_num_steps()
 
+        # Stores the current internal time of m3h3 object. 
         time = float(self.time)
 
+        # Finds the dictionary with time steps for each solver. 
         dt = self._get_physics_dt()
 
         if Physics.ELECTRO in self.physics:
             for _ in range(self.num_step[str(Physics.ELECTRO)]):
                 # Interval to solve for:
                 interval = (time, time+dt[str(Physics.ELECTRO)])
-                print(interval)
 
                 # Does one step and extracts the solution fields from solver.
                 self.electro_solver.step(interval)
@@ -156,11 +155,26 @@ class M3H3(object):
         self.time.assign(time + self.max_dt)
 
     def solve(self):
-        """ Solves the problem by running multiple steps for the full interval
-            ("start_time", "end_time"), where "start_time" and "end_time" are
-            given as parameters to the m3h3 object.
+        """Function for running all time-steps at once. 
+        
+        Solves the problem by running multiple steps for the full interval
+        ("start_time", "end_time"), where "start_time" and "end_time" are
+        given as parameters to the m3h3 object. Function returns a generator 
+        object with intervals and solution fields that can be iterated over. 
 
-            *Returns*
+        *Returns*
+            Generator with (interval, solution_fields) (:py:class:`genexpr`)
+                Generator that can be iterated over with intervals and 
+                solution fields. 
+            
+        *Usage*
+            The generator can be iterated over to give the solutions
+
+            .. code-block:: python
+
+                system = m3h3(geo, params)
+                for interval, solution_fields in system.solve():
+                    # Process the solutions. 
 
         """
         self.max_dt = self._get_num_steps()[1]
@@ -174,8 +188,9 @@ class M3H3(object):
             t1 += self.max_dt
 
     def get_solution_fields(self):
-        """ Returns the solution fields for the different problems. Returns a
-        dictionary with keys given by strings representing which problem they
+        """ Returns the solution fields. 
+        
+        Returns a dictionary with keys given by strings representing which problem they
         correspond to.
 
         *Returns*
@@ -219,6 +234,7 @@ class M3H3(object):
                 Dictionary of the number of steps for each solver. 
             max_dt (:py:class:`float`)
                 The longest time-step for all solvers. 
+
         """
         dt_physics = self._get_physics_dt()
 
@@ -325,8 +341,8 @@ class M3H3(object):
         This function sets up the solver for each problem with the given parameters
         and keyword arguments. The solver parameters should be in the parameter 
         object. 
-        """
 
+        """
         interval = (self.parameters['start_time'], self.parameters['end_time'])
 
         if Physics.ELECTRO in self.physics:

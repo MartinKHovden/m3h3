@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""This module keeps track of the cell models and the cardiac models for the 
+"""This module keeps track of the cell model and the cardiac model for the 
 electro problem. It also stores the solution fields for the electro problem. 
 """
 
@@ -39,8 +39,6 @@ class ElectroProblem(Problem):
         # Sets up the cell model and cardiac model. 
         self.cell_model = self.get_cell_model()
         self.cardiac_model = self.get_cardiac_model()
-
-
 
     def get_cell_model(self):
         """Returns the cell model specified in the parameters.
@@ -110,7 +108,6 @@ class ElectroProblem(Problem):
         self.vs = vs
         self.vur = vur
 
-
     def _get_solution_fields(self):
         """ Return the solution field for the electro problem.
 
@@ -118,7 +115,6 @@ class ElectroProblem(Problem):
         
         """
         return (self.vs_, self.vs, self.vur)
-
 
     def _set_up_stimulus(self, **kwargs):
         """Add the given stimulus to the electro problem. Stimulus is 
@@ -133,32 +129,6 @@ class ElectroProblem(Problem):
 
         """ 
         self.stimulus = self.parameters["stimulus"]
-
-        # if self.stimulus != None:
-        #     if isinstance(self.stimulus, cbcbeat.Markerwise):
-        #         for stim in self.stimulus.values():
-        #             if "t" in stim.user_parameters:
-        #                 stim.t = self.time
-        #             elif "time" in stim.user_parameters:
-        #                 stim.time = self.time
-
-        #     elif isinstance(self.stimulus, cbcbeat.Constant):
-        #         pass
-
-        #     elif isinstance(self.stimulus, cbcbeat.Expression):
-        #         if "t" in self.stimulus.user_parameters:
-        #             self.stimulus.t = self.time
-        #         elif "time" in self.stimulus.user_parameters:
-        #             self.stimulus.time = self.time
-
-        #     elif isinstance(self.stimulus, cbcbeat.CompiledExpression):
-        #         self.stimulus.t = self.time._cpp_object
-
-        #     else:
-        #         msg = """Stimulus should be an Expression, CompiledExpression 
-        #         or Markerwise, not %r""" %type(self.stimulus)
-        #         raise TypeError(msg)
-
 
     def _set_up_current(self, **kwargs):
         """ Add the given applied current to the electro problem. 

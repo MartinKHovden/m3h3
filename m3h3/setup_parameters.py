@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-"""This module handles parameters for cardiac simulations.
+"""This module handles the parameters for cardiac simulations.
 
 It contains one main class for storing the general parameters for each problem.
 In addition, it contains a class for the parameters of the electro problem. This
-is because df.Parameters dont take Markerwise functiosn as elements. Since we 
-might want to add complex stimuluses, this should be possible. By using the 
+is because df.Parameters only take floats, ints and strings. Since we 
+might want to add complex stimuluses, an alternative is needed. By using the 
 ElectroParameter class, this is now possible. 
 
 For more information on how to use the parameter class, see the user guide in 
@@ -54,18 +54,16 @@ def set_dolfin_compiler_parameters():
     df.parameters["form_compiler"]["cpp_optimize_flags"] = " ".join(flags)
 
 class ElectroParameters(df.Parameters):
-    """Class for handling the electro parameters
+    """Class for handling the electro parameters.
 
-    This class hadles the electro parameters.  
-
-    This class handles some of the problem specifications that can't 
-    be held by the Parameters class. The class are used as storage for 
-    stimulus, applied current and initial conditions. This class should 
-    be updated with more specifications when needed in later versions.
-    The reason why this class i needed is that df.Parameters dont hold 
-    Markerwise functions (As far as I know). Instead of storing the stimulus
-    in the actual df.Parameter dictionary, they are stored in separate variables.
-    They can be accessed and added in the same way as for normal Parameters.
+    This class handles the electro parameters. It inherits most of 
+    the functionality from df.Parameters, but is modified to be able 
+    to store more complex stimulus, applied current, and conductivities. 
+    This is needed because df.Parameters only takes floats, ints or strings. 
+    Instead of storing stimulus, applied current, and conductivities in the 
+    actual df.Parameter storage, it stores them in separate variables. The 
+    class is updated so that those items can be accessed in the same way 
+    as items in a normal df.Parameter object. 
 
     *Arguments*
         label (:py:class:`str`)
@@ -92,7 +90,7 @@ class ElectroParameters(df.Parameters):
         self.M_e = None
     
     def add(self, *args):
-        """ Function for adding new specifications. Should only be used 
+        """ Function for adding new parameters. Should only be used 
         for adding new elements to the set. For updating already defined 
         specifications, use:
         problem_specifications["specification"] = Something...
@@ -148,6 +146,12 @@ class ElectroParameters(df.Parameters):
             super().__setitem__(key, value)
 
     def get(self, key):
+        """Function for getting the value for a key.
+
+        *Returns*
+            Returns the value corrensponding to the key
+
+        """
         if key == "stimulus":
             return self.stimulus 
         elif key == "applied_current":
@@ -162,12 +166,28 @@ class ElectroParameters(df.Parameters):
             return super().get(key)    
 
     def keys(self):
+        """Returns a dictionary with the keys in the parameter set. 
+        
+        *Returns*
+            return_list (:py:class:`dict`)
+                List with the keys in the parameter set. 
+        """
         return_list = ["stimulus", "applied_current", "initial_conditions", "M_i", "M_e"]
         return_list += super().keys()
         
         return return_list
 
     def has_key(self, key):
+        """Checks if key is in parameter set. 
+
+        Function for checking if key is in the parameter set. Returns True if it 
+        is in the parameter set and false otherwise. 
+
+        *Returns*
+            (:py:class:`boolean`)
+                Boolean that represents if key is in parameter set or not. 
+
+        """
         if key == "stimulus":
             return True
         elif key == "applied_current":
@@ -182,6 +202,15 @@ class ElectroParameters(df.Parameters):
             return super().has_key(key)
 
     def clear(self):
+        """Clears the parameter set.
+
+        Function for removing every parameter from the parameter set. 
+
+        *Note*
+            The special parameters (stimulus, applied current, M_i, M_e) are 
+            set to None. 
+
+        """
         self.stimulus = None 
         self.applied_current = None 
         self.initial_conditions = None
@@ -195,13 +224,16 @@ class Parameters(df.Parameters):
     This class handles the parameters for the cardiac simulations. It 
     inherits most of the functionality from  `dolfin`'s Parameters class. 
     The main difference is that this class have an alternative way 
-    of handling the electro parameters, since we should be able to add stimulus
-    as a Markerwise function (df.Parmeters does not allow Markerwise elements).
+    of handling the electro parameters, since we should be able to add more complex
+    stimuluses (df.Parmeters does only allows floats, ints and strings).
     Therefore, the ElectroParameter class is used, and are stored in a separate
     variable self.electro_parameters instead of in the actual df.Parameter dict. 
 
     The parameter set can be nested. Each problem have their own nested
     Parameter set that contains the parameters. 
+
+    *Notes*
+        start_time and end_time is assumed to be of type df.Constant. 
 
     *Usage*
 
@@ -250,9 +282,10 @@ class Parameters(df.Parameters):
             electro_params = params["Electro"]
         
         The electro parameters can then be viewed, added, changed, and extracted as before. 
+
     """
     def __init__(self, label, **kwargs):
-        """Initializes a new instance of m3h3.
+        """Initializes a new instance of the Parameter class.
 
         Calls the super-class initializer, and automatically sets 
         the dolfin compiler parameters as well as the default parameters.
@@ -279,14 +312,15 @@ class Parameters(df.Parameters):
 
         *Note*
             This is automatically called when initializing a new instance, so 
-            does not need to be used. 
+            does not need to be used. Also note that start_time and end_time
+            is assumed to be of type df.Constant. 
         """
         self.add("log_level", df.get_log_level())
         m3h3.log(self["log_level"], "Log level is set to {}".format(
             LogLevel(self["log_level"])
         ))
-        self.add("start_time", 0.0)
-        self.add("end_time", 1.0)
+        self.add("start_time", df.Constant(0.0))
+        self.add("end_time", df.Constant(1.0))
 
     def __getitem__(self, key):
         if key == Physics.ELECTRO.value:
@@ -389,8 +423,6 @@ class Parameters(df.Parameters):
         self.electro_parameters.add("theta", 0.5)
         self.electro_parameters.add("polynomial_degree", 1)
         self.electro_parameters.add("use_average_u_constraint", False)
-        # self.electro_parameters.add("M_i", 1.0)
-        # self.electro_parameters.add("M_e", 2.0)
         self.electro_parameters.add("I_a", 0.0)
         self.electro_parameters.add("cell_model", "Tentusscher_panfilov_2006_M_cell")
         self.electro_parameters.add("pde_model", "bidomain")
