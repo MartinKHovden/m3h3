@@ -93,10 +93,10 @@ class ElectroParameters(df.Parameters):
         """ Function for adding new parameters. Should only be used 
         for adding new elements to the set. For updating already defined 
         specifications, use:
-        problem_specifications["specification"] = Something...
 
-        # FIXME: Raise error if adding stimulus, applied current or 
-        # intial conditions. 
+        .. code-block:: python 
+
+            problem_specifications["specification"] = Something...
 
         """
         if args[0] == "stimulus": 

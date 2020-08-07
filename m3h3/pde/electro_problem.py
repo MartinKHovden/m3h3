@@ -111,8 +111,9 @@ class ElectroProblem(Problem):
     def _get_solution_fields(self):
         """ Return the solution field for the electro problem.
 
-        Function for returning the solution fields for 
-        
+        *Returns*
+            tuple of solutions (:py:class:`tuple`)
+                Returns a tuple with (vs_, vs, vur)        
         """
         return (self.vs_, self.vs, self.vur)
 
