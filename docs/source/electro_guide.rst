@@ -74,9 +74,8 @@ end-time to default values of 0 and 1. This can be changed as follows
     parameters["end_time"] = Constant(10.0)
     parameters["start_time"] = Constant(0.0)
 
-start and end time is assumed to of type df.Constant. 
-
-to set the timespan of the simulations. To add a nested set of electro parameters, 
+to set the timespan of the simulations. start and end time is assumed to of type df.Constant. 
+To add a nested set of electro parameters, 
 you can run 
 
 .. code-block:: python 
@@ -205,7 +204,7 @@ When the two subdomains are set up, the stimulus for each domain can be set the 
                 degree=0)
 
 Note that the string in expression can be any expression allowed in c++.
-Also note that the time variable in the expression is set to the start time object. 
+Also note that the time variable in the expression is set to the start_time object. 
 This is important so that the time is syncronized with the internal time of m3h3.
 
 The stimuluses can now be applied to the subdomains via the Markerwise class 
