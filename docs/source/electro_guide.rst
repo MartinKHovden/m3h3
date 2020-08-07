@@ -191,15 +191,15 @@ When the two subdomains are set up, the stimulus for each domain can be set the 
 .. code-block:: python 
 
     I_s_1 = Expression("t >= start ? (t <= (duration + start) ? amplitude : 0.0) : 0.0",
-                t=Constant(0.0),
-                start=start_time,
+                t=start_time,
+                start=0.0,
                 duration=1,
                 amplitude=10,
                 degree=0)
 
     I_s_2 = Expression("t >= start ? (t <= (duration + start) ? amplitude : 0.0) : 0.0",
-                t=Constant(0.0),
-                start=start_time,
+                t=start_time,
+                start=0.0,
                 duration=0.5,
                 amplitude=5,
                 degree=0)

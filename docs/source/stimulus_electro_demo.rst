@@ -1,4 +1,4 @@
-Demo for running the electro solver with a stimulus
+Demo with a complex stimulus
 ===================================================== 
 
 .. code-block:: python 
@@ -30,11 +30,27 @@ Demo for running the electro solver with a stimulus
     stimulus_1 = CompiledSubDomain("pow(x[0],2) + pow(x[1],2) <= 0.5 + tol", tol = 1e-15 )
     stimulus_1.mark(stimulus_domain, 1)
 
-    stimulus_2 = CompiledSubDomain("pow(x[0]-0.5,2) + pow(x[1]-1, 2) <= 0.1 + tol", tol = 1e-15)
+    stimulus_2 = CompiledSubDomain("pow(x[0]-0.5,2) + pow(x[1]-1.0, 2) <= 0.1 + tol", tol = 1e-15)
     stimulus_2.mark(stimulus_domain, 2)
 
     # Set up the geometry given the computational domain: 
     geo = Geometry2D(mesh)
+
+    # Set up dt, t_0, and t_max: 
+    dt = 0.1
+    start_time = Constant(0.0)
+    end_time = Constant(1.0)
+    num_steps = int((float(end_time) - float(start_time))/dt)
+
+    # Define the conductivity (tensors):
+    M_i = 2.0
+    M_e = 1.0
+
+    # Set up the parameteres for the heart-model: 
+    params = Parameters("M3H3")
+
+    params["end_time"] =end_time
+    params["start_time"] =start_time
 
     # Set up various parameters for the stimulus:
     duration = 2. # ms
@@ -45,8 +61,9 @@ Demo for running the electro solver with a stimulus
     cm2mm = 10.
     factor = 1.0/(chi*C_m) # NB: cbcbeat convention
     amplitude = factor*A*(1./cm2mm)**3 # mV/ms
+
     I_s = Expression("t >= start ? (t <= (duration + start) ? amplitude : 0.0) : 0.0",
-                    t=Constant(0.0),
+                    t=start_time,
                     start=0.0,
                     duration=duration,
                     amplitude=amplitude,
@@ -54,23 +71,6 @@ Demo for running the electro solver with a stimulus
 
     # Set up Markerwise object for stimulus: 
     stimulus = Markerwise((I_s, I_s), (1,2), stimulus_domain)
-
-    # Set up dt, t_0, and t_max: 
-    dt = 0.1
-    t_0 = 0.0
-    t_max = 1.0
-    num_steps = int((t_max - t_0)/dt)
-    interval = (t_0, t_max)
-
-    # Define the conductivity (tensors):
-    M_i = 2.0
-    M_e = 1.0
-
-    # Set up the parameteres for the heart-model: 
-    params = Parameters("M3H3")
-
-    params["end_time"] = t_max
-    params["start_time"] = t_0 
 
     params.set_electro_parameters()
 
@@ -97,15 +97,11 @@ Demo for running the electro solver with a stimulus
 
     # Run the simulation by using the step function:
     for i in range(num_steps):
-        print("Time interval: ", (float(system.time), float(system.time) + dt) )
+        print("Time interval: (%.2f, %.2f)" % (float(system.time), float(system.time) + dt) )
         system.step()
 
-    # Or run the simulations by using the solve function: 
-    # for (t0, t1), solution_field in system.solve():
-    #     print((t0, t1))
-
     # Extract the solution:
-    vs_, vs = system.get_solution_fields()[str(Physics.ELECTRO)]
+    vs_, vs, vur = system.get_solution_fields()[str(Physics.ELECTRO)]
 
     # Plot the resulting solution fields:
     plt.figure()
