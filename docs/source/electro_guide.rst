@@ -1,27 +1,26 @@
-*********************************************************************************
-An introduction to doing cardiac simulations of the electrical activity in M3H3
-*********************************************************************************
+************************************************************************************
+An introduction to doing cardiac simulations of cardiac electrophysiologoly in m3h3
+************************************************************************************
 
 This guide is a work in progress. The reader is assumed to have some knowledge
-on how to use FEniCS. For an introduction to FEniCS, see: https://fenicsproject.org/tutorial/
+on how to use FEniCS and cbcbeat. For an introduction to FEniCS, see: 
+https://fenicsproject.org/tutorial/. For an introudction to cbcbeat, see the 
+documentation at: https://cbcbeat.readthedocs.io/en/latest/index.html. 
 
-In this guide we will go through the most important steps in setting up a cardiac
-simulation in M3H3. Currently, only the electrical activity can be simulated. 
-This solver solves the monodomain or the bidomain equations presented in 
-Sundnes (2006) to find the transmembrane potential. 
+In this guide we will go through the most important steps in setting up an electrophysiologoly 
+simulation in M3H3. This solver solves the monodomain or the bidomain equations presented in 
+Sundnes (2006) for the transmembrance potentail along with state variables in the 
+different cell models. 
 
-SAY SOMETHING MORE ABOUT THE PROBLEM WE ARE SOLVING!!!
-
-Importing M3H3 
+Importing m3h3 
 ===============
-To import all the functionality of M3H3, run 
+To import all the functionality of m3h3, run 
 
 .. code-block:: python
 
     from m3h3 import *
 
-This will also import the full functionality of FEniCS and CBCBeat, so those 
-do not have to be imported separately. 
+This will also import all the full functionality of FEniCS and cbcbeat.
 
 Setting up the mesh
 ======================
@@ -44,7 +43,6 @@ Mesh function.
     mesh = Mesh("data/mesh115_refined.xml.gz")
 
 Other mesh-functions can be found in the mesh module of fenics: https://fenicsproject.org/docs/dolfin/2016.2.0/python/programmers-reference/cpp/mesh/index.html.
-All of them are imported when importing m3h3. 
 
 When the mesh it created, you need to set up a geometry object with 
 this mesh
@@ -53,14 +51,16 @@ this mesh
 
     geo = Geometry(mesh)
 
+This will be necesarry when considering interactions in m3h3. 
+
 Setting up the parameters and specifying the problems 
 =======================================================
 The Parameter class is where the user can specify what parameters they want to 
-use in the simulations. It is a subclass of fenics' Parameter class and contains 
-most of the information about the electro problem (and later also Fluid 
-parameters, Solid parameters, and porous parameters). The Parameter class 
-contains nested Parameter classes that contains the parameters for each 
-of the problems. The Parameter class can be used like this 
+use in the simulations. It is a subclass of FEniCS' Parameter class and contains 
+most of the information about the electrophysiologoly problem (and later also Fluid 
+parameters, Solid parameters, and porous parameters). 
+
+The Parameter class can be used like this 
 
 .. code-block:: python 
 
@@ -71,8 +71,10 @@ end-time to default values of 0 and 1. This can be changed as follows
 
 .. code-block:: python 
 
-    parameters["end_time"] = 10.0
-    parameters["start_time"] = 0.0
+    parameters["end_time"] = Constant(10.0)
+    parameters["start_time"] = Constant(0.0)
+
+start and end time is assumed to of type df.Constant. 
 
 to set the timespan of the simulations. To add a nested set of electro parameters, 
 you can run 
@@ -116,19 +118,6 @@ and again, printing out the keys gives
 
     ['BasicCardiacODESolver', 'BidomainSolver', 'CardiacODESolver', 'MonodomainSolver', 'apply_stimulus_current_to_pde', 'enable_adjoint', 'ode_solver_choice', 'pde_solver', 'theta']
 
-Setting up the electro simulations
-++++++++++++++++++++++++++++++++++++++++
-
-Now that the parametres contains a nested set of electro parameters, they can 
-be changed as before. 
-
-.. code-block:: python 
-
-    electro_parameters = params["Electro"]
-
-There are multiple ways to set the parameters for the electro simulations. The 
-easiest is to first set them equal to the default electro parameters and then 
-updating them from there.
 
 Now that the electro parameters are set to default values, they can be changed 
 as one would do in a dictionary. 
@@ -165,7 +154,6 @@ This is done in a similar way as for the electro parameters
     electrosolver_parameters["apply_stimulus_current_to_pde"] = True
 
 Here we see that we can choose between the monodomain and the bidomain equations. 
-
 
 Stimulus 
 ++++++++++
