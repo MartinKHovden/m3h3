@@ -122,11 +122,10 @@ class ElectroProblem(Problem):
         suposed to be of type CompiledExpression, Expression or Markerwise.
 
         *Note*
-            When using CompiledExpression, time should be encoded as t in the 
-            expression. When using Expression or Markerwise, the time can be 
-            encoded as t or time in the user_parameters of the expression or 
-            markerwise. The time variable in the expression is then set to 
-            the internal time of the m3h3 object. 
+            The time variable in the stimulus should be set equal to the 
+            start time in the parameters. This is so that the time is 
+            syncronized for the solvers and the stimulus. start time is 
+            assumed to be of type df.Constant. 
 
         """ 
         self.stimulus = self.parameters["stimulus"]

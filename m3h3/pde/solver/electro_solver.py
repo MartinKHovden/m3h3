@@ -10,10 +10,7 @@ class ElectroSolver(SplittingSolver):
   at a later stage. It solves the bidomain and monodomain equations presented
   in Sundnes (2006). For more information, see the documentation for the 
   SplittingSolver in CBCBeat. 
-
-  It solves the bidomain (or monodomain) equations given by: 
   
-
   """ 
   pass 
 
