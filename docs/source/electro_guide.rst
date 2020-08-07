@@ -164,9 +164,11 @@ Expression class.
 
 .. code-block:: python 
 
-    stimulus = Expression("x[0]*t", t = Constant(0.0), degree = 1)
+    stimulus = Expression("x[0]*t", t = start_time, degree = 1)
 
-This is a simple stimulus that moves along the x-axis with time.  
+This is a simple stimulus that moves along the x-axis with time. Note that 
+the time is set equal to the start_time object. This is so that the stimulus 
+time is syncronized with the internal time of m3h3.  
 
 A more complex example uses the CompiledSubdomain functionality in combination 
 with the Markerwise class to set up two separate stimulus in the domain.
@@ -190,20 +192,23 @@ When the two subdomains are set up, the stimulus for each domain can be set the 
 
     I_s_1 = Expression("t >= start ? (t <= (duration + start) ? amplitude : 0.0) : 0.0",
                 t=Constant(0.0),
-                start=0.0,
+                start=start_time,
                 duration=1,
                 amplitude=10,
                 degree=0)
 
     I_s_2 = Expression("t >= start ? (t <= (duration + start) ? amplitude : 0.0) : 0.0",
                 t=Constant(0.0),
-                start=0.0,
+                start=start_time,
                 duration=0.5,
                 amplitude=5,
                 degree=0)
 
-Note that the string in expression can be any expression allowed in c++. The 
-stimuluses can now be applied to the subdomains via the Markerwise class 
+Note that the string in expression can be any expression allowed in c++.
+Also note that the time variable in the expression is set to the start time object. 
+This is important so that the time is syncronized with the internal time of m3h3.
+
+The stimuluses can now be applied to the subdomains via the Markerwise class 
 
 .. code-block:: python 
 
@@ -300,10 +305,8 @@ This will plot the transmenbrane potential over the domain.
 Plotting in 3D
 +++++++++++++++++
 In the previous example where the mesh was taken from a file, the domain 
-is in 3 dimensions. The plot function have some problems visualizing the solution
-fields in this case. Instead of directly plotting it using the plot function 
-from fenics, we can instead write the results to file, and then use 
-external software for visualizing it. Two of the possibilities is to 
+is in 3 dimensions. The easiest way to visualize the results in 3D is to use 
+external plotting software. Two of the possibilities is to 
 use ParaView or vedo. 
 
 To download ParaView, follow the instructions on: https://www.paraview.org/download/
