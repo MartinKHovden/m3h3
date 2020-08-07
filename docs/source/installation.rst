@@ -1,5 +1,5 @@
 *****************
-**Installation**
+Installation
 *****************
 There are different ways to install m3h3 depending on if you want to use the 
 framework as a user or a developer. The first part consentrates on how to install 

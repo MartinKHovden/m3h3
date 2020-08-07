@@ -16,12 +16,9 @@ Fix readthedocs, make the code look better.
 Fix init files. 
 Update initial conditions.
 Explain how to add more cell models (lower/upper case)
-Describe the parameters in detail, and where t hey are sent. 
 Credit where the cell models come from, or add them straight from cbcbeat instead
 of imports? 
 Credit cbcbeat for the demos. 
-Say something about what problem are actually solved. 
-Which github link to use?
 
 M3H3 is a framework used for modelling and simulating the heart. It inherits
 much of the functionality from other libaries and combines it into a full

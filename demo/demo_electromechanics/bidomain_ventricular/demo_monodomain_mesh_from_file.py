@@ -72,7 +72,7 @@ def set_up_conductivities(healthy = True):
 # Set up dt, t_0, and t_max. 
 dt = 0.1
 start_time = Constant(0.0)
-end_time = Constant(1.0)
+end_time = Constant(10.0)
 num_steps = int((float(end_time) - float(start_time))/dt)
 M_i, M_e = set_up_conductivities(healthy=True)
 

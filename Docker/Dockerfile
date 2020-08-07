@@ -11,10 +11,14 @@ RUN apt-get -qq update && \
 # Update pip
 RUN pip install --upgrade pip
 
+# Install m3h3
+
+RUN git clone https://github.com/MartinKHovden/m3h3.git
+RUN cd m3h3; python setup.py install; cd ..
 
 # Install cbcbeat
 RUN hg clone https://bitbucket.org/meg/cbcbeat
-RUN cd cbcbeat; pip install .; cd ..
+RUN cd cbcbeat; python setup.py install; cd ..
 
 # Install pulse
 RUN pip install git+https://github.com/finsberg/pulse.git
